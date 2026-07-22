@@ -936,9 +936,9 @@ func (s *Service) executeOpenAITool(ctx context.Context, activeWorkspaceDir stri
 		defer cancel()
 		var cmd *exec.Cmd
 		if runtime.GOOS == "windows" {
-			if _, err := exec.LookPath("bash"); err == nil {
+			if _, err := auth.SafeLookPath("bash"); err == nil {
 				cmd = exec.CommandContext(cmdCtx, "bash", "-c", command)
-			} else if _, err := exec.LookPath("powershell"); err == nil {
+			} else if _, err := auth.SafeLookPath("powershell"); err == nil {
 				cmd = exec.CommandContext(cmdCtx, "powershell", "-Command", command)
 			} else {
 				cmd = exec.CommandContext(cmdCtx, "cmd", "/c", command)

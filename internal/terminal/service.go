@@ -54,9 +54,9 @@ func (s *Service) StartSession(workspaceDir string) error {
 
 	var cmd *exec.Cmd
 	if runtime.GOOS == "windows" {
-		if _, err := exec.LookPath("bash"); err == nil {
+		if _, err := auth.SafeLookPath("bash"); err == nil {
 			cmd = exec.Command("bash", "-i")
-		} else if _, err := exec.LookPath("powershell"); err == nil {
+		} else if _, err := auth.SafeLookPath("powershell"); err == nil {
 			cmd = exec.Command("powershell")
 		} else {
 			cmd = exec.Command("cmd")
@@ -189,9 +189,9 @@ func (s *Service) KillSession() {
 func (s *Service) StartCommand(ctx context.Context, command string, activeWorkspaceDir string) (*exec.Cmd, io.ReadCloser, error) {
 	var cmd *exec.Cmd
 	if runtime.GOOS == "windows" {
-		if _, err := exec.LookPath("bash"); err == nil {
+		if _, err := auth.SafeLookPath("bash"); err == nil {
 			cmd = exec.Command("bash", "-c", command)
-		} else if _, err := exec.LookPath("powershell"); err == nil {
+		} else if _, err := auth.SafeLookPath("powershell"); err == nil {
 			cmd = exec.Command("powershell", "-Command", command)
 		} else {
 			cmd = exec.Command("cmd", "/c", command)
@@ -410,7 +410,7 @@ func (s *Service) GetModelsList() ([]string, error) {
 		var err error
 
 		useDirect := false
-		if _, lookErr := exec.LookPath("script"); lookErr != nil {
+		if _, lookErr := auth.SafeLookPath("script"); lookErr != nil {
 			useDirect = true
 		}
 

@@ -11,6 +11,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"sync"
 	"time"
@@ -147,12 +148,39 @@ func getHomeDir() (string, error) {
 	return os.UserHomeDir()
 }
 
+// SafeLookPath checks if an executable exists in PATH using os.Stat to bypass faccessat2 seccomp restrictions on Android Termux
+func SafeLookPath(file string) (string, error) {
+	if filepath.IsAbs(file) || strings.Contains(file, "/") || strings.Contains(file, `\`) {
+		if info, err := os.Stat(file); err == nil && !info.IsDir() {
+			return file, nil
+		}
+		return "", os.ErrNotExist
+	}
+	pathEnv := os.Getenv("PATH")
+	for _, dir := range filepath.SplitList(pathEnv) {
+		if dir == "" {
+			dir = "."
+		}
+		p := filepath.Join(dir, file)
+		if info, err := os.Stat(p); err == nil && !info.IsDir() {
+			return p, nil
+		}
+		if runtime.GOOS == "windows" && !strings.HasSuffix(strings.ToLower(file), ".exe") {
+			pExe := p + ".exe"
+			if info, err := os.Stat(pExe); err == nil && !info.IsDir() {
+				return pExe, nil
+			}
+		}
+	}
+	return "", os.ErrNotExist
+}
+
 func FindAgyPath() string {
 	if p := os.Getenv("AGY_PATH"); p != "" {
 		return p
 	}
 
-	if p, err := exec.LookPath("agy"); err == nil {
+	if p, err := SafeLookPath("agy"); err == nil {
 		return p
 	}
 
@@ -263,7 +291,7 @@ func (s *Service) StartGoogleAuth(activeWorkspaceDir string) (string, error) {
 	var cmd *exec.Cmd
 	useDirect := false
 
-	if _, err := exec.LookPath("script"); err != nil || os.Getenv("FORCE_DIRECT_AUTH") == "true" {
+	if _, err := SafeLookPath("script"); err != nil || os.Getenv("FORCE_DIRECT_AUTH") == "true" {
 		log.Printf("[AUTH] 'script' utility not found or forced direct. Using direct command execution.")
 		useDirect = true
 	}
