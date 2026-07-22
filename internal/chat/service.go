@@ -359,8 +359,11 @@ func (s *Service) StartChat(ctx context.Context, req ChatRequest, activeWorkspac
 		}
 		args = append(args, "--model", modelArg)
 
-		// Model gemini-3.5-flash atau reasoning memerlukan argumen --effort (low/medium/high)
-		if strings.Contains(strings.ToLower(modelArg), "3.5") || strings.Contains(strings.ToLower(modelArg), "flash") || strings.Contains(strings.ToLower(modelArg), "reasoning") || strings.Contains(strings.ToLower(modelArg), "thinking") {
+		// Model gemini-3.5-flash atau reasoning memerlukan argumen --effort (low/medium/high) HANYA jika nama model belum memiliki akhiran effort (-low, -medium, -high)
+		lowerModel := strings.ToLower(modelArg)
+		hasEffortSuffix := strings.HasSuffix(lowerModel, "-low") || strings.HasSuffix(lowerModel, "-medium") || strings.HasSuffix(lowerModel, "-high")
+
+		if !hasEffortSuffix && (strings.Contains(lowerModel, "3.5") || strings.Contains(lowerModel, "flash") || strings.Contains(lowerModel, "reasoning") || strings.Contains(lowerModel, "thinking")) {
 			effort := strings.TrimSpace(req.Effort)
 			if effort == "" {
 				effort = "medium"
