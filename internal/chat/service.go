@@ -24,6 +24,7 @@ import (
 type ChatRequest struct {
 	Prompt       string `json:"prompt"`
 	Model        string `json:"model"`
+	Effort       string `json:"effort"`
 	Continue     bool   `json:"continue"`
 	Conversation string `json:"conversation"`
 }
@@ -357,6 +358,15 @@ func (s *Service) StartChat(ctx context.Context, req ChatRequest, activeWorkspac
 			modelArg = fields[0]
 		}
 		args = append(args, "--model", modelArg)
+
+		// Model gemini-3.5-flash atau reasoning memerlukan argumen --effort (low/medium/high)
+		if strings.Contains(strings.ToLower(modelArg), "3.5") || strings.Contains(strings.ToLower(modelArg), "flash") || strings.Contains(strings.ToLower(modelArg), "reasoning") || strings.Contains(strings.ToLower(modelArg), "thinking") {
+			effort := strings.TrimSpace(req.Effort)
+			if effort == "" {
+				effort = "medium"
+			}
+			args = append(args, "--effort", effort)
+		}
 	}
 	args = append(args, "--print", req.Prompt, "--dangerously-skip-permissions")
 

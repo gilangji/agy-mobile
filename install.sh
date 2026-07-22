@@ -18,7 +18,7 @@ resolve_latest_version() {
         printf '%s\n' "$tags" | head -n 1
         return
     fi
-    echo "v1.1.0"
+    echo "v1.1.2"
 }
 
 REQUESTED_VERSION="${1:-${VERSION:-}}"
@@ -112,6 +112,11 @@ generate_scripts() {
 # Tambahkan ~/.local/bin ke PATH jika belum ada
 if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
     export PATH="$HOME/.local/bin:$PATH"
+fi
+
+# Mengaktifkan CPU wake lock di Termux agar OS Android tidak menidurkan proses background
+if command -v termux-wake-lock &>/dev/null; then
+    termux-wake-lock 2>/dev/null || true
 fi
 
 if [ -f .env ]; then

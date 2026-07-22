@@ -400,32 +400,30 @@
                     <span class="bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 font-black px-1.5 py-0.5 rounded text-[10px] uppercase tracking-wider shadow-sm">PRO</span>
                 </h1>
                 <div onclick="openUpdateModal()" class="flex items-center space-x-1 cursor-pointer bg-brand-panel border border-brand-border px-1.5 py-0.5 rounded font-mono hover:bg-brand-border transition group" title="Info Update & Version Pro">
-                    <span class="text-[10px] text-emerald-400 font-semibold">v1.1.0-PRO</span>
+                    <span class="text-[10px] text-emerald-400 font-semibold">v1.1.2-PRO</span>
                     <span id="update-dot" class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
                 </div>
             </div>
         </div>
-        <div class="flex items-center space-x-2">
-            <span id="active-file-label" class="text-xs text-slate-400 bg-brand-panel border border-brand-border px-2.5 py-1 rounded-full max-w-[120px] truncate">
+        <div class="flex items-center space-x-1.5 sm:space-x-2">
+            <span id="active-file-label" class="hidden md:inline-block text-xs text-slate-400 bg-brand-panel border border-brand-border px-2.5 py-1 rounded-full max-w-[120px] truncate">
                 No file open
             </span>
-            <button onclick="saveActiveFile()" class="p-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg transition duration-200 flex items-center justify-center" title="Save File">
+            <button onclick="saveActiveFile()" class="p-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg transition duration-200 flex items-center justify-center shrink-0" title="Save File">
                 <i data-lucide="save" class="w-4 h-4"></i>
             </button>
-            <button id="topbar-btn-browser" onclick="toggleLiveBrowserPanel()" class="p-1.5 bg-brand-panel border border-brand-border hover:bg-brand-accent/20 text-brand-accent rounded-lg transition duration-200 flex items-center space-x-1.5" title="Live Browser Preview (Ctrl+Shift+B)">
+            <button id="topbar-btn-browser" onclick="toggleLiveBrowserPanel()" class="p-1.5 bg-brand-panel border border-brand-border hover:bg-brand-accent/20 text-brand-accent rounded-lg transition duration-200 flex items-center space-x-1.5 shrink-0" title="Live Browser Preview">
                 <i data-lucide="globe" class="w-4 h-4 text-brand-accent"></i>
                 <span class="hidden sm:inline text-xs font-semibold text-slate-200">Browser</span>
             </button>
-            <button onclick="openQuotaModal()" class="p-1.5 bg-brand-panel border border-brand-border hover:bg-brand-border text-slate-300 rounded-lg transition duration-200" title="Quota & Account Info">
-                <i data-lucide="user" class="w-4 h-4"></i>
+            <button onclick="openQuotaModal()" class="px-2.5 py-1.5 bg-gradient-to-r from-brand-600 to-purple-600 hover:from-brand-700 hover:to-purple-700 text-white rounded-lg transition duration-200 flex items-center space-x-1.5 shadow shrink-0" title="Ganti Akun & Informasi Kuota">
+                <i data-lucide="user" class="w-4 h-4 text-emerald-300"></i>
+                <span class="text-xs font-bold">Akun</span>
             </button>
-            <button onclick="openSearchWorkspaceModal()" class="p-1.5 bg-brand-panel border border-brand-border hover:bg-brand-border text-slate-300 rounded-lg transition duration-200 flex items-center justify-center space-x-1" title="Cari Workspace (Ctrl+P / Cmd+P)">
+            <button onclick="openSearchWorkspaceModal()" class="p-1.5 bg-brand-panel border border-brand-border hover:bg-brand-border text-slate-300 rounded-lg transition duration-200 flex items-center justify-center shrink-0" title="Cari Workspace">
                 <i data-lucide="search" class="w-4 h-4 text-brand-accent"></i>
             </button>
-            <button onclick="refreshWorkspace()" class="p-1.5 bg-brand-panel border border-brand-border hover:bg-brand-border text-slate-300 rounded-lg transition duration-200" title="Refresh">
-                <i data-lucide="refresh-cw" class="w-4 h-4"></i>
-            </button>
-            <button onclick="logout()" class="p-1.5 bg-red-950/40 border border-red-900/30 hover:bg-red-900/40 text-red-400 rounded-lg transition duration-200 flex items-center justify-center" title="Logout">
+            <button onclick="logout()" class="p-1.5 bg-red-950/40 border border-red-900/30 hover:bg-red-900/40 text-red-400 rounded-lg transition duration-200 flex items-center justify-center shrink-0" title="Logout">
                 <i data-lucide="log-out" class="w-4 h-4"></i>
             </button>
         </div>
@@ -3874,13 +3872,14 @@
                 }
 
                 // Render account pool
-                if (poolRes.ok && poolList && poolContainer) {
-                    const poolData = await poolRes.json();
-                    const accounts = poolData.accounts || [];
-                    const active = poolData.active || '';
-                    
-                    if (accounts.length > 0) {
-                        poolContainer.classList.remove('hidden');
+                if (poolList && poolContainer) {
+                    poolContainer.classList.remove('hidden');
+                    if (poolRes.ok) {
+                        const poolData = await poolRes.json();
+                        const accounts = poolData.accounts || [];
+                        const active = poolData.active || '';
+                        
+                        if (accounts.length > 0) {
                         let html = '';
                         accounts.forEach(acc => {
                             const isActive = acc === active;
@@ -4119,7 +4118,7 @@
                 const latestStable = stableTags.sort(compareTags).pop();
                 const latestTesting = testingTags.sort(compareTags).pop();
                 const latest = (latestStable || latestTesting || releases?.[0]?.tag_name || 'latest');
-                const current = "v1.1.0";
+                const current = "v1.1.2";
 
                 if (verDisplay) verDisplay.innerText = latest;
                 if (releaseSelect) {
@@ -4698,7 +4697,7 @@
                 <div class="bg-brand-dark/40 border border-brand-border p-3 rounded-xl space-y-1.5">
                     <div class="flex justify-between items-center">
                         <span class="text-slate-400 font-medium">Versi Saat Ini:</span>
-                        <span class="font-mono font-bold text-white bg-brand-border px-1.5 py-0.5 rounded text-[10px]">v1.1.0</span>
+                        <span class="font-mono font-bold text-white bg-brand-border px-1.5 py-0.5 rounded text-[10px]">v1.1.2</span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-slate-400 font-medium">Rilis GitHub Terbaru:</span>
