@@ -196,12 +196,12 @@ func (h *Handler) HandlePasswordAuth(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if pwd == "" {
-		http.Error(w, "Sandi ora oleh kosong", http.StatusBadRequest)
+		http.Error(w, "Kata sandi tidak boleh kosong", http.StatusBadRequest)
 		return
 	}
 
 	if !h.authSvc.VerifyPassword(pwd) {
-		http.Error(w, "Sandi keamanan salah!", http.StatusUnauthorized)
+		http.Error(w, "Kata sandi keamanan salah!", http.StatusUnauthorized)
 		return
 	}
 
@@ -216,7 +216,7 @@ func (h *Handler) HandlePasswordAuth(w http.ResponseWriter, r *http.Request) {
 	})
 
 	w.WriteHeader(http.StatusOK)
-	_, _ = w.Write([]byte("Sukses mlebu"))
+	_, _ = w.Write([]byte("Berhasil masuk"))
 }
 
 // HandlePasswordUpdate updates the security login password
@@ -238,7 +238,7 @@ func (h *Handler) HandlePasswordUpdate(w http.ResponseWriter, r *http.Request) {
 
 	err := h.authSvc.SaveNewPassword(newPwd)
 	if err != nil {
-		http.Error(w, "Gagal nyimpen sandi anyar: "+err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Gagal menyimpan kata sandi baru: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -252,7 +252,7 @@ func (h *Handler) HandlePasswordUpdate(w http.ResponseWriter, r *http.Request) {
 	})
 
 	w.WriteHeader(http.StatusOK)
-	_, _ = w.Write([]byte("Sandi keamanan kasil dianyari"))
+	_, _ = w.Write([]byte("Kata sandi keamanan berhasil diperbarui"))
 }
 
 // HandleAuthStatus gets Google OAuth authentication status
@@ -271,11 +271,11 @@ func (h *Handler) HandleQuotaSummary(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	quota, err := h.authSvc.GetQuotaSummary()
 	if err != nil {
-		log.Printf("[QUOTA WARN] Detail quota resmi agy ora tersedia: %v\n", err)
+		log.Printf("[QUOTA WARN] Detail kuota resmi agy tidak tersedia: %v\n", err)
 		_ = json.NewEncoder(w).Encode(auth.QuotaSummaryResponse{
 			Groups:    []auth.QuotaGroup{},
 			Exhausted: false,
-			Error:     "Detail quota mung kasedhiya kanggo login Google Antigravity (`agy`). Yen sampeyan nganggo OpenAI-compatible provider, cek pemakaian/quota saka dashboard provider masing-masing.",
+			Error:     "Detail kuota hanya tersedia untuk login Google Antigravity (`agy`). Jika Anda menggunakan provider OpenAI-compatible, periksa penggunaan/kuota dari dashboard provider masing-masing.",
 		})
 		return
 	}
@@ -309,7 +309,7 @@ func (h *Handler) HandleAuthSubmit(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if code == "" {
-		http.Error(w, "kode verifikasi ora oleh kosong", http.StatusBadRequest)
+		http.Error(w, "Kode verifikasi tidak boleh kosong", http.StatusBadRequest)
 		return
 	}
 
@@ -663,9 +663,9 @@ func (h *Handler) HandleChatStop(w http.ResponseWriter, r *http.Request) {
 	stopped := h.chatSvc.StopChat(id)
 	w.WriteHeader(http.StatusOK)
 	if stopped {
-		_, _ = w.Write([]byte("Sukses mateni agen"))
+		_, _ = w.Write([]byte("Berhasil menghentikan agen"))
 	} else {
-		_, _ = w.Write([]byte("Agen ora lagi mlaku"))
+		_, _ = w.Write([]byte("Agen sedang tidak berjalan"))
 	}
 }
 

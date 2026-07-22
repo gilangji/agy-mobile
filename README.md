@@ -10,95 +10,97 @@ Aplikasi **Mobile IDE** yang ringan dan modern untuk koding melalui HP Android/i
 
 Berikut adalah galeri tampilan antarmuka Mobile IDE pada perangkat seluler (HP Android/iOS):
 
-| 🔑 Halaman Login | 💻 Code Editor | 💬 Chat Assistant (v1.1.7) |
+| 🔑 Halaman Login | 💻 Code Editor | 💬 Chat Assistant |
 | :---: | :---: | :---: |
 | ![Login Page](screenshots/mobile_login.png) | ![Editor Tab](screenshots/mobile_editor.png) | ![Chat Assistant](screenshots/mobile_chat.png) |
 
-| 🐚 Terminal Console | 📁 Atur Workspace | 🔄 Versi & Update (v1.1.7) |
+| 🐚 Terminal Console | 📁 Atur Workspace | 🔄 Versi & Update |
 | :---: | :---: | :---: |
 | ![Terminal Console](screenshots/mobile_terminal.png) | ![Workspace Manager](screenshots/mobile_workspace.png) | ![Update Modal](screenshots/mobile_update.png) |
 
 ---
 
 ## Fitur Utama
-- **Touch-Friendly File Explorer**: Menu file lan folder sing gampang di-swipe lan di-klik ing layar HP.
-- **Mobile Code Editor**: Nggunakake CodeMirror kanthi tema Dracula lan dhukungan syntax highlighting (Go, Python, JS, HTML, CSS).
-- **Mobile Keyboard Shortcut Helper**: Tombol cepet ing ndhuwur keyboard HP kanggo ngetik karakter pemrograman (`{`, `}`, `[`, `]`, `;`, `=`, lan sakpiturute).
-- **Interactive Chat Assistant**: Chatting real-time karo Antigravity AI, lengkap karo fitur **Copy** lan **Insert** kode menyang editor kanthi sekali klik.
-- **Terminal Runner**: Nglakokake perintah terminal bash langsung saka HP.
-- **REST API ready**: Kabeh fitur bisa diakses nganggo command `curl` liwat Termux/Terminal.
+- **Touch-Friendly File Explorer**: Menu file dan folder yang mudah di-swipe dan diklik di layar HP.
+- **Mobile Code Editor**: Menggunakan CodeMirror dengan tema Dracula dan dukungan syntax highlighting (Go, Python, JS, HTML, CSS, XML, Markdown).
+- **Mobile Keyboard Shortcut Helper**: Tombol cepat di atas keyboard HP untuk mengetik karakter pemrograman (`{`, `}`, `[`, `]`, `;`, `=`, `>`, `<`, `_`, `-`, `$`, `/`, `\`, `|`).
+- **Interactive Chat Assistant**: Obrolan real-time dengan Antigravity AI, lengkap dengan fitur **Copy** dan **Insert** kode ke editor dalam sekali klik.
+- **Terminal Runner**: Menjalankan perintah terminal bash langsung dari HP.
+- **REST API Ready**: Seluruh fitur dapat diakses menggunakan perintah `curl` melalui Termux/Terminal.
 
 ---
 
 ## Persyaratan Sistem
-- **Go (Golang)**: Versi 1.16 utawa luwih anyar (kudu ana mung yen njenengan kepengin ngompilasi dhewe saka source code).
-- **Antigravity CLI (`agy`)**: Wis terinstal lan terotentikasi ing server.
-- **Bash, PowerShell, utawa CMD**: Kanggo nglakokake perintah ing terminal console (ing Windows bakal otomatis nggunakake PowerShell utawa CMD yen Bash ora ditemokake).
+- **Go (Golang)**: Versi 1.16 atau lebih baru (hanya dibutuhkan jika Anda ingin mengompilasi sendiri dari source code).
+- **Antigravity CLI (`agy`)**: Telah terinstal dan terautentikasi di server.
+- **Bash, PowerShell, atau CMD**: Untuk menjalankan perintah di console terminal (di Windows secara otomatis menggunakan PowerShell atau CMD jika Bash tidak ditemukan).
 
 > [!NOTE]
 > **Kompatibilitas GLIBC**:
-> Binary pra-kompilasi sing kasedhiya ing GitHub dibangun kanthi **statis (`CGO_ENABLED=0`)**. Iki tegese program ora gumantung marang versi GLIBC sistem (`libc.so`), saengga bisa mlaku kanthi lancar ing distro Linux lawas, lingkungan wadhah (*container*) kaya GitHub Codespaces/Gitpod, sarta Termux ing Android tanpa nemoni masalah error `GLIBC_2.34 not found`.
+> Biner pra-kompilasi yang tersedia di GitHub dibangun secara **statis (`CGO_ENABLED=0`)**. Ini berarti program tidak bergantung pada versi GLIBC sistem (`libc.so`), sehingga dapat berjalan dengan lancar di distro Linux lama, lingkungan kontainer (*container*) seperti GitHub Codespaces/Gitpod, serta Termux di Android tanpa menghadapi masalah error `GLIBC_2.34 not found`.
 
 ---
 
 ## Cara Instalasi & Kompilasi
 
 ### Cara Cepat (One-Line Installer - Tanpa Perlu Install Go/Compiler):
-Cukup jalankan perintah iki ing terminal server utawa Termux HP kanggo ngundhuh pre-compiled binary lan nyiapake kabeh kanthi otomatis:
+Cukup jalankan perintah ini di terminal server atau Termux HP untuk mengunduh biner pra-kompilasi dan menyiapkannya secara otomatis:
 ```bash
 curl -fsSL https://raw.githubusercontent.com/gilangji/agy-mobile/main/install.sh | bash
 ```
-*Script iki bakal otomatis ndeteksi OS lan arsitektur CPU (Linux AMD64, Linux ARM64, MacOS, lsp.) sarta ngundhuh binary sing cocog saka kaca Rilis GitHub.*
+*Skrip ini akan secara otomatis mendeteksi OS dan arsitektur CPU (Linux AMD64, Linux ARM64, macOS, dll.) serta mengunduh biner yang sesuai dari halaman Rilis GitHub.*
 
-Yen pengin install versi/tag tartamtu sing wis dirilis, undhuh installer dhisik banjur lebokake tag-e:
+Jika ingin menginstal versi/tag tertentu yang sudah dirilis, unduh installer terlebih dahulu lalu masukkan tag-nya:
 ```bash
 curl -fsSL https://raw.githubusercontent.com/gilangji/agy-mobile/main/install.sh -o install.sh
 bash install.sh v1.4.1
 ```
-Utawa nganggo environment variable:
+Atau menggunakan environment variable:
 ```bash
 curl -fsSL https://raw.githubusercontent.com/gilangji/agy-mobile/main/install.sh -o install.sh
 VERSION=v1.3.5 bash install.sh
 ```
-Iki iso kanggo update menyang versi testing utawa downgrade menyang rilis lawas.
+Ini dapat digunakan untuk pembaruan ke versi pengujian atau menurunkan ke rilis lama.
 
-### Cara Manual (Ngompilasi Dewe):
-1. **Download source code** lan mlebu menyang folder:
+### Cara Manual (Mengompilasi Sendiri):
+1. **Unduh kode sumber** dan masuk ke folder:
    ```bash
    git clone https://github.com/gilangji/agy-mobile.git mobile-ide
    cd mobile-ide
    ```
 
-2. **Kompilasi kode program** (kudu ana compiler Go):
+2. **Kompilasi kode program** (membutuhkan compiler Go):
    ```bash
    go build -o mobile-agy main.go
    ```
 
 3. **Jalankan server**:
-   Njenengan bisa ngeset sandi keamanan liwat environment variable `PASSWORD`. Yen ora diset, server bakal nggawe sandi acak lan nampilake ing log server, sarta disimpen ing file `password.txt`.
+   Anda dapat mengatur kata sandi keamanan melalui environment variable `PASSWORD`. Jika tidak diatur, server akan membuat kata sandi acak dan menerbitkannya di log server, serta menyimpannya di file `password.txt`.
    ```bash
-   PASSWORD=sandi_njenengan PORT=8080 ./mobile-agy
+   PASSWORD=sandi_anda PORT=8080 ./mobile-agy
    ```
-   *Secara default, server bakal mlaku ing port `8080` lan ngrungokake kabeh antarmuka jaringan (`0.0.0.0:8080`).*
+   *Secara default, server akan berjalan di port `8080` dan mendengarkan seluruh antarmuka jaringan (`0.0.0.0:8080`).*
 
-### 🏁 Panduan Lengkap kanggo Pangguna Windows
+---
 
-Yen njenengan nggunakake Windows, iki tutorial langkah-demi-langkah sing luwih lengkap kanggo nginstal lan nglakokake Mobile IDE tanpa kudu nginstal compiler Go.
+### 🏁 Panduan Lengkap untuk Pengguna Windows
+
+Jika Anda menggunakan Windows, berikut adalah panduan langkah demi langkah lengkap untuk menginstal dan menjalankan Mobile IDE tanpa perlu menginstal compiler Go.
 
 #### Langkah 1: Instal Google Antigravity CLI (`agy`)
-Mobile IDE butuh tool CLI `agy` kanggo proses chat lan otentikasi.
-* **Nggunakake Git Bash / WSL**:
-  Jalankan perintah iki ing Git Bash:
+Mobile IDE membutuhkan alat CLI `agy` untuk proses obrolan dan autentikasi.
+* **Menggunakan Git Bash / WSL**:
+  Jalankan perintah ini di Git Bash:
   ```bash
   curl -fsSL https://antigravity.google/cli/install.sh | bash
   ```
-* **Nggunakake PowerShell / CMD (Manual)**:
-  1. Undhuh file binary `agy.exe` kanggo Windows saka situs resmi Antigravity.
-  2. Simpen file `agy.exe` ing folder contone `C:\Users\Username\.local\bin` utawa folder liyane.
-  3. Lebokake path folder kasebut menyang **Environment Variables (PATH)** Windows supaya bisa diakses saka ngendi wae.
+* **Menggunakan PowerShell / CMD (Manual)**:
+  1. Unduh berkas biner `agy.exe` untuk Windows dari situs resmi Antigravity.
+  2. Simpan file `agy.exe` di folder contoh `C:\Users\Username\.local\bin` atau folder lainnya.
+  3. Masukkan path folder tersebut ke dalam **Environment Variables (PATH)** Windows agar dapat diakses dari mana saja.
 
-#### Langkah 2: Undhuh Mobile IDE Binary (`mobile-agy.exe`)
-Bukak PowerShell utawa Command Prompt (CMD), banjur nggawe folder anyar lan undhuh binary-ne:
+#### Langkah 2: Unduh Biner Mobile IDE (`mobile-agy.exe`)
+Buka PowerShell atau Command Prompt (CMD), lalu buat folder baru dan unduh berkas binernya:
 * **PowerShell**:
   ```powershell
   mkdir mobile-ide; cd mobile-ide
@@ -110,86 +112,86 @@ Bukak PowerShell utawa Command Prompt (CMD), banjur nggawe folder anyar lan undh
   curl.exe -L "https://github.com/gilangji/agy-mobile/releases/latest/download/mobile-agy-windows-amd64.exe" -o mobile-agy.exe
   ```
 
-*Cathetan: Yen njenengan kepengin ngompilasi dhewe saka source code (kudu wis nginstal Go), jalankan perintah iki ing terminal:*
+*Catatan: Jika Anda ingin mengompilasi sendiri dari kode sumber (membutuhkan Go yang sudah terinstal), jalankan perintah ini di terminal:*
 ```cmd
 go build -o mobile-agy.exe main.go
 ```
 
-#### Langkah 3: Nglakokake Server
-Njenengan kudu ngeset sandi keamanan lan port sadurunge nglakokake server:
+#### Langkah 3: Menjalankan Server
+Anda perlu mengatur kata sandi keamanan dan port sebelum menjalankan server:
 * **PowerShell**:
   ```powershell
-  $env:PASSWORD="sandi_njenengan"
+  $env:PASSWORD="sandi_anda"
   $env:PORT="8080"
   .\mobile-agy.exe
   ```
 * **Command Prompt (CMD)**:
   ```cmd
-  set PASSWORD=sandi_njenengan
+  set PASSWORD=sandi_anda
   set PORT=8080
   mobile-agy.exe
   ```
 * **Git Bash / WSL**:
   ```bash
-  PASSWORD=sandi_njenengan PORT=8080 ./mobile-agy.exe
+  PASSWORD=sandi_anda PORT=8080 ./mobile-agy.exe
   ```
-*Secara default, server bakal mlaku ing port `8080` lan ngrungokake kabeh antarmuka jaringan (`0.0.0.0:8080`).*
+*Secara default, server akan berjalan di port `8080` dan mendengarkan seluruh antarmuka jaringan (`0.0.0.0:8080`).*
 
-#### Langkah 4: Mbukak Akses Firewall Windows (Penting!)
-Supaya HP Android/iOS bisa ngakses server Mobile IDE sing mlaku ing laptop Windows, njenengan kudu ngizini port kasebut liwat Windows Defender Firewall.
+#### Langkah 4: Membuka Akses Firewall Windows (Penting!)
+Agar HP Android/iOS dapat mengakses server Mobile IDE yang berjalan di laptop Windows, Anda perlu mengizinkan port tersebut melalui Windows Defender Firewall.
 
-Jalankan perintah iki ing **PowerShell minangka Administrator (Run as Administrator)**:
+Jalankan perintah ini di **PowerShell sebagai Administrator (Run as Administrator)**:
 ```powershell
 New-NetFirewallRule -DisplayName "Antigravity Mobile IDE" -Direction Inbound -LocalPort 8080 -Protocol TCP -Action Allow
 ```
-*(Yen njenengan nggunakake port liyane saliyane `8080`, ganti nilai `-LocalPort` cocog karo port sing diset).*
+*(Jika Anda menggunakan port lain selain `8080`, sesuaikan nilai `-LocalPort` dengan port yang telah diatur).*
 
-#### Langkah 5: Nyambungake HP Android/iOS
-1. Priksa manawa HP lan laptop Windows nyambung ing **siji jaringan Wi-Fi sing padha**.
-2. Goleki IP lokal laptop Windows:
-   * Bukak CMD, ketik `ipconfig`.
-   * Goleki bagean Wi-Fi utawa Ethernet, banjur cathet **IPv4 Address** (contone: `192.168.1.15`).
-3. Bukak browser (Chrome, lsp.) ing HP, banjur ketik alamat kasebut karo port-e:
+#### Langkah 5: Menghubungkan HP Android/iOS
+1. Pastikan HP dan laptop Windows terhubung dalam **satu jaringan Wi-Fi yang sama**.
+2. Cari IP lokal laptop Windows:
+   * Buka CMD, ketik `ipconfig`.
+   * Cari bagian Wi-Fi atau Ethernet, lalu catat **IPv4 Address** (contoh: `192.168.1.15`).
+3. Buka browser (Chrome, dll.) di HP, lalu ketik alamat tersebut beserta portnya:
    ```text
    http://192.168.1.15:8080
    ```
-4. Lebokake sandi keamanan sing wis njenengan set ing Langkah 3 (`sandi_njenengan`).
+4. Masukkan kata sandi keamanan yang telah Anda atur pada Langkah 3 (`sandi_anda`).
 
 ---
 
 ## Provider AI OpenAI-Compatible (Opsional)
 
-Mobile IDE tetep njaga integrasi resmi **Antigravity CLI (`agy`)** minangka default. Yen pengin nambah sumber AI liyane, sampeyan bisa nyetel provider **OpenAI-compatible** kayata OpenAI, DeepSeek, OpenRouter, LM Studio, utawa Ollama tanpa mbusak `agy`.
+Mobile IDE tetap mempertahankan integrasi resmi **Antigravity CLI (`agy`)** sebagai default. Jika ingin menambahkan penyedia AI lainnya, Anda dapat mengonfigurasi provider **OpenAI-compatible** seperti OpenAI, DeepSeek, OpenRouter, LM Studio, atau Ollama tanpa menghapus `agy`.
 
-### Konfigurasi saka UI
-Sawise login sandi, bukak halaman utama banjur klik tombol **gear/settings** ing panel chat. Saka kono sampeyan bisa:
-- ngisi utawa ngganti **API key**,
-- ngisi **endpoint base URL**,
-- klik **Fetch models dari key** kanggo njupuk daftar model saka endpoint `/models`,
-- nyimpen daftar model supaya muncul ing dropdown chat.
+### Konfigurasi dari UI
+Setelah masuk kata sandi, buka halaman utama lalu klik tombol **gear/pengaturan** pada panel chat. Dari sana Anda dapat:
+- mengisi atau mengganti **API key**,
+- mengisi **endpoint base URL**,
+- klik **Fetch models dari key** untuk mengambil daftar model dari endpoint `/models`,
+- menyimpan daftar model agar muncul pada dropdown chat.
 
-API key ora dibalikke mentah menyang browser; UI mung nampilake status lan key sing di-mask.
+API key tidak dikembalikan secara mentah ke browser; UI hanya menampilkan status dan key yang terselubung (masked).
 
-### Konfigurasi nganggo file `.env`
-Gawe file `.env` ing folder sing padha karo `mobile-agy.exe`:
+### Konfigurasi Menggunakan File `.env`
+Buat file `.env` pada folder yang sama dengan `mobile-agy.exe`:
 ```env
-PASSWORD=sandi_njenengan
+PASSWORD=sandi_anda
 PORT=8080
-OPENAI_API_KEY=sk-isi_api_key_kene
+OPENAI_API_KEY=sk-isi_api_key_di_sini
 OPENAI_API_BASE=https://api.openai.com/v1
 OPENAI_MODELS=gpt-4o,gpt-4o-mini,deepseek-chat
 ```
 
-Cathetan:
-- `OPENAI_API_BASE` default-e `https://api.openai.com/v1` yen ora diset.
-- `OPENAI_MODELS` dipisah koma. Model iki bakal muncul ing daftar model kanthi prefix `openai/`, contone `openai/gpt-4o`.
-- Kanggo Ollama lokal, biasane nganggo `OPENAI_API_BASE=http://localhost:11434/v1` lan `OPENAI_API_KEY=ollama`.
-- Model resmi saka `agy` tetep kasedhiya; model eksternal mung ditambahake minangka pilihan ekstra.
+Catatan:
+- `OPENAI_API_BASE` secara default adalah `https://api.openai.com/v1` jika tidak diatur.
+- `OPENAI_MODELS` dipisahkan koma. Model ini akan muncul pada daftar model dengan awalan `openai/`, contoh `openai/gpt-4o`.
+- Untuk Ollama lokal, biasanya menggunakan `OPENAI_API_BASE=http://localhost:11434/v1` dan `OPENAI_API_KEY=ollama`.
+- Model resmi dari `agy` tetap tersedia; model eksternal hanya ditambahkan sebagai pilihan ekstra.
 
 ### Contoh PowerShell tanpa file `.env`
 ```powershell
-$env:PASSWORD="sandi_njenengan"
-$env:OPENAI_API_KEY="sk-isi_api_key_kene"
+$env:PASSWORD="sandi_anda"
+$env:OPENAI_API_KEY="sk-isi_api_key_di_sini"
 $env:OPENAI_API_BASE="https://api.openai.com/v1"
 $env:OPENAI_MODELS="gpt-4o,gpt-4o-mini"
 .\mobile-agy.exe
@@ -199,65 +201,65 @@ $env:OPENAI_MODELS="gpt-4o,gpt-4o-mini"
 ```bash
 curl -X POST http://localhost:8080/api/openai/settings \
   -H "Content-Type: application/json" \
-  -d '{"apiKey":"sk-isi_api_key_kene","apiBase":"https://api.openai.com/v1","models":"gpt-4o,gpt-4o-mini"}'
+  -d '{"apiKey":"sk-isi_api_key_di_sini","apiBase":"https://api.openai.com/v1","models":"gpt-4o,gpt-4o-mini"}'
 ```
 
-Njupuk daftar model saka key/endpoint sing wis disimpan:
+Mengambil daftar model dari key/endpoint yang telah disimpan:
 ```bash
 curl -s http://localhost:8080/api/openai/models
 ```
 
 ### Contoh chat via curl
 ```bash
-curl -N -d "prompt=Tuliskan fungsi Go kanggo validasi email" -d "model=openai/gpt-4o-mini" http://localhost:8080/api/chat
+curl -N -d "prompt=Tuliskan fungsi Go untuk validasi email" -d "model=openai/gpt-4o-mini" http://localhost:8080/api/chat
 ```
 
 ---
 
 ## Perintah Global `agy-mobile`
 
-Sawise instalasi, njenengan bisa nggunakake perintah global `agy-mobile` saka ngendi wae ing terminal:
+Setelah instalasi, Anda dapat menggunakan perintah global `agy-mobile` dari mana saja di terminal:
 
-* **Mriksa status server (running/stopped, port, sandi)**:
+* **Memeriksa status server (berjalan/berhenti, port, kata sandi)**:
   ```bash
   agy-mobile status
   ```
-* **Miwiti server**:
+* **Menjalankan server**:
   ```bash
   agy-mobile start
   ```
-* **Mandhegake server**:
+* **Menghentikan server**:
   ```bash
   agy-mobile stop
   ```
-* **Miwiti maneh (restart) server**:
+* **Memuat ulang (restart) server**:
   ```bash
   agy-mobile restart
   ```
-* **Maca log server (100 baris pungkasan)**:
+* **Membaca log server (100 baris terakhir)**:
   ```bash
   agy-mobile log
   ```
-  *Bisa uga nggunakake `agy-mobile log -f` kanggo streaming log sacara real-time.*
-* **Maca log khusus otentikasi/login Google**:
+  *Dapat juga menggunakan `agy-mobile log -f` untuk pemantauan log secara real-time.*
+* **Membaca log khusus autentikasi/login Google**:
   ```bash
   agy-mobile logs
   ```
-  *Nampilake mung baris log sing ngemot informasi otentikasi Google.*
-* **Nganyari (update) server menyang versi paling anyar**:
+  *Menampilkan hanya baris log yang memuat informasi autentikasi Google.*
+* **Memperbarui (update) server ke versi terbaru**:
   ```bash
   agy-mobile update
   ```
-* **Nampilake daftar rilis/tag sing kasedhiya**:
+* **Menampilkan daftar rilis/tag yang tersedia**:
   ```bash
   agy-mobile releases
   ```
-* **Nganyari utawa downgrade menyang versi tartamtu**:
+* **Memperbarui atau penurunan versi ke versi tertentu**:
   ```bash
   agy-mobile update v1.4.1
   agy-mobile install-version v1.3.5
   ```
-* **Mbusak instalasi (uninstall) Mobile IDE**:
+* **Menghapus instalasi (uninstall) Mobile IDE**:
   ```bash
   agy-mobile uninstall
   ```
@@ -266,103 +268,103 @@ Sawise instalasi, njenengan bisa nggunakake perintah global `agy-mobile` saka ng
 
 ## Cara Update Mobile IDE (Manual)
 
-Yen ana versi anyar utawa update, saliyane nganggo `agy-mobile update`, njenengan uga bisa mlebu menyang folder `mobile-ide` banjur nglakokake perintah iki:
+Jika terdapat versi baru atau pembaruan, selain menggunakan `agy-mobile update`, Anda juga dapat masuk ke folder `mobile-ide` lalu menjalankan perintah ini:
 ```bash
 ./update.sh
 ```
-Kanggo target versi spesifik:
+Untuk target versi spesifik:
 ```bash
 ./update.sh v1.4.1
 ./update.sh v1.3.5
 ```
-*Script iki bakal otomatis ngundhuh installer paling anyar saka GitHub, nganyari binary program, lan miwiti maneh server **tanpa ngowahi port, sandi akses, utawa setelan OpenAI-compatible** sing wis disimpen ing file `.env`.*
+*Skrip ini akan secara otomatis mengunduh installer terbaru dari GitHub, memperbarui biner program, dan memuat ulang server tanpa mengubah port, kata sandi akses, atau pengaturan OpenAI-compatible yang sudah disimpan di file `.env`.*
 
 ---
 
-## Cara Akses saka HP Android
+## Cara Akses dari HP Android
 
-Njenengan bisa ngakses Mobile IDE iki saka HP Android nganggo rong cara:
+Anda dapat mengakses Mobile IDE ini dari HP Android melalui dua cara:
 
 ### Cara 1: SSH Port Forwarding (Paling Aman)
-Cara iki disaranake lan bisa digunakake ing Linux utawa Windows:
-1. Bukak **Termux** utawa **Termius** ing HP Android.
-2. Koneksi menyang laptop/server nggunakake perintah port forwarding iki:
+Cara ini direkomendasikan dan dapat digunakan di Linux maupun Windows:
+1. Buka **Termux** atau **Termius** di HP Android.
+2. Hubungkan ke laptop/server menggunakan perintah port forwarding ini:
    ```bash
-   ssh -L 8080:localhost:8080 username@ip-laptop-utawa-server
+   ssh -L 8080:localhost:8080 username@ip-laptop-atau-server
    ```
-3. Sawise kasil konek, bukak **browser (Chrome/liyane)** ing HP, banjur bukak alamat:
+3. Setelah berhasil terhubung, buka **browser (Chrome/lainnya)** di HP, lalu akses alamat:
    ```text
    http://localhost:8080
    ```
-4. Lebokake sandi keamanan sing wis diset utawa sing ana ing `password.txt`.
+4. Masukkan kata sandi keamanan yang telah diatur atau yang ada pada `password.txt`.
 
-### Cara 2: Akses Langsung Jaringan Wi-Fi (Khusus Windows/Linux ing siji Wi-Fi)
-Yen HP lan Laptop njenengan nyambung ing siji jaringan Wi-Fi sing padha:
-1. **Goleki IP lokal laptop**:
-   * **Windows**: Bukak Command Prompt (CMD), ketik `ipconfig`, goleki `IPv4 Address` (contone: `192.168.1.15`).
-   * **Linux**: Bukak Terminal, ketik `hostname -I` utawa `ip a`.
-2. **Atur Firewall Windows** (yen perlu): Make sure port `8080` (utawa port custom sing dipilih) diizini liwat Windows Defender Firewall.
-3. Bukak **browser** ing HP Android, banjur bukak alamat IP lokal laptop kasebut langsung:
+### Cara 2: Akses Langsung Jaringan Wi-Fi (Khusus Windows/Linux dalam satu Wi-Fi)
+Jika HP dan Laptop Anda terhubung dalam satu jaringan Wi-Fi yang sama:
+1. **Cari IP lokal laptop**:
+   * **Windows**: Buka Command Prompt (CMD), ketik `ipconfig`, cari `IPv4 Address` (contoh: `192.168.1.15`).
+   * **Linux**: Buka Terminal, ketik `hostname -I` atau `ip a`.
+2. **Atur Firewall Windows** (jika perlu): Pastikan port `8080` (atau port kustom yang dipilih) diizinkan melalui Windows Defender Firewall.
+3. Buka **browser** di HP Android, lalu buka alamat IP lokal laptop tersebut:
    ```text
    http://192.168.1.15:8080
    ```
-4. Mlebokake sandi keamanan kanggo ngakses editor.
+4. Masukkan kata sandi keamanan untuk mengakses editor.
 
 ---
 
-## Dokumentasi API (Akses liwat `curl`)
+## Dokumentasi API (Akses melalui `curl`)
 
-Amarga saiki server langsung mriksa otentikasi Google Antigravity (`agy`) ing mesin, njenengan ora butuh cookie utawa sandi tambahan kanggo `curl`. Angger server wis login menyang Google, kabeh perintah `curl` ing ngisor iki iso langsung dijalankan saka HP Android (Termux) utawa terminal laptop.
+Karena saat ini server langsung memeriksa autentikasi Google Antigravity (`agy`) di mesin, Anda tidak memerlukan cookie atau kata sandi tambahan untuk `curl`. Selama server telah terautentikasi ke Google, seluruh perintah `curl` di bawah ini dapat langsung dijalankan dari HP Android (Termux) atau terminal laptop.
 
 > [!IMPORTANT]
-> **Cathetan kanggo pangguna Windows PowerShell**:
-> Ing PowerShell, perintah `curl` minangka alias saka `Invoke-WebRequest` sing duwe alur beda lan ora ndhukung streaming.
-> Supaya lancar ing PowerShell, ganti perintah `curl` dadi **`curl.exe`** (contone: `curl.exe -N -d "prompt=..." http://localhost:8080/api/chat`).
+> **Catatan untuk pengguna Windows PowerShell**:
+> Di PowerShell, perintah `curl` merupakan alias dari `Invoke-WebRequest` yang memiliki alur berbeda dan tidak mendukung streaming.
+> Agar lancar di PowerShell, ganti perintah `curl` menjadi **`curl.exe`** (contoh: `curl.exe -N -d "prompt=..." http://localhost:8080/api/chat`).
 
 
-* **Obrolan/Chat karo Antigravity (Streaming)**:
+* **Obrolan/Chat dengan Antigravity (Streaming)**:
   ```bash
   curl -N -d "prompt=Buatkan endpoint HTTP GET baru" http://localhost:8080/api/chat
   ```
 
-* **Nglakokake Perintah Terminal (Streaming)**:
+* **Menjalankan Perintah Terminal (Streaming)**:
   ```bash
   curl -N -d "command=go test ./..." http://localhost:8080/api/run
   ```
 
-* **Maca Daftar File ing Workspace**:
+* **Membaca Daftar File di Workspace**:
   ```bash
   curl -s http://localhost:8080/api/files
   ```
 
-* **Maca Isi File**:
+* **Membaca Isi File**:
   ```bash
   curl -s "http://localhost:8080/api/file?path=main.go"
   ```
 
-* **Nyimpen / Nulis File**:
+* **Menyimpan / Menulis File**:
   ```bash
   curl -X POST -d "isi_kode_baru_di_sini" "http://localhost:8080/api/file?path=nama_file.go"
   ```
 
-* **Mbusak File utawa Folder**:
+* **Menghapus File atau Folder**:
   ```bash
   curl -X DELETE "http://localhost:8080/api/file?path=nama_file.go"
   ```
 
-* **Maca Daftar Workspace (Recent & Active)**:
+* **Membaca Daftar Workspace (Aktif & Terakhir)**:
   ```bash
   curl -s http://localhost:8080/api/workspaces
   ```
 
-* **Ngalih / Milih Workspace Aktif**:
+* **Beralih / Memilih Workspace Aktif**:
   ```bash
   curl -d "path=/home/sodikinnaa/sodikin/project-lain" http://localhost:8080/api/workspaces/select
   ```
 
-* **Nambah & Bukak Workspace Anyar**:
+* **Menambah & Membuka Workspace Baru**:
   ```bash
-  curl -d "path=/home/sodikinnaa/sodikin/project-anyar" http://localhost:8080/api/workspaces/add
+  curl -d "path=/home/sodikinnaa/sodikin/project-baru" http://localhost:8080/api/workspaces/add
   ```
 
 ---
@@ -372,7 +374,3 @@ Amarga saiki server langsung mriksa otentikasi Google Antigravity (`agy`) ing me
 - **Repositori Asli**: [sodikinnaa/go-agy-ide](https://github.com/sodikinnaa/go-agy-ide)
 - **Pembuat Asli**: [Sodikinnaa](https://github.com/sodikinnaa)
 - **Status Pengubahan**: Proyek ini merupakan hasil *fork* / pengalihan dengan modifikasi tingkat lanjut (pemaksimalan fitur mobile, manajemen pool akun, bilah pintasan touch keyboard, dan lokalisasi penuh 100% Bahasa Indonesia).
-
-
-
-

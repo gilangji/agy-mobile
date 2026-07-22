@@ -58,7 +58,7 @@ func (s *Service) LoadPassword() {
 
 	if envPwd != "" {
 		s.secretPassword = envPwd
-		log.Printf("[SECURITY] Sandi keamanan dimuat saka env variable PASSWORD\n")
+		log.Printf("[SECURITY] Sandi keamanan dimuat dari env variable PASSWORD\n")
 		return
 	}
 

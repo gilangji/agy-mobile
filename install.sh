@@ -33,15 +33,15 @@ echo "================================================="
 echo "        Mobile IDE One-Line Installer           "
 echo "================================================="
 echo "Versi target: $VERSION"
-echo "Mulai ngundhuh pre-compiled binary saka GitHub..."
+echo "Mulai mengunduh biner pra-kompilasi dari GitHub..."
 
-# 1. Deteksi OS lan Arsitektur CPU
+# 1. Deteksi OS dan Arsitektur CPU
 OS="$(uname -s | tr '[:upper:]' '[:lower:]')"
 ARCH="$(uname -m)"
 BINARY_NAME="mobile-agy"
 
 mobile_agy_pids() {
-    # Aja nganggo `pkill -f mobile-agy` amarga iso mateni wrapper `agy-mobile update` dhewe.
+    # Jangan gunakan `pkill -f mobile-agy` karena dapat mematikan wrapper `agy-mobile update` sendiri.
     pgrep -x mobile-agy 2>/dev/null || true
     pgrep -x mobile-agy.exe 2>/dev/null || true
 }
@@ -68,7 +68,7 @@ case "$OS" in
                 BINARY_URL="https://github.com/gilangji/agy-mobile/releases/download/${VERSION}/mobile-agy-linux-arm64"
                 ;;
             *)
-                echo "Error: Arsitektur CPU $ARCH ora didhukung kanggo Linux."
+                echo "Error: Arsitektur CPU $ARCH tidak didukung untuk Linux."
                 exit 1
                 ;;
         esac
@@ -82,23 +82,23 @@ case "$OS" in
                 BINARY_URL="https://github.com/gilangji/agy-mobile/releases/download/${VERSION}/mobile-agy-darwin-arm64"
                 ;;
             *)
-                echo "Error: Arsitektur CPU $ARCH ora didhukung kanggo MacOS."
+                echo "Error: Arsitektur CPU $ARCH tidak didukung untuk macOS."
                 exit 1
                 ;;
         esac
         ;;
     mingw*|msys*|cygwin*|windows*)
-        # Windows environment nggunakake Bash (Git Bash / MSYS2)
+        # Lingkungan Windows menggunakan Bash (Git Bash / MSYS2)
         BINARY_URL="https://github.com/gilangji/agy-mobile/releases/download/${VERSION}/mobile-agy-windows-amd64.exe"
         BINARY_NAME="mobile-agy.exe"
         ;;
     *)
-        echo "Error: Sistem Operasi $OS ora didhukung."
+        echo "Error: Sistem Operasi $OS tidak didukung."
         exit 1
         ;;
 esac
 
-# 2. Nggawe folder instalasi (Cek supaya ora nggawe folder nested yen wis ana ing folder mobile-ide)
+# 2. Membuat folder instalasi (Memastikan tidak membuat folder bertingkat jika sudah berada di folder mobile-ide)
 if [ "$(basename "$(pwd)")" != "mobile-ide" ]; then
     INSTALL_DIR="mobile-ide"
     mkdir -p "$INSTALL_DIR"
@@ -106,10 +106,10 @@ if [ "$(basename "$(pwd)")" != "mobile-ide" ]; then
 fi
 
 generate_scripts() {
-    # Nggawe/nganyari script start.sh
+    # Membuat/memperbarui skrip start.sh
     cat <<'EOT' > start.sh
 #!/bin/bash
-# Tambah ~/.local/bin menyang PATH yen durung ana
+# Tambahkan ~/.local/bin ke PATH jika belum ada
 if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
     export PATH="$HOME/.local/bin:$PATH"
 fi
@@ -126,19 +126,19 @@ fi
 EOT
     chmod +x start.sh
 
-    # Nggawe/nganyari script update.sh supaya user gampang nglakokake update
+    # Membuat/memperbarui skrip update.sh agar pengguna mudah menjalankan pembaruan
     cat <<'EOT' > update.sh
 #!/bin/bash
 set -e
 TARGET_VERSION="${1:-${VERSION:-latest}}"
 INSTALLER_TMP="${TMPDIR:-/tmp}/mobile-agy-install.sh"
-echo "Mulai nglakokake update Mobile IDE menyang versi: $TARGET_VERSION"
+echo "Mulai menjalankan pembaruan Mobile IDE ke versi: $TARGET_VERSION"
 curl -H 'Cache-Control: no-cache' -fsSL 'https://raw.githubusercontent.com/gilangji/agy-mobile/main/install.sh' -o "$INSTALLER_TMP"
 exec env VERSION="$TARGET_VERSION" bash "$INSTALLER_TMP"
 EOT
     chmod +x update.sh
 
-    # Nggawe command global 'agy-mobile'
+    # Membuat perintah global 'agy-mobile'
     CURRENT_AGY_MOBILE_PATH=$(which agy-mobile 2>/dev/null || echo "")
     if [ -n "$CURRENT_AGY_MOBILE_PATH" ] && [ -w "$CURRENT_AGY_MOBILE_PATH" ]; then
         TARGET_WRAPPER="$CURRENT_AGY_MOBILE_PATH"
@@ -146,7 +146,7 @@ EOT
         TARGET_WRAPPER="$HOME/.local/bin/agy-mobile"
         mkdir -p "$HOME/.local/bin"
     fi
-    echo "Nggawe script wrapper global 'agy-mobile' ing $TARGET_WRAPPER..."
+    echo "Membuat skrip wrapper global 'agy-mobile' di $TARGET_WRAPPER..."
     ABS_INSTALL_DIR="$(pwd)"
     cat <<EOF > "$TARGET_WRAPPER"
 #!/bin/bash
@@ -173,9 +173,9 @@ stop_mobile_agy() {
 
 case "\$1" in
     start)
-        echo "Starting Mobile IDE..."
+        echo "Menjalankan Mobile IDE..."
         if mobile_agy_running; then
-            echo "Mobile IDE is already running."
+            echo "Mobile IDE sudah berjalan."
         else
             cd "\$INSTALL_DIR"
             if command -v setsid &>/dev/null; then
@@ -185,19 +185,19 @@ case "\$1" in
             fi
             sleep 2
             if mobile_agy_running; then
-                echo "Mobile IDE started successfully."
+                echo "Mobile IDE berhasil dijalankan."
             else
-                echo "Failed to start Mobile IDE. Check \$INSTALL_DIR/server.log for errors."
+                echo "Gagal menjalankan Mobile IDE. Periksa \$INSTALL_DIR/server.log untuk melihat detail error."
             fi
         fi
         ;;
     stop)
-        echo "Stopping Mobile IDE..."
+        echo "Menghentikan Mobile IDE..."
         stop_mobile_agy
-        echo "Mobile IDE stopped."
+        echo "Mobile IDE telah dihentikan."
         ;;
     restart)
-        echo "Restarting Mobile IDE..."
+        echo "Memulai ulang Mobile IDE..."
         stop_mobile_agy
         sleep 1
         cd "\$INSTALL_DIR"
@@ -207,36 +207,36 @@ case "\$1" in
             nohup ./start.sh > server.log 2>&1 &
         fi
         sleep 2
-        echo "Mobile IDE restarted."
+        echo "Mobile IDE telah berhasil dimuat ulang."
         ;;
     status)
         PID=\$(mobile_agy_pids)
         if [ -n "\$PID" ]; then
             echo "========================================="
-            echo "        Mobile IDE Status: RUNNING       "
+            echo "        Status Mobile IDE: BERJALAN      "
             echo "========================================="
-            echo "Version  : $VERSION"
+            echo "Versi    : $VERSION"
             echo "PID      : \$PID"
             if [ -f "\$INSTALL_DIR/.env" ]; then
                 PORT=\$(grep -E "^PORT=" "\$INSTALL_DIR/.env" | cut -d'=' -f2)
                 PASSWORD=\$(grep -E "^PASSWORD=" "\$INSTALL_DIR/.env" | cut -d'=' -f2)
                 echo "Port     : \$PORT"
-                echo "Password : \$PASSWORD"
-                echo "Address  : http://localhost:\$PORT"
+                echo "Kata Sandi: \$PASSWORD"
+                echo "Alamat   : http://localhost:\$PORT"
             fi
             echo "========================================="
         else
             echo "========================================="
-            echo "        Mobile IDE Status: STOPPED       "
+            echo "        Status Mobile IDE: BERHENTI      "
             echo "========================================="
         fi
         ;;
     logs)
-        echo "=== Mobile IDE Authentication Logs ==="
+        echo "=== Log Otentikasi Mobile IDE ==="
         if [ -f "\$INSTALL_DIR/server.log" ]; then
             grep -i "\[AUTH" "\$INSTALL_DIR/server.log" | tail -n 100
         else
-            echo "No server.log found in \$INSTALL_DIR"
+            echo "Tidak ada berkas server.log di \$INSTALL_DIR"
         fi
         ;;
     log)
@@ -247,25 +247,25 @@ case "\$1" in
                 tail -n 100 "\$INSTALL_DIR/server.log"
             fi
         else
-            echo "No server.log found in \$INSTALL_DIR"
+            echo "Tidak ada berkas server.log di \$INSTALL_DIR"
         fi
         ;;
     update)
         TARGET_VERSION="\${2:-latest}"
         INSTALLER_TMP="\${TMPDIR:-/tmp}/mobile-agy-install.sh"
-        echo "Updating Mobile IDE to \$TARGET_VERSION..."
+        echo "Memperbarui Mobile IDE ke versi \$TARGET_VERSION..."
         curl -H 'Cache-Control: no-cache' -fsSL 'https://raw.githubusercontent.com/gilangji/agy-mobile/main/install.sh' -o "\$INSTALLER_TMP"
         exec env VERSION="\$TARGET_VERSION" bash "\$INSTALLER_TMP"
         ;;
     install-version)
         if [ -z "\$2" ]; then
-            echo "Usage: agy-mobile install-version <tag>"
-            echo "Example: agy-mobile install-version v1.4.1"
+            echo "Penggunaan: agy-mobile install-version <tag>"
+            echo "Contoh: agy-mobile install-version v1.4.1"
             exit 1
         fi
         TARGET_VERSION="\$2"
         INSTALLER_TMP="\${TMPDIR:-/tmp}/mobile-agy-install.sh"
-        echo "Installing Mobile IDE version \$TARGET_VERSION..."
+        echo "Menginstal Mobile IDE versi \$TARGET_VERSION..."
         curl -H 'Cache-Control: no-cache' -fsSL 'https://raw.githubusercontent.com/gilangji/agy-mobile/main/install.sh' -o "\$INSTALLER_TMP"
         exec env VERSION="\$TARGET_VERSION" bash "\$INSTALLER_TMP"
         ;;
@@ -273,32 +273,32 @@ case "\$1" in
         curl -fsSL "https://api.github.com/repos/gilangji/agy-mobile/releases?per_page=30" | grep '"tag_name":' | sed -E 's/.*"tag_name": "([^"]+)".*/\1/'
         ;;
     uninstall)
-        echo "Stopping Mobile IDE..."
+        echo "Menghentikan Mobile IDE..."
         stop_mobile_agy
         CURRENT_AGY_MOBILE_PATH=\$(which agy-mobile 2>/dev/null || echo "")
         if [ -n "\$CURRENT_AGY_MOBILE_PATH" ] && [ -w "\$CURRENT_AGY_MOBILE_PATH" ]; then
             rm -f "\$CURRENT_AGY_MOBILE_PATH"
-            echo "Removed global command '\$CURRENT_AGY_MOBILE_PATH'."
+            echo "Menghapus perintah global '\$CURRENT_AGY_MOBILE_PATH'."
         else
             rm -f "\$HOME/.local/bin/agy-mobile"
-            echo "Removed global command 'agy-mobile'."
+            echo "Menghapus perintah global 'agy-mobile'."
         fi
 
         if [ -c /dev/tty ]; then
-            read -p "Do you want to delete the installation directory (\$INSTALL_DIR)? (y/N): " choice < /dev/tty
+            read -p "Apakah Anda yakin ingin menghapus direktori instalasi (\$INSTALL_DIR)? (y/N): " choice < /dev/tty
         else
             choice="n"
         fi
         if [[ "\$choice" =~ ^[Yy]$ ]]; then
             rm -rf "\$INSTALL_DIR"
-            echo "Installation directory (\$INSTALL_DIR) deleted."
+            echo "Direktori instalasi (\$INSTALL_DIR) berhasil dihapus."
         else
-            echo "Installation directory left intact."
+            echo "Direktori instalasi tidak dihapus."
         fi
-        echo "Mobile IDE successfully uninstalled."
+        echo "Mobile IDE berhasil di-uninstall."
         ;;
     *)
-        echo "Usage: agy-mobile {start|stop|restart|status|log|logs|update [version]|install-version <version>|releases|uninstall}"
+        echo "Penggunaan: agy-mobile {start|stop|restart|status|log|logs|update [versi]|install-version <versi>|releases|uninstall}"
         exit 1
         ;;
 esac
@@ -306,75 +306,82 @@ EOF
     chmod +x "$TARGET_WRAPPER"
 }
 
-# 2.5. Mulai ngundhuh pre-compiled binary saka GitHub Releases
-
-# 3. Ngundhuh binary anyar dhisik (Download first to minimize downtime!)
-echo "Ngundhuh binary kanggo OS: $OS ($ARCH)..."
+# 3. Mengunduh biner baru terlebih dahulu (Download first to minimize downtime!)
+echo "Mengunduh biner untuk OS: $OS ($ARCH)..."
 echo "Alamat URL: $BINARY_URL"
 
-# Ngundhuh menyang file sauntara (.tmp) dhisik
+# Mengunduh ke file sementara (.tmp) terlebih dahulu
 TEMP_BINARY="${BINARY_NAME}.tmp"
 rm -f "$TEMP_BINARY"
 
 if ! curl -fL --no-progress-meter "$BINARY_URL" -o "$TEMP_BINARY"; then
-    echo "================================================="
-    echo "ERROR: Gagal ngundhuh binary saka GitHub!"
-    echo "Priksa sambungan internet utawa limitasi jaringan."
-    echo "Njenengan uga bisa ngundhuh manual saka URL ing ndhuwur."
-    echo "================================================="
-    exit 1
+    echo "Informasi: Biner pra-kompilasi belum tersedia di Release $VERSION repositori gilangji/agy-mobile."
+    echo "Mengunduh biner cadangan (fallback)..."
+    FALLBACK_URL="$(echo "$BINARY_URL" | sed 's|gilangji/agy-mobile|sodikinnaa/go-agy-ide|g')"
+    if ! curl -fL --no-progress-meter "$FALLBACK_URL" -o "$TEMP_BINARY"; then
+        if command -v go >/dev/null 2>&1; then
+            echo "Mengompilasi biner secara otomatis menggunakan Go..."
+            CGO_ENABLED=0 go build -o "$TEMP_BINARY" .
+        else
+            echo "================================================="
+            echo "ERROR: Gagal mengunduh biner dari GitHub!"
+            echo "Silakan periksa koneksi internet atau buat Release di GitHub gilangji/agy-mobile."
+            echo "================================================="
+            exit 1
+        fi
+    fi
 fi
 
 if [[ "$BINARY_NAME" != *.exe ]]; then
     chmod +x "$TEMP_BINARY"
 fi
 
-# 4. Ganteni binary lawas nganggo metode Hot-Swap (Nyegah 'text file busy' lan zero downtime)
-echo "Nindakake hot-swap binary..."
+# 4. Memperbarui biner menggunakan metode Hot-Swap (Mencegah 'text file busy' dan zero downtime)
+echo "Melakukan hot-swap biner..."
 if [[ "$BINARY_NAME" == *.exe ]]; then
-    # Ing Windows, mateni proses dhisik amarga file sistem ngunci file sing mlaku
+    # Di Windows, menghentikan proses terlebih dahulu karena sistem mengunci file yang sedang berjalan
     taskkill //F //IM mobile-agy.exe 2>/dev/null || true
     mv -f "$TEMP_BINARY" "$BINARY_NAME" 2>/dev/null || true
 else
-    # Ing Linux/Unix, ganti jeneng file sing lagi mlaku dhisik (diidini dening OS)
+    # Di Linux/Unix, mengganti nama file yang sedang berjalan terlebih dahulu (diizinkan oleh OS)
     if [ -f "$BINARY_NAME" ]; then
         mv -f "$BINARY_NAME" "${BINARY_NAME}.old" 2>/dev/null || true
     fi
-    # Pindhah binary anyar menyang panggonan utama
+    # Memindahkan biner baru ke lokasi utama
     mv -f "$TEMP_BINARY" "$BINARY_NAME"
 
-    # Mandhegake proses lawas sing saiki mlaku minangka .old tanpa mateni wrapper `agy-mobile update`.
+    # Menghentikan proses lama yang berjalan sebagai .old tanpa mematikan wrapper `agy-mobile update`.
     stop_mobile_agy
     sleep 0.2
 
-    # Hapus file .old (bakal dibusak sakwise proses lawas mati)
+    # Hapus file .old (akan dihapus setelah proses lama berhenti)
     rm -f "${BINARY_NAME}.old" 2>/dev/null || true
 fi
 
-# 5.5. Mriksa, Nginstal, sarta Nganyari Google Antigravity CLI (agy / gemini cli)
-echo "Mriksa Google Antigravity CLI (agy)..."
+# 5. Memeriksa, Menginstal, serta Memperbarui Google Antigravity CLI (agy)
+echo "Memeriksa Google Antigravity CLI (agy)..."
 if ! command -v agy &> /dev/null && [ ! -f "$HOME/.local/bin/agy" ]; then
-    echo "Google Antigravity CLI (agy) ora ditemokake. Mulai ngundhuh lan nginstal..."
+    echo "Google Antigravity CLI (agy) tidak ditemukan. Mulai mengunduh dan menginstal..."
     if ! curl -fsSL https://antigravity.google/cli/install.sh | bash; then
-        echo "Pènget: Gagal nginstal Antigravity CLI kanthi otomatis."
-        echo "Njenengan bisa nyoba nginstal manual nganggo perintah:"
+        echo "Peringatan: Gagal menginstal Antigravity CLI secara otomatis."
+        echo "Anda dapat mencoba menginstal manual menggunakan perintah:"
         echo "  curl -fsSL https://antigravity.google/cli/install.sh | bash"
     fi
 else
-    echo "Google Antigravity CLI (agy) wis terinstal. Nyoba nganyari menyang versi paling anyar..."
+    echo "Google Antigravity CLI (agy) telah terinstal. Mencoba memperbarui ke versi terbaru..."
     AGY_BIN="agy"
     if [ -f "$HOME/.local/bin/agy" ]; then
         AGY_BIN="$HOME/.local/bin/agy"
     fi
-    $AGY_BIN update || echo "Pènget: Gagal nganyari Antigravity CLI."
+    $AGY_BIN update || echo "Peringatan: Gagal memperbarui Antigravity CLI."
 fi
 
-# Tambah ~/.local/bin menyang PATH yen durung ana ing session iki
+# Tambahkan ~/.local/bin ke PATH jika belum ada dalam sesi ini
 if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
     export PATH="$HOME/.local/bin:$PATH"
 fi
 
-# 6. Setel workspaces.json awal
+# 6. Pengaturan workspaces.json awal
 if [ ! -f "workspaces.json" ]; then
     cat <<EOT > workspaces.json
 {
@@ -386,22 +393,22 @@ if [ ! -f "workspaces.json" ]; then
 EOT
 fi
 
-# 7. Setel Konfigurasi (.env) - Ndhukung Fresh Install utawa Update
+# 7. Pengaturan Konfigurasi (.env) - Mendukung Fresh Install atau Update
 IS_UPDATE=false
 if [ -f .env ]; then
     IS_UPDATE=true
     PORT=$(grep -E "^PORT=" .env | cut -d'=' -f2 || echo "8080")
     GEN_PASSWORD=$(grep -E "^PASSWORD=" .env | cut -d'=' -f2 || echo "AgyPass123")
     echo ""
-    echo "Nemokake file konfigurasi .env (Mode Update)..."
-    echo "Nggunakake port lawas  : $PORT"
-    echo "Nggunakake sandi lawas : $GEN_PASSWORD"
+    echo "Menemukan file konfigurasi .env (Mode Pembaruan)..."
+    echo "Menggunakan port lama       : $PORT"
+    echo "Menggunakan kata sandi lama : $GEN_PASSWORD"
 else
-    # Fresh Install: Takon Port Keinginan User
+    # Fresh Install: Meminta Port Keinginan Pengguna
     echo ""
     echo "-------------------------------------------------"
     if [ -c /dev/tty ]; then
-        read -p "Mlebokake Port kanggo server Mobile IDE (Default: 8080): " USER_PORT < /dev/tty
+        read -p "Masukkan Port untuk server Mobile IDE (Default: 8080): " USER_PORT < /dev/tty
     else
         USER_PORT=""
     fi
@@ -411,15 +418,15 @@ else
         if [[ "$USER_PORT" =~ ^[0-9]+$ ]]; then
             PORT="$USER_PORT"
         else
-            echo "Format port salah. Nggunakake port default 8080."
+            echo "Format port salah. Menggunakan port default 8080."
         fi
     fi
 
-    # Generate sandi keamanan acak (12 karakter)
+    # Generate kata sandi keamanan acak (12 karakter)
     GEN_PASSWORD=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 12 2>/dev/null || echo "AgyPass123")
 fi
 
-# Dapatkan DBUS address saka session utawa socket default
+# Dapatkan alamat DBUS dari sesi atau socket default
 DBUS_ADDR="$DBUS_SESSION_BUS_ADDRESS"
 if [ -z "$DBUS_ADDR" ]; then
     MY_UID=$(id -u)
@@ -428,7 +435,7 @@ if [ -z "$DBUS_ADDR" ]; then
     fi
 fi
 
-# Tulis/nganyari file konfigurasi .env tanpa mbusak setelan liyane (OPENAI_API_KEY, OPENAI_API_BASE, lsp.)
+# Tulis/perbarui file konfigurasi .env tanpa menghapus pengaturan lainnya
 touch .env
 set_env_var() {
     local key="$1"
@@ -448,21 +455,21 @@ if [ -n "$DBUS_ADDR" ]; then
     set_env_var "DBUS_SESSION_BUS_ADDRESS" "$DBUS_ADDR"
 fi
 
-# Nggawe/nganyari kabeh script start.sh, update.sh, lan agy-mobile
+# Membuat/memperbarui seluruh skrip start.sh, update.sh, dan agy-mobile
 generate_scripts
 
-# 8. Nglakokake server ing background
-echo "Nglakokake server Mobile IDE ing port: $PORT..."
+# 8. Menjalankan server di background
+echo "Menjalankan server Mobile IDE di port: $PORT..."
 if command -v setsid &>/dev/null; then
     setsid ./start.sh > server.log 2>&1 &
 else
     nohup ./start.sh > server.log 2>&1 &
 fi
 
-# Ngenteni 2 detik kanggo mriksa apa server kasil munggah
+# Menunggu 2 detik untuk memeriksa apakah server berhasil berjalan
 sleep 2
 
-# Cek apa process isih mlaku
+# Periksa apakah proses masih berjalan
 SERVER_RUNNING=false
 if [[ "$BINARY_NAME" == *.exe ]]; then
     if pgrep -x mobile-agy.exe > /dev/null 2>&1; then
@@ -474,30 +481,30 @@ else
     fi
 fi
 
-# 9. Tampilan Rampung
+# 9. Ringkasan Instalasi
 echo "================================================="
-echo "                INSTALLASI SUKSES!               "
+echo "                INSTALASI SUKSES!                "
 echo "================================================="
-echo "Mobile IDE kasil disetel ing folder: $(pwd)"
+echo "Mobile IDE berhasil disetup di folder: $(pwd)"
 echo "-------------------------------------------------"
-echo "Port Server    : $PORT"
-echo "Sandi Akses    : $GEN_PASSWORD"
+echo "Port Server        : $PORT"
+echo "Kata Sandi Akses   : $GEN_PASSWORD"
 echo "-------------------------------------------------"
 
 if [ "$SERVER_RUNNING" = true ]; then
-    echo "Server wis mlaku ing background!"
-    echo "Bukak browser lan bukak alamat iki:"
+    echo "Server telah berjalan di background!"
+    echo "Buka browser dan akses alamat berikut:"
     echo "  http://localhost:$PORT"
     echo ""
-    echo "Kanggo mriksa log server, ketik:"
+    echo "Untuk memeriksa log server, ketik:"
     echo "  cat server.log"
 else
-    echo "Server gagal mlaku otomatis (kemungkinan port $PORT wis dienggo)."
-    echo "Njenengan bisa nglakokake server kanthi manual:"
+    echo "Server gagal berjalan otomatis (kemungkinan port $PORT sudah digunakan)."
+    echo "Anda dapat menjalankan server secara manual:"
     echo "  ./start.sh"
 fi
 
 echo ""
-echo "Cathetan: Port sarta Sandi Akses wis disimpen ing file '.env'."
-echo "Njenengan bisa ngowahi file '.env' kanggo custom."
+echo "Catatan: Port serta Kata Sandi Akses telah disimpan dalam file '.env'."
+echo "Anda dapat mengubah file '.env' untuk kustomisasi."
 echo "================================================="

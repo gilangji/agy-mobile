@@ -1278,14 +1278,14 @@
                 browserPanel.classList.remove('relative', 'flex-1', 'border-l');
                 if (btn) {
                     btn.innerHTML = '<i data-lucide="minimize-2" class="w-3.5 h-3.5 text-brand-accent"></i>';
-                    btn.title = "Keluar saka Layar Kebak (Esc / Alt+F)";
+                    btn.title = "Keluar dari Layar Penuh (Esc / Alt+F)";
                 }
             } else {
                 browserPanel.classList.remove('fixed', 'inset-0', 'z-50', 'w-full', 'h-full');
                 browserPanel.classList.add('relative', 'flex-1', 'border-l');
                 if (btn) {
                     btn.innerHTML = '<i data-lucide="maximize-2" class="w-3.5 h-3.5"></i>';
-                    btn.title = "Layar Kebak / Full Screen Browser (Alt+F)";
+                    btn.title = "Layar Penuh / Full Screen Browser (Alt+F)";
                 }
             }
             lucide.createIcons();
@@ -1544,17 +1544,17 @@
                 document.getElementById('openai-api-base').value = cfg.apiBase || 'https://api.openai.com/v1';
                 document.getElementById('openai-models').value = cfg.configuredModels || '';
                 document.getElementById('openai-api-key').value = '';
-                status.innerText = cfg.apiKeySet ? `API key tersimpan (${cfg.apiKeyMasked || 'masked'})` : 'API key durung disetel. Isi key banjur klik Simpan.';
+                status.innerText = cfg.apiKeySet ? `API key tersimpan (${cfg.apiKeyMasked || 'masked'})` : 'API key belum diatur. Isi key lalu klik Simpan.';
                 status.className = cfg.apiKeySet ? 'text-[11px] text-emerald-400' : 'text-[11px] text-amber-400';
             } catch (err) {
-                status.innerText = 'Gagal ngundhuh setelan OpenAI: ' + err.message;
+                status.innerText = 'Gagal mengunduh pengaturan OpenAI: ' + err.message;
                 status.className = 'text-[11px] text-red-400';
             }
         }
 
         async function saveOpenAISettings(clearKey) {
             const status = document.getElementById('openai-status');
-            status.innerText = 'Nyimpen setelan...';
+            status.innerText = 'Menyimpan pengaturan...';
             status.className = 'text-[11px] text-slate-400';
             try {
                 const res = await fetch('/api/openai/settings', {
@@ -1570,16 +1570,16 @@
                 if (!res.ok) throw new Error(await res.text());
                 await loadOpenAISettings();
                 await loadAvailableModels();
-                document.getElementById('openai-model-fetch-result').innerText = clearKey ? 'API key wis dibusak.' : 'Setelan disimpen.';
+                document.getElementById('openai-model-fetch-result').innerText = clearKey ? 'API key telah dihapus.' : 'Pengaturan disimpan.';
             } catch (err) {
-                status.innerText = 'Gagal nyimpen: ' + err.message;
+                status.innerText = 'Gagal menyimpan: ' + err.message;
                 status.className = 'text-[11px] text-red-400';
             }
         }
 
         async function fetchOpenAIModelsFromSettings() {
             const result = document.getElementById('openai-model-fetch-result');
-            result.innerText = 'Nyoba fetch model saka endpoint...';
+            result.innerText = 'Mencoba mengambil model dari endpoint...';
             result.className = 'text-[11px] text-slate-400';
             try {
                 const res = await fetch('/api/openai/models', {
@@ -1594,11 +1594,11 @@
                 const models = await res.json();
                 const rawModels = (models || []).map(m => m.replace(/^openai\//, ''));
                 document.getElementById('openai-models').value = rawModels.join(',');
-                result.innerText = rawModels.length ? `Ketemu ${rawModels.length} model. Klik Simpan kanggo nyimpen daftar iki.` : 'Endpoint sukses, tapi ora ana model.';
+                result.innerText = rawModels.length ? `Ditemukan ${rawModels.length} model. Klik Simpan untuk menyimpan daftar ini.` : 'Endpoint sukses, tetapi tidak ada model.';
                 result.className = rawModels.length ? 'text-[11px] text-emerald-400' : 'text-[11px] text-amber-400';
                 populateModelSelect(models || []);
             } catch (err) {
-                result.innerText = 'Gagal fetch model: ' + err.message;
+                result.innerText = 'Gagal mengambil model: ' + err.message;
                 result.className = 'text-[11px] text-red-400';
             }
         }
@@ -1902,7 +1902,7 @@
                             lowerPath.endsWith('.ico');
             
             if (isImage) {
-                alert('File gambar ora bisa diowahi langsung saka editor text!');
+                alert('File gambar tidak dapat diubah langsung dari editor teks!');
                 return;
             }
 

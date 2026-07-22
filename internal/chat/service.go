@@ -230,7 +230,7 @@ func (s *Service) GetHistoryDetail(id string) (ChatHistoryDetail, error) {
 			Messages: []ChatMessage{
 				{
 					Role:    "model",
-					Content: "⚠️ Berkas detail obrolan (transcript) ora ditemokake ing PC lokal iki. Obrolan iki kemungkinan digawe ing Codespace utawa piranti liyane saengga log riwayate ora sinkron ing kene.",
+					Content: "⚠️ Berkas detail obrolan (transcript) tidak ditemukan di perangkat lokal ini. Obrolan ini kemungkinan dibuat di Codespace atau perangkat lain sehingga log riwayatnya tidak tersinkronisasi di sini.",
 				},
 			},
 		}, nil
