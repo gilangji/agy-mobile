@@ -774,24 +774,72 @@
                 </div>
             </div>
 
-            <!-- OpenAI-Compatible Settings Overlay -->
-            <div id="openai-settings-pane" class="hidden border-b border-brand-border bg-brand-dark/95 p-3 space-y-2 text-xs">
-                <div class="flex items-center justify-between mb-1">
-                    <span class="font-semibold text-slate-400 uppercase tracking-wider">OpenAI-Compatible Provider</span>
-                    <button onclick="toggleOpenAISettings()" class="text-brand-accent hover:underline flex items-center space-x-1">
+            <!-- OpenAI-Compatible Providers & Multi-API Key Pool -->
+            <div id="openai-settings-pane" class="hidden border-b border-brand-border bg-brand-dark/95 p-3.5 space-y-3 text-xs">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-1.5">
+                        <i data-lucide="key" class="w-4 h-4 text-brand-accent animate-pulse"></i>
+                        <span class="font-bold text-slate-200 uppercase tracking-wider text-[11px]">Provider AI & Pool API Key</span>
+                    </div>
+                    <button onclick="toggleOpenAISettings()" class="text-brand-accent hover:underline flex items-center space-x-1 text-xs">
                         <i data-lucide="x" class="w-3.5 h-3.5"></i><span>Tutup</span>
                     </button>
                 </div>
-                <div id="openai-status" class="text-[11px] text-slate-500">Ngundhuh setelan...</div>
-                <input id="openai-api-key" type="password" autocomplete="off" placeholder="API key baru (kosongkan jika tidak diganti)" class="w-full bg-brand-panel border border-brand-border rounded px-2 py-1.5 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-500">
-                <input id="openai-api-base" type="text" placeholder="Endpoint base, contoh: https://api.openai.com/v1" class="w-full bg-brand-panel border border-brand-border rounded px-2 py-1.5 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-500">
-                <textarea id="openai-models" rows="2" placeholder="Model manual dipisah koma, contoh: gpt-4o,gpt-4o-mini" class="w-full bg-brand-panel border border-brand-border rounded px-2 py-1.5 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-500 resize-none"></textarea>
-                <div class="flex flex-wrap gap-2">
-                    <button onclick="saveOpenAISettings(false)" class="px-2 py-1 bg-brand-600 hover:bg-brand-700 text-white rounded transition">Simpan</button>
-                    <button onclick="fetchOpenAIModelsFromSettings()" class="px-2 py-1 bg-brand-panel hover:bg-brand-border text-slate-200 rounded border border-brand-border transition">Fetch models dari key</button>
-                    <button onclick="saveOpenAISettings(true)" class="px-2 py-1 bg-red-600/80 hover:bg-red-600 text-white rounded transition">Hapus key</button>
+
+                <!-- Provider Presets -->
+                <div class="space-y-1">
+                    <span class="text-[10px] text-slate-400 font-semibold block">Pintasan Provider Cepat (Preset):</span>
+                    <div class="flex flex-wrap gap-1.5">
+                        <button onclick="applyOpenAIPreset('OpenAI Official', 'https://api.openai.com/v1')" class="px-2 py-0.5 bg-brand-panel border border-brand-border hover:bg-brand-border text-slate-300 rounded text-[10px] transition">🤖 OpenAI</button>
+                        <button onclick="applyOpenAIPreset('DeepSeek AI', 'https://api.deepseek.com/v1')" class="px-2 py-0.5 bg-brand-panel border border-brand-border hover:bg-brand-border text-blue-400 rounded text-[10px] transition">🐋 DeepSeek</button>
+                        <button onclick="applyOpenAIPreset('Groq High-Speed', 'https://api.groq.com/openai/v1')" class="px-2 py-0.5 bg-brand-panel border border-brand-border hover:bg-brand-border text-orange-400 rounded text-[10px] transition">⚡ Groq</button>
+                        <button onclick="applyOpenAIPreset('OpenRouter AI', 'https://openrouter.ai/api/v1')" class="px-2 py-0.5 bg-brand-panel border border-brand-border hover:bg-brand-border text-purple-400 rounded text-[10px] transition">🌐 OpenRouter</button>
+                        <button onclick="applyOpenAIPreset('Ollama Local', 'http://localhost:11434/v1')" class="px-2 py-0.5 bg-brand-panel border border-brand-border hover:bg-brand-border text-emerald-400 rounded text-[10px] transition">🦙 Ollama Local</button>
+                    </div>
                 </div>
-                <div id="openai-model-fetch-result" class="text-[11px] text-slate-500"></div>
+
+                <!-- Form Inputs -->
+                <div class="space-y-2 bg-brand-dark/50 p-2.5 rounded-xl border border-brand-border/60">
+                    <div class="flex space-x-2">
+                        <input id="openai-provider-label" type="text" placeholder="Nama Label Provider (misal: DeepSeek Pro, Groq)" class="flex-1 bg-brand-panel border border-brand-border rounded-lg px-2.5 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-500 font-medium">
+                        <input id="openai-api-base" type="text" placeholder="Endpoint Base URL (contoh: https://api.openai.com/v1)" class="flex-1 bg-brand-panel border border-brand-border rounded-lg px-2.5 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-500 font-mono">
+                    </div>
+                    <input id="openai-api-key" type="password" autocomplete="off" placeholder="API Key (kosongkan jika tidak mengganti key aktif)" class="w-full bg-brand-panel border border-brand-border rounded-lg px-2.5 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-500 font-mono">
+                    
+                    <div class="space-y-1">
+                        <div class="flex justify-between items-center text-[10px] text-slate-400">
+                            <span>Daftar Model Otomatis / Manual:</span>
+                            <span id="openai-models-count" class="font-mono text-emerald-400"></span>
+                        </div>
+                        <textarea id="openai-models" rows="2" placeholder="Model terdeteksi otomatis atau ketik manual dipisah koma (contoh: deepseek-chat, deepseek-coder, gpt-4o)" class="w-full bg-brand-panel border border-brand-border rounded-lg px-2.5 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-500 font-mono resize-none"></textarea>
+                    </div>
+
+                    <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+                        <div class="flex space-x-1.5">
+                            <button onclick="fetchOpenAIModelsFromSettings()" class="px-3 py-1.5 bg-brand-panel hover:bg-brand-border text-brand-accent rounded-lg border border-brand-border text-xs font-semibold transition flex items-center space-x-1" title="Tes koneksi & deteksi model otomatis dari endpoint">
+                                <i data-lucide="zap" class="w-3.5 h-3.5 text-brand-accent"></i>
+                                <span>Deteksi Model Otomatis</span>
+                            </button>
+                            <button onclick="saveOpenAIKeyToPool()" class="px-3 py-1.5 bg-gradient-to-r from-brand-600 to-purple-600 hover:from-brand-700 hover:to-purple-700 text-white rounded-lg text-xs font-bold transition flex items-center space-x-1 shadow">
+                                <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                                <span>Simpan & Gunakan</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="openai-model-fetch-result" class="text-[11px] text-slate-400 font-mono px-1"></div>
+
+                <!-- Multi-API Key Pool Container -->
+                <div class="space-y-1.5 pt-2 border-t border-brand-border/40">
+                    <div class="flex items-center justify-between text-[11px]">
+                        <span class="font-bold text-slate-300 uppercase tracking-wider">Pool Provider & API Key Tersimpan</span>
+                        <span id="openai-status" class="text-[10px]"></span>
+                    </div>
+                    <div id="openai-pool-list" class="space-y-1.5 max-h-[140px] overflow-y-auto pr-1">
+                        <!-- Saved API keys list rendered dynamically -->
+                    </div>
+                </div>
             </div>
 
             <!-- Chat History Overlay -->
@@ -1606,71 +1654,189 @@
             lucide.createIcons();
         }
 
-        async function loadOpenAISettings() {
-            const status = document.getElementById('openai-status');
-            try {
-                const res = await fetch('/api/openai/settings');
-                if (!res.ok) throw new Error(await res.text());
-                const cfg = await res.json();
-                document.getElementById('openai-api-base').value = cfg.apiBase || 'https://api.openai.com/v1';
-                document.getElementById('openai-models').value = cfg.configuredModels || '';
-                document.getElementById('openai-api-key').value = '';
-                status.innerText = cfg.apiKeySet ? `API key tersimpan (${cfg.apiKeyMasked || 'masked'})` : 'API key belum diatur. Isi key lalu klik Simpan.';
-                status.className = cfg.apiKeySet ? 'text-[11px] text-emerald-400' : 'text-[11px] text-amber-400';
-            } catch (err) {
-                status.innerText = 'Gagal mengunduh pengaturan OpenAI: ' + err.message;
-                status.className = 'text-[11px] text-red-400';
+        function applyOpenAIPreset(label, base) {
+            document.getElementById('openai-provider-label').value = label;
+            document.getElementById('openai-api-base').value = base;
+            const result = document.getElementById('openai-model-fetch-result');
+            if (result) {
+                result.innerText = `Preset ${label} diterapkan. Masukkan API Key Anda lalu klik 'Deteksi Model Otomatis'.`;
+                result.className = 'text-[11px] text-brand-accent font-mono';
             }
         }
 
-        async function saveOpenAISettings(clearKey) {
+        async function loadOpenAISettings() {
             const status = document.getElementById('openai-status');
-            status.innerText = 'Menyimpan pengaturan...';
-            status.className = 'text-[11px] text-slate-400';
             try {
-                const res = await fetch('/api/openai/settings', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        apiKey: document.getElementById('openai-api-key').value.trim(),
-                        apiBase: document.getElementById('openai-api-base').value.trim(),
-                        models: document.getElementById('openai-models').value.trim(),
-                        clearApiKey: clearKey
-                    })
-                });
+                const res = await fetch('/api/openai/pool');
                 if (!res.ok) throw new Error(await res.text());
-                await loadOpenAISettings();
-                await loadAvailableModels();
-                document.getElementById('openai-model-fetch-result').innerText = clearKey ? 'API key telah dihapus.' : 'Pengaturan disimpan.';
+                const data = await res.json();
+                const activeCfg = data.active || {};
+                const pool = data.pool || [];
+
+                document.getElementById('openai-api-base').value = activeCfg.apiBase || 'https://api.openai.com/v1';
+                document.getElementById('openai-models').value = activeCfg.configuredModels || '';
+                document.getElementById('openai-api-key').value = '';
+
+                if (activeCfg.apiKeySet) {
+                    status.innerText = `Aktif: ${activeCfg.apiKeyMasked || 'key set'}`;
+                    status.className = 'text-[10px] text-emerald-400 font-mono font-bold';
+                } else {
+                    status.innerText = 'Belum ada key aktif';
+                    status.className = 'text-[10px] text-amber-400 font-mono';
+                }
+
+                renderOpenAIPoolList(pool);
             } catch (err) {
-                status.innerText = 'Gagal menyimpan: ' + err.message;
-                status.className = 'text-[11px] text-red-400';
+                if (status) status.innerText = 'Gagal memuat pool: ' + err.message;
             }
+        }
+
+        function renderOpenAIPoolList(pool) {
+            const container = document.getElementById('openai-pool-list');
+            if (!container) return;
+
+            if (!pool || pool.length === 0) {
+                container.innerHTML = '<div class="text-[10px] text-slate-500 italic text-center py-2 bg-brand-dark/20 rounded-lg">Belum ada API Key tersimpan di pool. Isi form di atas lalu klik Simpan & Gunakan.</div>';
+                return;
+            }
+
+            let html = '';
+            pool.forEach(item => {
+                const isActive = item.isActive;
+                const modelsCount = item.models ? item.models.split(',').filter(m=>m.trim()).length : 0;
+                html += `
+                    <div class="flex items-center justify-between p-2 rounded-xl ${isActive ? 'bg-brand-600/20 border border-brand-accent/40 shadow-sm' : 'bg-brand-dark/40 border border-brand-border/40'} text-xs">
+                        <div class="flex flex-col min-w-0 pr-2">
+                            <div class="flex items-center space-x-2">
+                                <span class="font-bold text-slate-200 truncate">${escapeHtml(item.label || 'Provider')}</span>
+                                ${isActive ? '<span class="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded text-[9px] font-bold">Aktif</span>' : ''}
+                            </div>
+                            <div class="text-[10px] text-slate-400 font-mono truncate">
+                                ${escapeHtml(item.apiKeyMasked || 'no key')} • <span class="text-slate-500">${escapeHtml(item.apiBase)}</span>
+                            </div>
+                            ${modelsCount > 0 ? `<div class="text-[9px] text-brand-accent mt-0.5 font-mono">${modelsCount} model terdeteksi</div>` : ''}
+                        </div>
+                        <div class="flex items-center space-x-1 shrink-0">
+                            ${!isActive ? `
+                                <button onclick="switchOpenAIKey('${escapeHtml(item.id)}')" class="py-1 px-2 bg-brand-panel hover:bg-brand-border border border-brand-border text-slate-200 hover:text-white rounded-lg text-[10px] font-semibold transition">
+                                    Gunakan
+                                </button>
+                            ` : ''}
+                            <button onclick="deleteOpenAIKey('${escapeHtml(item.id)}')" class="p-1 hover:bg-red-950/40 text-slate-400 hover:text-red-400 rounded-lg transition" title="Hapus Key Ini">
+                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+            lucide.createIcons();
         }
 
         async function fetchOpenAIModelsFromSettings() {
             const result = document.getElementById('openai-model-fetch-result');
-            result.innerText = 'Mencoba mengambil model dari endpoint...';
-            result.className = 'text-[11px] text-slate-400';
+            const countLabel = document.getElementById('openai-models-count');
+            const apiKey = document.getElementById('openai-api-key').value.trim();
+            const apiBase = document.getElementById('openai-api-base').value.trim();
+
+            result.innerText = '🔄 Menghubungkan ke endpoint & mendeteksi model...';
+            result.className = 'text-[11px] text-slate-400 font-mono animate-pulse';
+
+            const startTime = Date.now();
             try {
                 const res = await fetch('/api/openai/models', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        apiKey: document.getElementById('openai-api-key').value.trim(),
-                        apiBase: document.getElementById('openai-api-base').value.trim()
-                    })
+                    body: JSON.stringify({ apiKey, apiBase })
                 });
                 if (!res.ok) throw new Error(await res.text());
                 const models = await res.json();
+                const elapsed = Date.now() - startTime;
                 const rawModels = (models || []).map(m => m.replace(/^openai\//, ''));
-                document.getElementById('openai-models').value = rawModels.join(',');
-                result.innerText = rawModels.length ? `Ditemukan ${rawModels.length} model. Klik Simpan untuk menyimpan daftar ini.` : 'Endpoint sukses, tetapi tidak ada model.';
-                result.className = rawModels.length ? 'text-[11px] text-emerald-400' : 'text-[11px] text-amber-400';
+                
+                document.getElementById('openai-models').value = rawModels.join(', ');
+                if (countLabel) countLabel.innerText = `${rawModels.length} model aktif (${elapsed}ms)`;
+                
+                result.innerText = rawModels.length ? `✅ Berhasil! Ditemukan ${rawModels.length} model aktif (${elapsed}ms). Klik 'Simpan & Gunakan' untuk menyimpan.` : '⚠️ Endpoint terhubung, tetapi tidak ada model yang terdaftar.';
+                result.className = rawModels.length ? 'text-[11px] text-emerald-400 font-mono font-semibold' : 'text-[11px] text-amber-400 font-mono';
+                
                 populateModelSelect(models || []);
             } catch (err) {
-                result.innerText = 'Gagal mengambil model: ' + err.message;
-                result.className = 'text-[11px] text-red-400';
+                if (countLabel) countLabel.innerText = '';
+                result.innerText = '❌ Gagal mendeteksi model: ' + err.message;
+                result.className = 'text-[11px] text-red-400 font-mono';
+            }
+        }
+
+        async function saveOpenAIKeyToPool() {
+            const result = document.getElementById('openai-model-fetch-result');
+            result.innerText = 'Menyimpan key ke pool...';
+            result.className = 'text-[11px] text-slate-400 font-mono';
+
+            const label = document.getElementById('openai-provider-label').value.trim();
+            const apiKey = document.getElementById('openai-api-key').value.trim();
+            const apiBase = document.getElementById('openai-api-base').value.trim();
+            const models = document.getElementById('openai-models').value.trim();
+
+            try {
+                const res = await fetch('/api/openai/pool?action=add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ label, apiKey, apiBase, models, setActive: true })
+                });
+                if (!res.ok) throw new Error(await res.text());
+                
+                result.innerText = '✅ API key berhasil disimpan ke pool & diaktifkan!';
+                result.className = 'text-[11px] text-emerald-400 font-mono font-semibold';
+
+                await loadOpenAISettings();
+                await loadAvailableModels();
+            } catch (err) {
+                result.innerText = '❌ Gagal menyimpan: ' + err.message;
+                result.className = 'text-[11px] text-red-400 font-mono';
+            }
+        }
+
+        async function switchOpenAIKey(id) {
+            const result = document.getElementById('openai-model-fetch-result');
+            result.innerText = 'Mengalihkan provider...';
+            result.className = 'text-[11px] text-slate-400 font-mono';
+            try {
+                const res = await fetch('/api/openai/pool?action=switch', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                });
+                if (!res.ok) throw new Error(await res.text());
+                result.innerText = '✅ Provider berhasil dialihkan!';
+                result.className = 'text-[11px] text-emerald-400 font-mono font-semibold';
+                await loadOpenAISettings();
+                await loadAvailableModels();
+            } catch (err) {
+                result.innerText = '❌ Gagal mengalihkan: ' + err.message;
+                result.className = 'text-[11px] text-red-400 font-mono';
+            }
+        }
+
+        async function deleteOpenAIKey(id) {
+            if (!confirm('Apakah Anda yakin ingin menghapus API key ini dari pool?')) return;
+            const result = document.getElementById('openai-model-fetch-result');
+            result.innerText = 'Menghapus key...';
+            result.className = 'text-[11px] text-slate-400 font-mono';
+            try {
+                const res = await fetch('/api/openai/pool?action=delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                });
+                if (!res.ok) throw new Error(await res.text());
+                result.innerText = '🗑️ API key berhasil dihapus dari pool.';
+                result.className = 'text-[11px] text-amber-400 font-mono';
+                await loadOpenAISettings();
+                await loadAvailableModels();
+            } catch (err) {
+                result.innerText = '❌ Gagal menghapus: ' + err.message;
+                result.className = 'text-[11px] text-red-400 font-mono';
             }
         }
 

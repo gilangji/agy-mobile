@@ -150,6 +150,7 @@ func main() {
 	http.HandleFunc("/api/models", h.AuthMiddleware(h.HandleModelsList))
 	http.HandleFunc("/api/openai/settings", h.AuthMiddleware(h.HandleOpenAISettings))
 	http.HandleFunc("/api/openai/models", h.AuthMiddleware(h.HandleOpenAIModels))
+	http.HandleFunc("/api/openai/pool", h.AuthMiddleware(h.HandleOpenAIPool))
 	http.HandleFunc("/preview/", h.AuthMiddleware(h.HandlePreviewFile))
 	http.HandleFunc("/api/webhook", h.HandleGithubWebhook)
 	http.HandleFunc("/api/browser/proxy", h.AuthMiddleware(h.HandleBrowserProxy))
@@ -187,5 +188,8 @@ func loadEnv() {
 				os.Setenv(key, val)
 			}
 		}
+	}
+	if err := scanner.Err(); err != nil {
+		log.Printf("[ENV WARN] Gagal membaca beberapa baris .env: %v", err)
 	}
 }

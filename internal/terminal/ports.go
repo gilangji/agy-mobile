@@ -88,6 +88,10 @@ func parseProcNetTCP(path string) ([]rawPortEntry, error) {
 		})
 	}
 
+	if err := scanner.Err(); err != nil {
+		return nil, err
+	}
+
 	return entries, nil
 }
 

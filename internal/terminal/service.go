@@ -3,10 +3,12 @@ package terminal
 import (
 	"bufio"
 	"context"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io"
 	"mobile-agy/internal/auth"
+	"net"
 	"net/http"
 	"os"
 	"os/exec"
@@ -340,6 +342,212 @@ func updateEnvFile(path string, updates map[string]*string) error {
 	return os.WriteFile(path, []byte(content), 0600)
 }
 
+type OpenAIKeyPoolEntry struct {
+	ID           string   `json:"id"`
+	Label        string   `json:"label"`
+	APIKey       string   `json:"apiKey,omitempty"`
+	APIKeyMasked string   `json:"apiKeyMasked,omitempty"`
+	APIBase      string   `json:"apiBase"`
+	Models       string   `json:"models"`
+	IsActive     bool     `json:"isActive"`
+	CreatedAt    int64    `json:"createdAt"`
+}
+
+func getOpenAIKeysPoolFilePath() (string, error) {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return "", err
+	}
+	dir := filepath.Join(homeDir, ".gemini", "antigravity-cli")
+	if err := os.MkdirAll(dir, 0755); err != nil {
+		return "", err
+	}
+	return filepath.Join(dir, "openai_keys_pool.json"), nil
+}
+
+func (s *Service) LoadOpenAIKeysPool() ([]OpenAIKeyPoolEntry, error) {
+	path, err := getOpenAIKeysPoolFilePath()
+	if err != nil {
+		return nil, err
+	}
+	data, err := os.ReadFile(path)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return []OpenAIKeyPoolEntry{}, nil
+		}
+		return nil, err
+	}
+	var pool []OpenAIKeyPoolEntry
+	if err := json.Unmarshal(data, &pool); err != nil {
+		return []OpenAIKeyPoolEntry{}, nil
+	}
+	return pool, nil
+}
+
+func (s *Service) SaveOpenAIKeysPool(pool []OpenAIKeyPoolEntry) error {
+	path, err := getOpenAIKeysPoolFilePath()
+	if err != nil {
+		return err
+	}
+	data, err := json.MarshalIndent(pool, "", "  ")
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(path, data, 0600)
+}
+
+func (s *Service) AddOrUpdateOpenAIKey(label, apiKey, apiBase, models string, setActive bool) error {
+	label = strings.TrimSpace(label)
+	apiKey = strings.TrimSpace(apiKey)
+	apiBase = strings.TrimSpace(apiBase)
+	models = strings.TrimSpace(models)
+
+	if apiBase == "" {
+		apiBase = "https://api.openai.com/v1"
+	}
+	if label == "" {
+		if strings.Contains(apiBase, "deepseek") {
+			label = "DeepSeek AI"
+		} else if strings.Contains(apiBase, "groq") {
+			label = "Groq High-Speed"
+		} else if strings.Contains(apiBase, "openrouter") {
+			label = "OpenRouter AI"
+		} else if strings.Contains(apiBase, "localhost") || strings.Contains(apiBase, "127.0.0.1") {
+			label = "Ollama Local"
+		} else {
+			label = "OpenAI Provider"
+		}
+	}
+
+	pool, _ := s.LoadOpenAIKeysPool()
+
+	existingIdx := -1
+	for i, entry := range pool {
+		if (apiKey != "" && entry.APIKey == apiKey && entry.APIBase == apiBase) || (label != "" && entry.Label == label && entry.APIBase == apiBase) {
+			existingIdx = i
+			break
+		}
+	}
+
+	entryID := fmt.Sprintf("key-%d", time.Now().UnixNano())
+	if existingIdx >= 0 {
+		entryID = pool[existingIdx].ID
+		if apiKey == "" {
+			apiKey = pool[existingIdx].APIKey
+		}
+	}
+
+	if setActive {
+		for i := range pool {
+			pool[i].IsActive = false
+		}
+	}
+
+	newEntry := OpenAIKeyPoolEntry{
+		ID:        entryID,
+		Label:     label,
+		APIKey:    apiKey,
+		APIBase:   apiBase,
+		Models:    models,
+		IsActive:  setActive,
+		CreatedAt: time.Now().Unix(),
+	}
+
+	if existingIdx >= 0 {
+		pool[existingIdx] = newEntry
+	} else {
+		pool = append(pool, newEntry)
+	}
+
+	if err := s.SaveOpenAIKeysPool(pool); err != nil {
+		return err
+	}
+
+	if setActive {
+		return s.SaveOpenAISettings(apiKey, apiBase, models, false)
+	}
+	return nil
+}
+
+func (s *Service) SetActiveOpenAIKey(id string) error {
+	pool, err := s.LoadOpenAIKeysPool()
+	if err != nil {
+		return err
+	}
+
+	var activeEntry *OpenAIKeyPoolEntry
+	for i := range pool {
+		if pool[i].ID == id {
+			pool[i].IsActive = true
+			activeEntry = &pool[i]
+		} else {
+			pool[i].IsActive = false
+		}
+	}
+
+	if activeEntry == nil {
+		return fmt.Errorf("API key dengan ID '%s' tidak ditemukan", id)
+	}
+
+	if err := s.SaveOpenAIKeysPool(pool); err != nil {
+		return err
+	}
+
+	return s.SaveOpenAISettings(activeEntry.APIKey, activeEntry.APIBase, activeEntry.Models, false)
+}
+
+func (s *Service) DeleteOpenAIKey(id string) error {
+	pool, err := s.LoadOpenAIKeysPool()
+	if err != nil {
+		return err
+	}
+
+	newPool := []OpenAIKeyPoolEntry{}
+	wasActive := false
+	for _, entry := range pool {
+		if entry.ID == id {
+			if entry.IsActive {
+				wasActive = true
+			}
+			continue
+		}
+		newPool = append(newPool, entry)
+	}
+
+	if wasActive && len(newPool) > 0 {
+		newPool[0].IsActive = true
+		_ = s.SaveOpenAISettings(newPool[0].APIKey, newPool[0].APIBase, newPool[0].Models, false)
+	} else if wasActive && len(newPool) == 0 {
+		_ = s.SaveOpenAISettings("", "https://api.openai.com/v1", "", true)
+	}
+
+	return s.SaveOpenAIKeysPool(newPool)
+}
+
+func (s *Service) GetOpenAIKeysPoolForClient() []OpenAIKeyPoolEntry {
+	pool, _ := s.LoadOpenAIKeysPool()
+	activeKey := os.Getenv("OPENAI_API_KEY")
+	activeBase := os.Getenv("OPENAI_API_BASE")
+
+	clientPool := make([]OpenAIKeyPoolEntry, len(pool))
+	for i, entry := range pool {
+		isActive := entry.IsActive
+		if activeKey != "" && entry.APIKey == activeKey && entry.APIBase == activeBase {
+			isActive = true
+		}
+		clientPool[i] = OpenAIKeyPoolEntry{
+			ID:           entry.ID,
+			Label:        entry.Label,
+			APIKeyMasked: maskAPIKey(entry.APIKey),
+			APIBase:      entry.APIBase,
+			Models:       entry.Models,
+			IsActive:     isActive,
+			CreatedAt:    entry.CreatedAt,
+		}
+	}
+	return clientPool
+}
+
 func (s *Service) FetchOpenAIModels(apiKey, apiBase string) ([]string, error) {
 	apiKey = strings.TrimSpace(apiKey)
 	apiBase = strings.TrimSpace(apiBase)
@@ -349,8 +557,8 @@ func (s *Service) FetchOpenAIModels(apiKey, apiBase string) ([]string, error) {
 	if apiBase == "" {
 		apiBase = defaultOpenAIBase()
 	}
-	if apiKey == "" {
-		return nil, fmt.Errorf("OPENAI_API_KEY is not configured")
+	if apiKey == "" && !strings.Contains(apiBase, "localhost") && !strings.Contains(apiBase, "127.0.0.1") {
+		return nil, fmt.Errorf("API key belum diisi")
 	}
 
 	url := strings.TrimSuffix(apiBase, "/") + "/models"
@@ -358,18 +566,77 @@ func (s *Service) FetchOpenAIModels(apiKey, apiBase string) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Set("Authorization", "Bearer "+apiKey)
+	if apiKey != "" {
+		req.Header.Set("Authorization", "Bearer "+apiKey)
+	}
+	req.Header.Set("User-Agent", "Mozilla/5.0 (compatible; AGY-Mobile-IDE/1.1.2)")
 
-	client := &http.Client{Timeout: 15 * time.Second}
+	dialer := &net.Dialer{
+		Timeout:   5 * time.Second,
+		KeepAlive: 30 * time.Second,
+	}
+
+	transport := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		DialContext: func(ctx context.Context, network, addr string) (net.Conn, error) {
+			conn, err := dialer.DialContext(ctx, network, addr)
+			if err == nil {
+				return conn, nil
+			}
+
+			host, port, splitErr := net.SplitHostPort(addr)
+			if splitErr != nil {
+				return nil, err
+			}
+
+			resolver := &net.Resolver{
+				PreferGo: true,
+				Dial: func(ctx context.Context, network, address string) (net.Conn, error) {
+					d := net.Dialer{Timeout: 3 * time.Second}
+					c, e := d.DialContext(ctx, "udp", "1.1.1.1:53")
+					if e == nil {
+						return c, nil
+					}
+					c2, e2 := d.DialContext(ctx, "udp", "8.8.8.8:53")
+					if e2 == nil {
+						return c2, nil
+					}
+					return d.DialContext(ctx, "udp", "8.8.4.4:53")
+				},
+			}
+
+			ips, lookupErr := resolver.LookupHost(ctx, host)
+			if lookupErr != nil || len(ips) == 0 {
+				return nil, err
+			}
+
+			for _, ip := range ips {
+				c, e := dialer.DialContext(ctx, "tcp4", net.JoinHostPort(ip, port))
+				if e == nil {
+					return c, nil
+				}
+				c2, e2 := dialer.DialContext(ctx, "tcp", net.JoinHostPort(ip, port))
+				if e2 == nil {
+					return c2, nil
+				}
+			}
+			return nil, err
+		},
+	}
+
+	client := &http.Client{
+		Timeout:   10 * time.Second,
+		Transport: transport,
+	}
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("gagal terhubung ke endpoint %s: %v", url, err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		body, _ := io.ReadAll(resp.Body)
-		return nil, fmt.Errorf("OpenAI models endpoint returned status %d: %s", resp.StatusCode, string(body))
+		return nil, fmt.Errorf("endpoint %s mengembalikan status %d: %s", url, resp.StatusCode, string(body))
 	}
 
 	var parsed struct {
@@ -378,7 +645,7 @@ func (s *Service) FetchOpenAIModels(apiKey, apiBase string) ([]string, error) {
 		} `json:"data"`
 	}
 	if err := json.NewDecoder(resp.Body).Decode(&parsed); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("gagal parse balasan JSON: %v", err)
 	}
 
 	var models []string

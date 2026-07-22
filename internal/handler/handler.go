@@ -831,6 +831,53 @@ func (h *Handler) HandleOpenAISettings(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// HandleOpenAIPool handles listing, adding, switching, and deleting API keys in the pool
+func (h *Handler) HandleOpenAIPool(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	switch r.Method {
+	case http.MethodGet:
+		_ = json.NewEncoder(w).Encode(map[string]interface{}{
+			"pool":   h.terminalSvc.GetOpenAIKeysPoolForClient(),
+			"active": h.terminalSvc.GetOpenAISettings(false),
+		})
+	case http.MethodPost:
+		action := r.URL.Query().Get("action")
+		var req struct {
+			ID        string `json:"id"`
+			Label     string `json:"label"`
+			APIKey    string `json:"apiKey"`
+			APIBase   string `json:"apiBase"`
+			Models    string `json:"models"`
+			SetActive bool   `json:"setActive"`
+		}
+		_ = json.NewDecoder(r.Body).Decode(&req)
+
+		var err error
+		switch action {
+		case "add", "save":
+			err = h.terminalSvc.AddOrUpdateOpenAIKey(req.Label, req.APIKey, req.APIBase, req.Models, true)
+		case "switch":
+			err = h.terminalSvc.SetActiveOpenAIKey(req.ID)
+		case "delete":
+			err = h.terminalSvc.DeleteOpenAIKey(req.ID)
+		default:
+			err = h.terminalSvc.AddOrUpdateOpenAIKey(req.Label, req.APIKey, req.APIBase, req.Models, true)
+		}
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		_ = json.NewEncoder(w).Encode(map[string]interface{}{
+			"pool":   h.terminalSvc.GetOpenAIKeysPoolForClient(),
+			"active": h.terminalSvc.GetOpenAISettings(false),
+		})
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
+}
+
 // HandleOpenAIModels fetches models available for the configured or provided key.
 func (h *Handler) HandleOpenAIModels(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
