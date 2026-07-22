@@ -3,7 +3,7 @@ set -e
 
 resolve_latest_version() {
     local tags testing_tag latest_tag
-    tags=$(curl -fsSL "https://api.github.com/repos/sodikinnaa/go-agy-ide/releases?per_page=100" 2>/dev/null | grep '"tag_name":' | sed -E 's/.*"tag_name": "([^"]+)".*/\1/' || true)
+    tags=$(curl -fsSL "https://api.github.com/repos/gilangji/agy-mobile/releases?per_page=100" 2>/dev/null | grep '"tag_name":' | sed -E 's/.*"tag_name": "([^"]+)".*/\1/' || true)
     if [ -n "$tags" ]; then
         latest_tag=$(printf '%s\n' "$tags" | grep -E '^v[0-9]+(\.[0-9]+)*$' | sort -V | tail -n 1 || true)
         if [ -n "$latest_tag" ]; then
@@ -62,10 +62,10 @@ case "$OS" in
     linux)
         case "$ARCH" in
             x86_64|amd64)
-                BINARY_URL="https://github.com/sodikinnaa/go-agy-ide/releases/download/${VERSION}/mobile-agy-linux-amd64"
+                BINARY_URL="https://github.com/gilangji/agy-mobile/releases/download/${VERSION}/mobile-agy-linux-amd64"
                 ;;
             aarch64|arm64)
-                BINARY_URL="https://github.com/sodikinnaa/go-agy-ide/releases/download/${VERSION}/mobile-agy-linux-arm64"
+                BINARY_URL="https://github.com/gilangji/agy-mobile/releases/download/${VERSION}/mobile-agy-linux-arm64"
                 ;;
             *)
                 echo "Error: Arsitektur CPU $ARCH ora didhukung kanggo Linux."
@@ -76,10 +76,10 @@ case "$OS" in
     darwin)
         case "$ARCH" in
             x86_64|amd64)
-                BINARY_URL="https://github.com/sodikinnaa/go-agy-ide/releases/download/${VERSION}/mobile-agy-darwin-amd64"
+                BINARY_URL="https://github.com/gilangji/agy-mobile/releases/download/${VERSION}/mobile-agy-darwin-amd64"
                 ;;
             arm64)
-                BINARY_URL="https://github.com/sodikinnaa/go-agy-ide/releases/download/${VERSION}/mobile-agy-darwin-arm64"
+                BINARY_URL="https://github.com/gilangji/agy-mobile/releases/download/${VERSION}/mobile-agy-darwin-arm64"
                 ;;
             *)
                 echo "Error: Arsitektur CPU $ARCH ora didhukung kanggo MacOS."
@@ -89,7 +89,7 @@ case "$OS" in
         ;;
     mingw*|msys*|cygwin*|windows*)
         # Windows environment nggunakake Bash (Git Bash / MSYS2)
-        BINARY_URL="https://github.com/sodikinnaa/go-agy-ide/releases/download/${VERSION}/mobile-agy-windows-amd64.exe"
+        BINARY_URL="https://github.com/gilangji/agy-mobile/releases/download/${VERSION}/mobile-agy-windows-amd64.exe"
         BINARY_NAME="mobile-agy.exe"
         ;;
     *)
@@ -133,7 +133,7 @@ set -e
 TARGET_VERSION="${1:-${VERSION:-latest}}"
 INSTALLER_TMP="${TMPDIR:-/tmp}/mobile-agy-install.sh"
 echo "Mulai nglakokake update Mobile IDE menyang versi: $TARGET_VERSION"
-curl -H 'Cache-Control: no-cache' -fsSL 'https://raw.githubusercontent.com/sodikinnaa/go-agy-ide/main/install.sh' -o "$INSTALLER_TMP"
+curl -H 'Cache-Control: no-cache' -fsSL 'https://raw.githubusercontent.com/gilangji/agy-mobile/main/install.sh' -o "$INSTALLER_TMP"
 exec env VERSION="$TARGET_VERSION" bash "$INSTALLER_TMP"
 EOT
     chmod +x update.sh
@@ -254,7 +254,7 @@ case "\$1" in
         TARGET_VERSION="\${2:-latest}"
         INSTALLER_TMP="\${TMPDIR:-/tmp}/mobile-agy-install.sh"
         echo "Updating Mobile IDE to \$TARGET_VERSION..."
-        curl -H 'Cache-Control: no-cache' -fsSL 'https://raw.githubusercontent.com/sodikinnaa/go-agy-ide/main/install.sh' -o "\$INSTALLER_TMP"
+        curl -H 'Cache-Control: no-cache' -fsSL 'https://raw.githubusercontent.com/gilangji/agy-mobile/main/install.sh' -o "\$INSTALLER_TMP"
         exec env VERSION="\$TARGET_VERSION" bash "\$INSTALLER_TMP"
         ;;
     install-version)
@@ -266,11 +266,11 @@ case "\$1" in
         TARGET_VERSION="\$2"
         INSTALLER_TMP="\${TMPDIR:-/tmp}/mobile-agy-install.sh"
         echo "Installing Mobile IDE version \$TARGET_VERSION..."
-        curl -H 'Cache-Control: no-cache' -fsSL 'https://raw.githubusercontent.com/sodikinnaa/go-agy-ide/main/install.sh' -o "\$INSTALLER_TMP"
+        curl -H 'Cache-Control: no-cache' -fsSL 'https://raw.githubusercontent.com/gilangji/agy-mobile/main/install.sh' -o "\$INSTALLER_TMP"
         exec env VERSION="\$TARGET_VERSION" bash "\$INSTALLER_TMP"
         ;;
     releases)
-        curl -fsSL "https://api.github.com/repos/sodikinnaa/go-agy-ide/releases?per_page=30" | grep '"tag_name":' | sed -E 's/.*"tag_name": "([^"]+)".*/\1/'
+        curl -fsSL "https://api.github.com/repos/gilangji/agy-mobile/releases?per_page=30" | grep '"tag_name":' | sed -E 's/.*"tag_name": "([^"]+)".*/\1/'
         ;;
     uninstall)
         echo "Stopping Mobile IDE..."

@@ -46,18 +46,18 @@ Berikut adalah galeri tampilan antarmuka Mobile IDE pada perangkat seluler (HP A
 ### Cara Cepat (One-Line Installer - Tanpa Perlu Install Go/Compiler):
 Cukup jalankan perintah iki ing terminal server utawa Termux HP kanggo ngundhuh pre-compiled binary lan nyiapake kabeh kanthi otomatis:
 ```bash
-curl -fsSL https://raw.githubusercontent.com/sodikinnaa/go-agy-ide/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/gilangji/agy-mobile/main/install.sh | bash
 ```
 *Script iki bakal otomatis ndeteksi OS lan arsitektur CPU (Linux AMD64, Linux ARM64, MacOS, lsp.) sarta ngundhuh binary sing cocog saka kaca Rilis GitHub.*
 
 Yen pengin install versi/tag tartamtu sing wis dirilis, undhuh installer dhisik banjur lebokake tag-e:
 ```bash
-curl -fsSL https://raw.githubusercontent.com/sodikinnaa/go-agy-ide/main/install.sh -o install.sh
+curl -fsSL https://raw.githubusercontent.com/gilangji/agy-mobile/main/install.sh -o install.sh
 bash install.sh v1.4.1
 ```
 Utawa nganggo environment variable:
 ```bash
-curl -fsSL https://raw.githubusercontent.com/sodikinnaa/go-agy-ide/main/install.sh -o install.sh
+curl -fsSL https://raw.githubusercontent.com/gilangji/agy-mobile/main/install.sh -o install.sh
 VERSION=v1.3.5 bash install.sh
 ```
 Iki iso kanggo update menyang versi testing utawa downgrade menyang rilis lawas.
@@ -65,7 +65,7 @@ Iki iso kanggo update menyang versi testing utawa downgrade menyang rilis lawas.
 ### Cara Manual (Ngompilasi Dewe):
 1. **Download source code** lan mlebu menyang folder:
    ```bash
-   git clone https://github.com/sodikinnaa/go-agy-ide.git mobile-ide
+   git clone https://github.com/gilangji/agy-mobile.git mobile-ide
    cd mobile-ide
    ```
 
@@ -102,12 +102,12 @@ Bukak PowerShell utawa Command Prompt (CMD), banjur nggawe folder anyar lan undh
 * **PowerShell**:
   ```powershell
   mkdir mobile-ide; cd mobile-ide
-  curl.exe -L "https://github.com/sodikinnaa/go-agy-ide/releases/latest/download/mobile-agy-windows-amd64.exe" -o mobile-agy.exe
+  curl.exe -L "https://github.com/gilangji/agy-mobile/releases/latest/download/mobile-agy-windows-amd64.exe" -o mobile-agy.exe
   ```
 * **Command Prompt (CMD)**:
   ```cmd
   mkdir mobile-ide && cd mobile-ide
-  curl.exe -L "https://github.com/sodikinnaa/go-agy-ide/releases/latest/download/mobile-agy-windows-amd64.exe" -o mobile-agy.exe
+  curl.exe -L "https://github.com/gilangji/agy-mobile/releases/latest/download/mobile-agy-windows-amd64.exe" -o mobile-agy.exe
   ```
 
 *Cathetan: Yen njenengan kepengin ngompilasi dhewe saka source code (kudu wis nginstal Go), jalankan perintah iki ing terminal:*

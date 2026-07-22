@@ -8,7 +8,7 @@ A lightweight, mobile-first IDE built with Go and Antigravity AI. It provides an
 ## 🚀 Key Commands
 - **Install/Update**: Use the provided installer script for a pre-compiled binary:
   ```bash
-  curl -fsSL https://raw.githubusercontent.com/sodikinnaa/go-agy-ide/main/install.sh | bash
+  curl -fsSL https://raw.githubusercontent.com/gilangji/agy-mobile/main/install.sh | bash
   ```
 - **Build**: This project is typically built as a static binary to ensure compatibility across Linux environments:
   ```bash

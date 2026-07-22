@@ -983,7 +983,7 @@ func (h *Handler) HandleSelfUpdate(w http.ResponseWriter, r *http.Request) {
 		if _, err := os.Stat(scriptPath); err == nil {
 			cmd = exec.Command("bash", "-c", "nohup ./update.sh \"$UPDATE_VERSION\" > update.log 2>&1 &")
 		} else {
-			cmd = exec.Command("bash", "-c", "nohup bash -c 'set -e; installer_tmp=\"${TMPDIR:-/tmp}/mobile-agy-install.sh\"; curl -H \"Cache-Control: no-cache\" -fsSL https://raw.githubusercontent.com/sodikinnaa/go-agy-ide/main/install.sh -o \"$installer_tmp\"; env VERSION=\"$UPDATE_VERSION\" bash \"$installer_tmp\"' > update.log 2>&1 &")
+			cmd = exec.Command("bash", "-c", "nohup bash -c 'set -e; installer_tmp=\"${TMPDIR:-/tmp}/mobile-agy-install.sh\"; curl -H \"Cache-Control: no-cache\" -fsSL https://raw.githubusercontent.com/gilangji/agy-mobile/main/install.sh -o \"$installer_tmp\"; env VERSION=\"$UPDATE_VERSION\" bash \"$installer_tmp\"' > update.log 2>&1 &")
 		}
 		cmd.Dir = startDir
 		cmd.Env = append(os.Environ(), "UPDATE_VERSION="+version)
@@ -1077,7 +1077,7 @@ func (h *Handler) HandleClearGoogleAuth(w http.ResponseWriter, r *http.Request) 
 
 // HandleGithubReleases proxy fetches releases from GitHub API
 func (h *Handler) HandleGithubReleases(w http.ResponseWriter, r *http.Request) {
-	req, err := http.NewRequest("GET", "https://api.github.com/repos/sodikinnaa/go-agy-ide/releases?per_page=30", nil)
+	req, err := http.NewRequest("GET", "https://api.github.com/repos/gilangji/agy-mobile/releases?per_page=30", nil)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Gagal nggawe request: %v", err), http.StatusInternalServerError)
 		return
