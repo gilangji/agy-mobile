@@ -361,20 +361,22 @@ fi
 
 # 5. Memeriksa, Menginstal, serta Memperbarui Google Antigravity CLI (agy)
 echo "Memeriksa Google Antigravity CLI (agy)..."
-if ! command -v agy &> /dev/null && [ ! -f "$HOME/.local/bin/agy" ]; then
-    echo "Google Antigravity CLI (agy) tidak ditemukan. Mulai mengunduh dan menginstal..."
-    if ! curl -fsSL https://antigravity.google/cli/install.sh | bash; then
-        echo "Peringatan: Gagal menginstal Antigravity CLI secara otomatis."
-        echo "Anda dapat mencoba menginstal manual menggunakan perintah:"
-        echo "  curl -fsSL https://antigravity.google/cli/install.sh | bash"
+if [ -f "$HOME/.local/bin/agy" ]; then
+    if ! "$HOME/.local/bin/agy" --version &>/dev/null; then
+        echo "Peringatan: Biner $HOME/.local/bin/agy di Termux tidak dapat dieksekusi (tidak kompatibel). Menghapus berkas rusak..."
+        rm -f "$HOME/.local/bin/agy"
     fi
+fi
+
+if ! command -v agy &> /dev/null && [ ! -x "$HOME/.local/bin/agy" ]; then
+    echo "Google Antigravity CLI (agy) tidak terinstal secara lokal di Termux."
 else
-    echo "Google Antigravity CLI (agy) telah terinstal. Mencoba memperbarui ke versi terbaru..."
+    echo "Google Antigravity CLI (agy) terdeteksi."
     AGY_BIN="agy"
-    if [ -f "$HOME/.local/bin/agy" ]; then
+    if [ -x "$HOME/.local/bin/agy" ]; then
         AGY_BIN="$HOME/.local/bin/agy"
     fi
-    $AGY_BIN update || echo "Peringatan: Gagal memperbarui Antigravity CLI."
+    $AGY_BIN update 2>/dev/null || true
 fi
 
 # Tambahkan ~/.local/bin ke PATH jika belum ada dalam sesi ini

@@ -196,25 +196,48 @@ func SafeCommandContext(ctx context.Context, name string, arg ...string) *exec.C
 	return exec.CommandContext(ctx, name, arg...)
 }
 
-func FindAgyPath() string {
-	if p := os.Getenv("AGY_PATH"); p != "" {
-		return p
+func isValidAgyExecutable(p string) bool {
+	if p == "" || p == "./agy" {
+		return false
 	}
+	info, err := os.Stat(p)
+	if err != nil || info.IsDir() {
+		return false
+	}
+	if runtime.GOOS != "windows" && (info.Mode()&0111 == 0) {
+		return false
+	}
+	cmd := SafeCommand(p, "--version")
+	cmd.Env = os.Environ()
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		outStr := strings.ToLower(string(out) + " " + err.Error())
+		if strings.Contains(outStr, "cannot execute") || strings.Contains(outStr, "no such file") || strings.Contains(outStr, "not found") || strings.Contains(outStr, "syntax error") {
+			return false
+		}
+	}
+	return true
+}
 
-	if p, err := SafeLookPath("agy"); err == nil {
+func FindAgyPath() string {
+	if p := os.Getenv("AGY_PATH"); p != "" && isValidAgyExecutable(p) {
 		return p
 	}
 
 	homeDir, err := getHomeDir()
 	if err == nil {
 		p := filepath.Join(homeDir, ".local", "bin", "agy")
-		if _, err := os.Stat(p); err == nil {
+		if isValidAgyExecutable(p) {
 			return p
 		}
 	}
 
+	if p, err := SafeLookPath("agy"); err == nil && isValidAgyExecutable(p) {
+		return p
+	}
+
 	p := "/home/codespace/.local/bin/agy"
-	if _, err := os.Stat(p); err == nil {
+	if isValidAgyExecutable(p) {
 		return p
 	}
 
@@ -309,6 +332,12 @@ func (s *Service) StartGoogleAuth(activeWorkspaceDir string) (string, error) {
 	}
 
 	agyPath := FindAgyPath()
+	if !isValidAgyExecutable(agyPath) {
+		if backupErr == nil && backupVal != "" {
+			_ = keyring.Set("gemini", "antigravity", backupVal)
+		}
+		return "", fmt.Errorf("Google Antigravity CLI ('agy') tidak ditemukan atau tidak kompatibel di arsitektur sistem ini (Termux ARM64). Silakan gunakan 'OpenAI / DeepSeek / Custom Provider API Key' pada obrolan AI.")
+	}
 	var cmd *exec.Cmd
 	useDirect := false
 
