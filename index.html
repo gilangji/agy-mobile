@@ -9,6 +9,15 @@
     <meta name="theme-color" content="#090a15">
     <link rel="apple-touch-icon" href="/icon-192.png">
     <script>
+        const _origFetch = window.fetch;
+        window.fetch = async function(...args) {
+            const res = await _origFetch(...args);
+            if (res.status === 401 && !window.location.pathname.includes('/login-pwd')) {
+                window.location.href = '/login-pwd';
+            }
+            return res;
+        };
+
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/sw.js')
@@ -1996,7 +2005,7 @@
                 return { action: '🔌 Menghubungkan ke Antigravity Engine...', icon: 'loader-2', color: 'text-brand-accent', isAuthError: false };
             }
 
-            const cleanText = fullText.replace(/<!-- keep-alive -->/g, '');
+            const cleanText = fullText.replace(new RegExp('<!-- keep-alive -->', 'g'), '');
             if (cleanText.includes('Authentication required') || cleanText.includes('authentication timed out')) {
                 return { action: '⚠️ Otentikasi Google Dibutuhkan!', icon: 'alert-triangle', color: 'text-red-400', isAuthError: true };
             }
