@@ -167,8 +167,9 @@ stop_mobile_agy() {
     local pids
     pids=\$(mobile_agy_pids)
     if [ -n "\$pids" ]; then
-        kill \$pids 2>/dev/null || true
+        kill -9 \$pids 2>/dev/null || true
     fi
+    fuser -k 8080/tcp 2>/dev/null || true
 }
 
 case "\$1" in
