@@ -869,7 +869,7 @@ func (h *Handler) HandleGithubWebhook(w http.ResponseWriter, r *http.Request) {
 	log.Printf("[WEBHOOK] GitHub Webhook diterima, memulai git pull di background...")
 	serverStartDir := h.workspaceSvc.ServerStartDir()
 	go func() {
-		cmd := exec.Command("git", "pull")
+		cmd := auth.SafeCommand("git", "pull")
 		cmd.Dir = serverStartDir
 		output, err := cmd.CombinedOutput()
 		if err != nil {
@@ -981,9 +981,9 @@ func (h *Handler) HandleSelfUpdate(w http.ResponseWriter, r *http.Request) {
 		scriptPath := filepath.Join(startDir, "update.sh")
 		var cmd *exec.Cmd
 		if _, err := os.Stat(scriptPath); err == nil {
-			cmd = exec.Command("bash", "-c", "nohup ./update.sh \"$UPDATE_VERSION\" > update.log 2>&1 &")
+			cmd = auth.SafeCommand("bash", "-c", "nohup ./update.sh \"$UPDATE_VERSION\" > update.log 2>&1 &")
 		} else {
-			cmd = exec.Command("bash", "-c", "nohup bash -c 'set -e; installer_tmp=\"${TMPDIR:-/tmp}/mobile-agy-install.sh\"; curl -H \"Cache-Control: no-cache\" -fsSL https://raw.githubusercontent.com/gilangji/agy-mobile/main/install.sh -o \"$installer_tmp\"; env VERSION=\"$UPDATE_VERSION\" bash \"$installer_tmp\"' > update.log 2>&1 &")
+			cmd = auth.SafeCommand("bash", "-c", "nohup bash -c 'set -e; installer_tmp=\"${TMPDIR:-/tmp}/mobile-agy-install.sh\"; curl -H \"Cache-Control: no-cache\" -fsSL https://raw.githubusercontent.com/gilangji/agy-mobile/main/install.sh -o \"$installer_tmp\"; env VERSION=\"$UPDATE_VERSION\" bash \"$installer_tmp\"' > update.log 2>&1 &")
 		}
 		cmd.Dir = startDir
 		cmd.Env = append(os.Environ(), "UPDATE_VERSION="+version)

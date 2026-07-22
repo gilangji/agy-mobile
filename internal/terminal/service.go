@@ -55,14 +55,14 @@ func (s *Service) StartSession(workspaceDir string) error {
 	var cmd *exec.Cmd
 	if runtime.GOOS == "windows" {
 		if _, err := auth.SafeLookPath("bash"); err == nil {
-			cmd = exec.Command("bash", "-i")
+			cmd = auth.SafeCommand("bash", "-i")
 		} else if _, err := auth.SafeLookPath("powershell"); err == nil {
-			cmd = exec.Command("powershell")
+			cmd = auth.SafeCommand("powershell")
 		} else {
-			cmd = exec.Command("cmd")
+			cmd = auth.SafeCommand("cmd")
 		}
 	} else {
-		cmd = exec.Command("bash", "-i")
+		cmd = auth.SafeCommand("bash", "-i")
 	}
 
 	cmd.Dir = workspaceDir
@@ -190,14 +190,14 @@ func (s *Service) StartCommand(ctx context.Context, command string, activeWorksp
 	var cmd *exec.Cmd
 	if runtime.GOOS == "windows" {
 		if _, err := auth.SafeLookPath("bash"); err == nil {
-			cmd = exec.Command("bash", "-c", command)
+			cmd = auth.SafeCommand("bash", "-c", command)
 		} else if _, err := auth.SafeLookPath("powershell"); err == nil {
-			cmd = exec.Command("powershell", "-Command", command)
+			cmd = auth.SafeCommand("powershell", "-Command", command)
 		} else {
-			cmd = exec.Command("cmd", "/c", command)
+			cmd = auth.SafeCommand("cmd", "/c", command)
 		}
 	} else {
-		cmd = exec.Command("bash", "-c", command)
+		cmd = auth.SafeCommand("bash", "-c", command)
 	}
 
 	cmd.Dir = activeWorkspaceDir
@@ -415,17 +415,17 @@ func (s *Service) GetModelsList() ([]string, error) {
 		}
 
 		if useDirect {
-			cmdDirect := exec.Command(agyPath, "models")
+			cmdDirect := auth.SafeCommand(agyPath, "models")
 			cmdDirect.Env = os.Environ()
 			outputBytes, err = cmdDirect.Output()
 		} else {
 			cmdStr := fmt.Sprintf("%s models", agyPath)
-			cmd := exec.Command("script", "-q", "-f", "-c", cmdStr, "/dev/null")
+			cmd := auth.SafeCommand("script", "-q", "-f", "-c", cmdStr, "/dev/null")
 			cmd.Env = os.Environ()
 			outputBytes, err = cmd.Output()
 
 			if err != nil {
-				cmdDirect := exec.Command(agyPath, "models")
+				cmdDirect := auth.SafeCommand(agyPath, "models")
 				cmdDirect.Env = os.Environ()
 				outputBytes, err = cmdDirect.Output()
 			}

@@ -2,6 +2,7 @@ package auth
 
 import (
 	"bytes"
+	"context"
 	"crypto/rand"
 	"encoding/json"
 	"fmt"
@@ -175,6 +176,22 @@ func SafeLookPath(file string) (string, error) {
 	return "", os.ErrNotExist
 }
 
+// SafeCommand creates an exec.Cmd after resolving the executable path using SafeLookPath to bypass faccessat2 seccomp restrictions on Android Termux
+func SafeCommand(name string, arg ...string) *exec.Cmd {
+	if resolved, err := SafeLookPath(name); err == nil && resolved != "" {
+		name = resolved
+	}
+	return exec.Command(name, arg...)
+}
+
+// SafeCommandContext creates an exec.Cmd with context after resolving the executable path using SafeLookPath
+func SafeCommandContext(ctx context.Context, name string, arg ...string) *exec.Cmd {
+	if resolved, err := SafeLookPath(name); err == nil && resolved != "" {
+		name = resolved
+	}
+	return exec.CommandContext(ctx, name, arg...)
+}
+
 func FindAgyPath() string {
 	if p := os.Getenv("AGY_PATH"); p != "" {
 		return p
@@ -297,10 +314,10 @@ func (s *Service) StartGoogleAuth(activeWorkspaceDir string) (string, error) {
 	}
 
 	if useDirect {
-		cmd = exec.Command(agyPath, "--print", "hello", "--dangerously-skip-permissions")
+		cmd = SafeCommand(agyPath, "--print", "hello", "--dangerously-skip-permissions")
 	} else {
 		cmdStr := fmt.Sprintf("%s --print hello --dangerously-skip-permissions", agyPath)
-		cmd = exec.Command("script", "-q", "-f", "-c", cmdStr, "/dev/null")
+		cmd = SafeCommand("script", "-q", "-f", "-c", cmdStr, "/dev/null")
 	}
 	cmd.Dir = activeWorkspaceDir
 	cmd.Env = append(os.Environ(), "DISPLAY=", "BROWSER=false")

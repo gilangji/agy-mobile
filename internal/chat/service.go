@@ -370,7 +370,7 @@ func (s *Service) StartChat(ctx context.Context, req ChatRequest, activeWorkspac
 	// when request context is cancelled (due to HTTP timeout or tab sleep).
 	cmdCtx, cmdCancel := context.WithTimeout(context.Background(), 1*time.Hour)
 
-	cmd := exec.CommandContext(cmdCtx, auth.FindAgyPath(), args...)
+	cmd := auth.SafeCommandContext(cmdCtx, auth.FindAgyPath(), args...)
 	cmd.Dir = activeWorkspaceDir
 	cmd.Env = os.Environ()
 
@@ -937,14 +937,14 @@ func (s *Service) executeOpenAITool(ctx context.Context, activeWorkspaceDir stri
 		var cmd *exec.Cmd
 		if runtime.GOOS == "windows" {
 			if _, err := auth.SafeLookPath("bash"); err == nil {
-				cmd = exec.CommandContext(cmdCtx, "bash", "-c", command)
+				cmd = auth.SafeCommandContext(cmdCtx, "bash", "-c", command)
 			} else if _, err := auth.SafeLookPath("powershell"); err == nil {
-				cmd = exec.CommandContext(cmdCtx, "powershell", "-Command", command)
+				cmd = auth.SafeCommandContext(cmdCtx, "powershell", "-Command", command)
 			} else {
-				cmd = exec.CommandContext(cmdCtx, "cmd", "/c", command)
+				cmd = auth.SafeCommandContext(cmdCtx, "cmd", "/c", command)
 			}
 		} else {
-			cmd = exec.CommandContext(cmdCtx, "bash", "-c", command)
+			cmd = auth.SafeCommandContext(cmdCtx, "bash", "-c", command)
 		}
 		cmd.Dir = activeWorkspaceDir
 		cmd.Env = os.Environ()
