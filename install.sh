@@ -18,7 +18,7 @@ resolve_latest_version() {
         printf '%s\n' "$tags" | head -n 1
         return
     fi
-    echo "v1.5.9"
+    echo "v1.1.0"
 }
 
 REQUESTED_VERSION="${1:-${VERSION:-}}"
@@ -30,7 +30,7 @@ fi
 
 # Tampilan header
 echo "================================================="
-echo "        Mobile IDE One-Line Installer           "
+echo "       AGY Mobile IDE Pro - One-Line Installer  "
 echo "================================================="
 echo "Versi target: $VERSION"
 echo "Mulai mengunduh biner pra-kompilasi dari GitHub..."
@@ -423,7 +423,7 @@ else
     fi
 
     # Generate kata sandi keamanan acak (12 karakter)
-    GEN_PASSWORD=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 12 2>/dev/null || echo "AgyPass123")
+    GEN_PASSWORD=$(LC_ALL=C tr -dc A-Za-z0-9 </dev/urandom | head -c 12 2>/dev/null || echo "AgyPass123")
 fi
 
 # Dapatkan alamat DBUS dari sesi atau socket default

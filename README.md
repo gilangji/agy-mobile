@@ -1,10 +1,15 @@
-# Antigravity Mobile IDE & Assistant
+# AGY Mobile IDE Pro - Workstation AI Portabel
 
-Aplikasi **Mobile IDE** yang ringan dan modern untuk koding melalui HP Android/iOS menggunakan teknologi **Antigravity AI**.
+Aplikasi **AGY Mobile IDE Pro** yang ringan, ultra-cepat, dan modern untuk koding melalui HP Android/iOS dan Desktop menggunakan teknologi **Google Antigravity AI** & Provider AI Kompatibel OpenAI.
 
 > [!NOTE]
-> **Kredit & Atribusi Kode Sumber**:
-> Proyek ini dikembangkan berbasis kode sumber (*source code*) asli dari repositori **[sodikinnaa/go-agy-ide](https://github.com/sodikinnaa/go-agy-ide)** dan telah dikembangkan lebih lanjut dengan peningkatan fitur serta lokalisasi 100% Bahasa Indonesia.
+> **Kredit & Atribusi**:
+> Proyek **AGY Mobile IDE Pro** versi ini dikembangkan dan dikelola oleh **Gilangji** berbasis fondasi kode sumber asli dari repositori **[sodikinnaa/go-agy-ide](https://github.com/sodikinnaa/go-agy-ide)** dengan peningkatan besar meliputi:
+> - **100% Lokalisasi Bahasa Indonesia Baku** di seluruh antarmuka & log.
+> - **Bypass Syscall `faccessat2` (`SafeLookPath`)**: 100% bebas dari crash `SIGSYS bad system call` pada Termux Android.
+> - **Toolbar AI Quick Actions**: Fitur sekali klik *Jelaskan Kode*, *Fix Bug*, *Unit Test*, dan *Optimasi Kode*.
+> - **Pintasan Cepat Terminal**: Tombol pintasan dev sekali sentuh (`git status`, `go build`, `agy-mobile status`, `log`, `update`).
+> - **Global 401 Fetch Interceptor**: Otomatis mengarahkan ke halaman login kata sandi jika sesi habis.
 
 ## 📱 Tampilan Mobile (Screenshots)
 
@@ -20,12 +25,14 @@ Berikut adalah galeri tampilan antarmuka Mobile IDE pada perangkat seluler (HP A
 
 ---
 
-## Fitur Utama
+## Fitur Utama Pro Edition
+- **Toolbar AI Quick Actions**: Sekali klik untuk meminta AI *Jelaskan Kode*, *Perbaiki Error*, *Buat Unit Test*, atau *Optimasi Kode*.
+- **SafeLookPath Termux Engine**: Bebas dari pembatasan seccomp kernel Android, menjamin kestabilan server 100% tanpa crash `SIGSYS`.
 - **Touch-Friendly File Explorer**: Menu file dan folder yang mudah di-swipe dan diklik di layar HP.
-- **Mobile Code Editor**: Menggunakan CodeMirror dengan tema Dracula dan dukungan syntax highlighting (Go, Python, JS, HTML, CSS, XML, Markdown).
+- **Mobile Code Editor Pro**: Menggunakan CodeMirror dengan tema Dracula dan dukungan syntax highlighting (Go, Python, JS, HTML, CSS, XML, Markdown).
 - **Mobile Keyboard Shortcut Helper**: Tombol cepat di atas keyboard HP untuk mengetik karakter pemrograman (`{`, `}`, `[`, `]`, `;`, `=`, `>`, `<`, `_`, `-`, `$`, `/`, `\`, `|`).
-- **Interactive Chat Assistant**: Obrolan real-time dengan Antigravity AI, lengkap dengan fitur **Copy** dan **Insert** kode ke editor dalam sekali klik.
-- **Terminal Runner**: Menjalankan perintah terminal bash langsung dari HP.
+- **Interactive Chat Assistant**: Obrolan real-time dengan Antigravity AI & Provider OpenAI, lengkap dengan fitur **Copy** dan **Insert** kode ke editor dalam sekali klik.
+- **Terminal Runner & Dev Shortcuts**: Menjalankan perintah terminal bash langsung dari HP dengan bilah tombol pintasan cepat (`git status`, `go build`).
 - **REST API Ready**: Seluruh fitur dapat diakses menggunakan perintah `curl` melalui Termux/Terminal.
 
 ---
