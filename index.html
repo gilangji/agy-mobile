@@ -3880,35 +3880,35 @@
                         const active = poolData.active || '';
                         
                         if (accounts.length > 0) {
-                        let html = '';
-                        accounts.forEach(acc => {
-                            const isActive = acc === active;
-                            const maskedAcc = maskEmail(acc);
-                            html += `
-                                <div class="flex items-center justify-between p-2 rounded-lg ${isActive ? 'bg-brand-600/20 border border-brand-accent/30' : 'bg-brand-dark/20 border border-brand-border/40'} text-[11px]">
-                                    <div class="flex items-center space-x-1.5 truncate max-w-[200px]">
-                                        <div class="w-1.5 h-1.5 rounded-full ${isActive ? 'bg-green-500' : 'bg-slate-500'}"></div>
-                                        <span class="font-mono text-slate-200 truncate ${isActive ? 'font-bold' : ''}" title="${escapeHtml(maskedAcc)}">${escapeHtml(maskedAcc)}</span>
-                                    </div>
-                                    <div class="flex items-center space-x-1">
-                                        ${!isActive ? `
-                                            <button onclick="switchAccount('${escapeHtml(acc)}')" class="py-0.5 px-2 bg-brand-panel border border-brand-border hover:bg-brand-border text-slate-200 rounded text-[9px] font-semibold transition">
-                                                Switch
+                            let html = '';
+                            accounts.forEach(acc => {
+                                const isActive = acc === active;
+                                const maskedAcc = maskEmail(acc);
+                                html += `
+                                    <div class="flex items-center justify-between p-2 rounded-lg ${isActive ? 'bg-brand-600/20 border border-brand-accent/30' : 'bg-brand-dark/20 border border-brand-border/40'} text-[11px]">
+                                        <div class="flex items-center space-x-1.5 truncate max-w-[200px]">
+                                            <div class="w-1.5 h-1.5 rounded-full ${isActive ? 'bg-green-500' : 'bg-slate-500'}"></div>
+                                            <span class="font-mono text-slate-200 truncate ${isActive ? 'font-bold' : ''}" title="${escapeHtml(maskedAcc)}">${escapeHtml(maskedAcc)}</span>
+                                        </div>
+                                        <div class="flex items-center space-x-1">
+                                            ${!isActive ? `
+                                                <button onclick="switchAccount('${escapeHtml(acc)}')" class="py-0.5 px-2 bg-brand-panel border border-brand-border hover:bg-brand-border text-slate-200 rounded text-[9px] font-semibold transition">
+                                                    Switch
+                                                </button>
+                                            ` : `
+                                                <span class="text-[9px] text-green-400 font-bold px-2">Aktif</span>
+                                            `}
+                                            <button onclick="deleteAccount('${escapeHtml(acc)}')" class="p-1 hover:text-red-400 text-slate-400 transition" title="Hapus Akun">
+                                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                                             </button>
-                                        ` : `
-                                            <span class="text-[9px] text-green-400 font-bold px-2">Aktif</span>
-                                        `}
-                                        <button onclick="deleteAccount('${escapeHtml(acc)}')" class="p-1 hover:text-red-400 text-slate-400 transition" title="Hapus Akun">
-                                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                                        </button>
+                                        </div>
                                     </div>
-                                </div>
-                            `;
-                        });
-                        poolList.innerHTML = html;
-                    } else {
-                        poolContainer.classList.remove('hidden');
-                        poolList.innerHTML = '<div class="text-slate-500 py-1 text-center italic text-[10px]">Belum ada akun lain di pool.</div>';
+                                `;
+                            });
+                            poolList.innerHTML = html;
+                        } else {
+                            poolList.innerHTML = '<div class="text-slate-500 py-1 text-center italic text-[10px]">Belum ada akun lain di pool.</div>';
+                        }
                     }
                 }
             } catch (err) {
