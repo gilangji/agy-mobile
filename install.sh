@@ -38,6 +38,11 @@ echo "Mulai mengunduh biner pra-kompilasi dari GitHub..."
 # 1. Deteksi OS dan Arsitektur CPU
 OS="$(uname -s | tr '[:upper:]' '[:lower:]')"
 ARCH="$(uname -m)"
+
+# Menginstal ca-certificates otomatis di Termux jika belum ada
+if command -v pkg &>/dev/null; then
+    pkg install -y ca-certificates 2>/dev/null || true
+fi
 BINARY_NAME="mobile-agy"
 
 mobile_agy_pids() {

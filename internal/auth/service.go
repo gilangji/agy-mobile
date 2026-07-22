@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"crypto/rand"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -27,6 +28,7 @@ type Service struct {
 	secretPassword         string
 	passwordSessionToken   string
 	bypassDynamicAuthCheck bool
+	isAuthFlowInProgress   bool
 
 	// Google OAuth process variables
 	activeAuthCmd   *exec.Cmd
@@ -267,6 +269,13 @@ func (s *Service) CheckOAuthTokenExists() bool {
 }
 
 func (s *Service) EnsureActiveAccountFromPool() bool {
+	s.mu.RLock()
+	inProgress := s.isAuthFlowInProgress
+	s.mu.RUnlock()
+	if inProgress {
+		return false
+	}
+
 	homeDir, err := getHomeDir()
 	tokenPath := ""
 	if err == nil {
@@ -311,6 +320,7 @@ func (s *Service) EnsureActiveAccountFromPool() bool {
 
 func (s *Service) StartGoogleAuth(activeWorkspaceDir string) (string, error) {
 	s.mu.Lock()
+	s.isAuthFlowInProgress = true
 	locked := true
 	defer func() {
 		if locked {
@@ -500,6 +510,10 @@ func (s *Service) StartGoogleAuth(activeWorkspaceDir string) (string, error) {
 		time.Sleep(100 * time.Millisecond)
 	}
 
+	s.mu.Lock()
+	s.isAuthFlowInProgress = false
+	s.mu.Unlock()
+
 	// Restore keyring if timeout reached and URL not found
 	if backupErr == nil && backupVal != "" {
 		_ = keyring.Set("gemini", "antigravity", backupVal)
@@ -511,6 +525,7 @@ func (s *Service) StartGoogleAuth(activeWorkspaceDir string) (string, error) {
 
 func (s *Service) SubmitGoogleAuthCode(code string) error {
 	s.mu.Lock()
+	s.isAuthFlowInProgress = false
 	cmd := s.activeAuthCmd
 	stdin := s.activeAuthStdin
 	s.mu.Unlock()
@@ -765,19 +780,45 @@ func (s *Service) GetQuotaSummary() (*QuotaSummaryResponse, error) {
 		return nil, fmt.Errorf("user is not authenticated")
 	}
 
-	val, err := keyring.Get("gemini", "antigravity")
-	if err != nil {
-		// Fallback: read from file directly in headless environment
-		homeDir, pathErr := getHomeDir()
-		if pathErr == nil {
-			tokenPath := filepath.Join(homeDir, ".gemini", "antigravity-cli", "antigravity-oauth-token")
-			if fileData, fileErr := os.ReadFile(tokenPath); fileErr == nil {
-				val = string(fileData)
+	var val string
+
+	// 1. Coba baca dari file token terlebih dahulu (paling akurat di Termux)
+	homeDir, pathErr := getHomeDir()
+	if pathErr == nil {
+		tokenPath := filepath.Join(homeDir, ".gemini", "antigravity-cli", "antigravity-oauth-token")
+		if fileData, fileErr := os.ReadFile(tokenPath); fileErr == nil {
+			c := strings.TrimSpace(string(fileData))
+			if strings.HasPrefix(c, "{") {
+				val = c
 			}
 		}
-		if val == "" {
-			return nil, fmt.Errorf("failed to retrieve credentials from keyring: %w", err)
+	}
+
+	// 2. Coba baca dari keyring jika file belum valid
+	if val == "" {
+		if kVal, err := keyring.Get("gemini", "antigravity"); err == nil {
+			c := strings.TrimSpace(kVal)
+			if strings.HasPrefix(c, "{") {
+				val = c
+			}
 		}
+	}
+
+	// 3. Coba dari pool akun
+	if val == "" {
+		if pool, poolErr := s.LoadAccountsPool(); poolErr == nil {
+			for _, acc := range pool {
+				c := strings.TrimSpace(acc.KeyringValue)
+				if strings.HasPrefix(c, "{") {
+					val = c
+					break
+				}
+			}
+		}
+	}
+
+	if val == "" {
+		return nil, fmt.Errorf("gagal menemukan token OAuth JSON yang valid")
 	}
 
 	var kt struct {
@@ -799,10 +840,7 @@ func (s *Service) GetQuotaSummary() (*QuotaSummaryResponse, error) {
 	var resp *http.Response
 	var respBytes []byte
 
-	projectsToTry := []string{project}
-	if project != "" {
-		projectsToTry = append(projectsToTry, "")
-	}
+	projectsToTry := []string{project, "", "antigravity-cli"}
 
 	var lastErr error
 	for _, proj := range projectsToTry {
@@ -828,6 +866,7 @@ func (s *Service) GetQuotaSummary() (*QuotaSummaryResponse, error) {
 		}
 
 		transport := &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 			DialContext: func(ctx context.Context, network, addr string) (net.Conn, error) {
 				conn, err := dialer.DialContext(ctx, network, addr)
 				if err == nil {
@@ -861,9 +900,13 @@ func (s *Service) GetQuotaSummary() (*QuotaSummaryResponse, error) {
 				}
 
 				for _, ip := range ips {
-					c, e := dialer.DialContext(ctx, network, net.JoinHostPort(ip, port))
+					c, e := dialer.DialContext(ctx, "tcp4", net.JoinHostPort(ip, port))
 					if e == nil {
 						return c, nil
+					}
+					c2, e2 := dialer.DialContext(ctx, "tcp", net.JoinHostPort(ip, port))
+					if e2 == nil {
+						return c2, nil
 					}
 				}
 				return nil, err
