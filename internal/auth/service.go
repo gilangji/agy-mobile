@@ -180,6 +180,8 @@ func SafeLookPath(file string) (string, error) {
 func SafeCommand(name string, arg ...string) *exec.Cmd {
 	if resolved, err := SafeLookPath(name); err == nil && resolved != "" {
 		name = resolved
+	} else if !strings.Contains(name, "/") && !strings.Contains(name, `\`) {
+		name = "./" + name
 	}
 	return exec.Command(name, arg...)
 }
@@ -188,6 +190,8 @@ func SafeCommand(name string, arg ...string) *exec.Cmd {
 func SafeCommandContext(ctx context.Context, name string, arg ...string) *exec.Cmd {
 	if resolved, err := SafeLookPath(name); err == nil && resolved != "" {
 		name = resolved
+	} else if !strings.Contains(name, "/") && !strings.Contains(name, `\`) {
+		name = "./" + name
 	}
 	return exec.CommandContext(ctx, name, arg...)
 }
@@ -214,7 +218,7 @@ func FindAgyPath() string {
 		return p
 	}
 
-	return "agy"
+	return "./agy"
 }
 
 func (s *Service) CheckOAuthTokenExists() bool {
@@ -1114,7 +1118,7 @@ func (s *Service) SaveNewPassword(newPwd string) error {
 		}
 	} else {
 		// If .env doesn't exist, create it with the PASSWORD env
-		_ = os.WriteFile(envPath, []byte(fmt.Sprintf("PASSWORD=%q\n", newPwd)), 0600)
+		_ = os.WriteFile(envPath, fmt.Appendf(nil, "PASSWORD=%q\n", newPwd), 0600)
 	}
 
 	// Also make sure to update OS environment variable PASSWORD
