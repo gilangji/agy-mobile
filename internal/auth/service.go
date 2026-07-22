@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"net"
 	"net/http"
 	"os"
 	"os/exec"
@@ -821,7 +822,58 @@ func (s *Service) GetQuotaSummary() (*QuotaSummaryResponse, error) {
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("User-Agent", "antigravity/cli/1.2.3")
 
-		client := &http.Client{Timeout: 10 * time.Second}
+		dialer := &net.Dialer{
+			Timeout:   5 * time.Second,
+			KeepAlive: 30 * time.Second,
+		}
+
+		transport := &http.Transport{
+			DialContext: func(ctx context.Context, network, addr string) (net.Conn, error) {
+				conn, err := dialer.DialContext(ctx, network, addr)
+				if err == nil {
+					return conn, nil
+				}
+
+				host, port, splitErr := net.SplitHostPort(addr)
+				if splitErr != nil {
+					return nil, err
+				}
+
+				resolver := &net.Resolver{
+					PreferGo: true,
+					Dial: func(ctx context.Context, network, address string) (net.Conn, error) {
+						d := net.Dialer{Timeout: 3 * time.Second}
+						c, e := d.DialContext(ctx, "udp", "1.1.1.1:53")
+						if e == nil {
+							return c, nil
+						}
+						c2, e2 := d.DialContext(ctx, "udp", "8.8.8.8:53")
+						if e2 == nil {
+							return c2, nil
+						}
+						return d.DialContext(ctx, "udp", "8.8.4.4:53")
+					},
+				}
+
+				ips, lookupErr := resolver.LookupHost(ctx, host)
+				if lookupErr != nil || len(ips) == 0 {
+					return nil, err
+				}
+
+				for _, ip := range ips {
+					c, e := dialer.DialContext(ctx, network, net.JoinHostPort(ip, port))
+					if e == nil {
+						return c, nil
+					}
+				}
+				return nil, err
+			},
+		}
+
+		client := &http.Client{
+			Timeout:   10 * time.Second,
+			Transport: transport,
+		}
 		resp, err = client.Do(req)
 		if err != nil {
 			lastErr = err
