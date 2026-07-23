@@ -62,8 +62,12 @@ Dokumen ini berisi spesifikasi teknis dan panduan fitur **Astro Research Workben
   4. *Klaster 4 (Research Gap & Peluang Kebaruan)*: Pemetaan ruang kosong literatur dan peluang kebaruan (*novelty*) riset.
 - **Pencarian Dynamic Knowledge Map**: Pengguna dapat memasukkan kata kunci bidang riset kustom apa saja untuk membuat *Knowledge Graph* terstruktur secara real-time.
 
-### 5. 🤖 AI Asisten Riset (Prof. AI) & Unggah Dokumen Terlampir
-- **Asisten Pakar Riset Terdedikasi**: AI pakar riset terintegrasi untuk menjawab pertanyaan seputar bimbingan skripsi, metodologi riset, evaluasi Turnitin, dan penulisan naskah akademik.
+### 5. 🤖 AI Asisten Riset (Prof. AI) & Integrasi Antigravity Engine
+- **Asisten Pakar Riset Terintegrasi Realtime**: Terhubung 100% secara langsung dengan backend **Antigravity AI Engine (`/api/chat`)** untuk menghasilkan respon ilmiah yang nyata, dinamis, dan streaming token-by-token.
+- **Pemilih Model AI (Model Selector Dropdown)**: Pengguna dapat memilih model AI yang ingin digunakan secara langsung di dalam header Prof. AI (seperti *Gemini 3.5 Flash*, *Gemini 3.5 Pro*, *Claude 3.5 Sonnet*, *GPT-4o*).
+- **Penyimpanan & Penghapusan Riwayat Chat LocalServer**:
+  - Percakapan secara otomatis tersimpan di `localStorage` memori server lokal, sehingga riwayat chat tidak hilang saat halaman ditutup/di-refresh.
+  - **Tombol `[🗑️ Hapus Riwayat]`**: Menyediakan opsi satu-klik untuk membersihkan seluruh riwayat chat lokal kapan saja.
 - **Fitur Unggah Dokumen & Lampiran (Paperclip Attachment)**:
   - Mendukung pengunggahan berkas berformat **PDF (`.pdf`)**, **Microsoft Word (`.doc`, `.docx`)**, **Teks Polos (`.txt`)**, **Markdown (`.md`)**, **JSON (`.json`)**, dan **CSV (`.csv`)**.
   - **Pratinjau Badge Terlampir**: Menampilkan nama berkas dan ukuran file terlampir secara visual sebelum dikirim.
