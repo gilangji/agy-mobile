@@ -22,7 +22,7 @@ import (
 	"time"
 )
 
-const AppVersion = "v1.1.2"
+const AppVersion = "v1.3.0"
 
 var versionRegex = regexp.MustCompile(`v1\.\d+\.\d+`)
 

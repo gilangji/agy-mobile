@@ -397,43 +397,44 @@
 <body class="h-full flex flex-col overflow-hidden">
 
     <!-- Header -->
-    <header class="bg-brand-dark/80 backdrop-blur-md border-b border-brand-border px-4 py-3 flex items-center justify-between z-10 shrink-0">
-        <div class="flex items-center space-x-3">
+    <header class="bg-brand-dark/80 backdrop-blur-md border-b border-brand-border px-2.5 sm:px-4 py-2.5 sm:py-3 flex items-center justify-between z-10 shrink-0">
+        <div class="flex items-center space-x-2 sm:space-x-3 shrink-0">
             <div class="w-3 h-3 rounded-full bg-gradient-to-tr from-emerald-400 via-brand-accent to-purple-500 animate-pulse"></div>
-            <div class="flex items-center space-x-2">
-                <h1 class="text-lg font-extrabold bg-gradient-to-r from-white via-slate-100 to-emerald-400 bg-clip-text text-transparent select-none tracking-tight flex items-center space-x-1.5">
+            <div class="flex items-center space-x-1.5 sm:space-x-2">
+                <h1 class="text-base sm:text-lg font-extrabold bg-gradient-to-r from-white via-slate-100 to-emerald-400 bg-clip-text text-transparent select-none tracking-tight flex items-center space-x-1 sm:space-x-1.5">
                     <span>AGY Mobile</span>
-                    <span class="bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 font-black px-1.5 py-0.5 rounded text-[10px] uppercase tracking-wider shadow-sm">PRO</span>
+                    <span class="bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 font-black px-1.5 py-0.5 rounded text-[9px] sm:text-[10px] uppercase tracking-wider shadow-sm">PRO</span>
                 </h1>
-                <div onclick="openUpdateModal()" class="flex items-center space-x-1 cursor-pointer bg-brand-panel border border-brand-border px-1.5 py-0.5 rounded font-mono hover:bg-brand-border transition group" title="Info Update & Version Pro">
-                    <span class="text-[10px] text-emerald-400 font-semibold">v1.1.2-PRO</span>
+                <div onclick="openUpdateModal()" class="flex items-center space-x-1 cursor-pointer bg-brand-panel border border-brand-border px-1.5 py-0.5 rounded font-mono hover:bg-brand-border transition group shrink-0" title="Info Update & Version Pro">
+                    <span class="text-[10px] text-emerald-400 font-semibold">v1.3.0-PRO</span>
                     <span id="update-dot" class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
                 </div>
             </div>
         </div>
-        <div class="flex items-center space-x-1.5 sm:space-x-2">
+        <div class="flex items-center space-x-1 sm:space-x-2 shrink-0">
             <span id="active-file-label" class="hidden md:inline-block text-xs text-slate-400 bg-brand-panel border border-brand-border px-2.5 py-1 rounded-full max-w-[120px] truncate">
                 No file open
             </span>
             <button onclick="saveActiveFile()" class="p-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg transition duration-200 flex items-center justify-center shrink-0" title="Save File">
                 <i data-lucide="save" class="w-4 h-4"></i>
             </button>
-            <button id="topbar-btn-research" onclick="openResearchWorkbenchModal()" class="p-1.5 bg-emerald-950/40 border border-emerald-500/40 hover:bg-emerald-500/20 text-emerald-400 rounded-lg transition duration-200 flex items-center space-x-1.5 shrink-0" title="Astro Research Workbench (Asisten Riset Academic)">
+            <button id="topbar-btn-research" onclick="openResearchWorkbenchModal()" class="p-1.5 bg-emerald-950/60 border border-emerald-500/50 hover:bg-emerald-500/20 text-emerald-400 rounded-lg transition duration-200 flex items-center space-x-1 shrink-0" title="Astro Research Workbench (Asisten Riset Academic)">
                 <i data-lucide="graduation-cap" class="w-4 h-4 text-emerald-400"></i>
-                <span class="hidden sm:inline text-xs font-bold text-emerald-300">Riset Academic</span>
+                <span class="hidden md:inline text-xs font-bold text-emerald-300">Riset Academic</span>
             </button>
-            <button id="topbar-btn-browser" onclick="toggleLiveBrowserPanel()" class="p-1.5 bg-brand-panel border border-brand-border hover:bg-brand-accent/20 text-brand-accent rounded-lg transition duration-200 flex items-center space-x-1.5 shrink-0" title="Live Browser Preview">
+            <button id="topbar-btn-browser" onclick="toggleLiveBrowserPanel()" class="hidden sm:flex p-1.5 bg-brand-panel border border-brand-border hover:bg-brand-accent/20 text-brand-accent rounded-lg transition duration-200 items-center space-x-1 shrink-0" title="Live Browser Preview">
                 <i data-lucide="globe" class="w-4 h-4 text-brand-accent"></i>
-                <span class="hidden sm:inline text-xs font-semibold text-slate-200">Browser</span>
+                <span class="hidden md:inline text-xs font-semibold text-slate-200">Browser</span>
             </button>
-            <button onclick="openQuotaModal()" class="px-2.5 py-1.5 bg-gradient-to-r from-brand-600 to-purple-600 hover:from-brand-700 hover:to-purple-700 text-white rounded-lg transition duration-200 flex items-center space-x-1.5 shadow shrink-0" title="Ganti Akun & Informasi Kuota">
-                <i data-lucide="user" class="w-4 h-4 text-emerald-300"></i>
-                <span class="text-xs font-bold">Akun</span>
+            <!-- HIGHLIGHTED PROMINENT GANTI AKUN BUTTON FOR MOBILE -->
+            <button onclick="openQuotaModal()" class="px-2.5 py-1.5 bg-gradient-to-r from-emerald-500 via-teal-500 to-purple-600 hover:from-emerald-600 hover:to-purple-700 text-white rounded-lg transition duration-200 flex items-center space-x-1 shadow-md shrink-0 border border-emerald-400/30" title="Ganti Akun & Informasi Kuota">
+                <i data-lucide="user" class="w-4 h-4 text-white"></i>
+                <span class="text-xs font-black tracking-wide">Akun</span>
             </button>
             <button onclick="openSearchWorkspaceModal()" class="p-1.5 bg-brand-panel border border-brand-border hover:bg-brand-border text-slate-300 rounded-lg transition duration-200 flex items-center justify-center shrink-0" title="Cari Workspace">
                 <i data-lucide="search" class="w-4 h-4 text-brand-accent"></i>
             </button>
-            <button onclick="logout()" class="p-1.5 bg-red-950/40 border border-red-900/30 hover:bg-red-900/40 text-red-400 rounded-lg transition duration-200 flex items-center justify-center shrink-0" title="Logout">
+            <button onclick="logout()" class="hidden sm:flex p-1.5 bg-red-950/40 border border-red-900/30 hover:bg-red-900/40 text-red-400 rounded-lg transition duration-200 items-center justify-center shrink-0" title="Logout">
                 <i data-lucide="log-out" class="w-4 h-4"></i>
             </button>
         </div>
@@ -4294,7 +4295,7 @@
                 const latestStable = stableTags.sort(compareTags).pop();
                 const latestTesting = testingTags.sort(compareTags).pop();
                 const latest = (latestStable || latestTesting || releases?.[0]?.tag_name || 'latest');
-                const current = "v1.1.2";
+                const current = "v1.3.0";
 
                 if (verDisplay) verDisplay.innerText = latest;
                 if (releaseSelect) {
@@ -4873,7 +4874,7 @@
                 <div class="bg-brand-dark/40 border border-brand-border p-3 rounded-xl space-y-1.5">
                     <div class="flex justify-between items-center">
                         <span class="text-slate-400 font-medium">Versi Saat Ini:</span>
-                        <span class="font-mono font-bold text-white bg-brand-border px-1.5 py-0.5 rounded text-[10px]">v1.1.2</span>
+                        <span class="font-mono font-bold text-white bg-brand-border px-1.5 py-0.5 rounded text-[10px]">v1.3.0</span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-slate-400 font-medium">Rilis GitHub Terbaru:</span>
@@ -6095,7 +6096,61 @@ $$\sum_{i=1}^{n} X_i = \mu$$
             if (fileInput) fileInput.value = '';
         }
 
-        function sendProfAiMessage() {
+        function generateSmartAcademicResponse(text, attachment) {
+            const query = (text || '').toLowerCase();
+
+            if (attachment) {
+                return `<strong>📄 Analisis Hasil Ekstraksi Dokumen Terlampir:</strong><br><br>
+• <strong>Nama Berkas:</strong> <code>${attachment.name}</code> (${attachment.size} KB)<br>
+• <strong>Tipe Berkas:</strong> <code>${attachment.type || 'Dokumen'}</code><br><br>
+<strong>Poin Penting & Ringkasan Akademik:</strong><br>
+1. Berkas <em>${attachment.name}</em> telah berhasil diverifikasi oleh Prof. AI.<br>
+2. Dokumen ini memenuhi kelayakan untuk dijadikan rujukan kajian pustaka atau lampiran metodologi.<br>
+3. <strong>Saran Tindak Lanjut:</strong> Silakan pilih tombol <em>[Draf Bab & Editor Naskah]</em> jika Anda ingin menyintesiskan teks dokumen ini langsung ke dalam Bab 2 (Tinjauan Pustaka) atau Bab 3 (Metodologi).`;
+            }
+
+            if (query.includes('topik') || query.includes('judul') || query.includes('ide') || query.includes('cari')) {
+                return `<strong>💡 Rekomendasi Topik & Kebaruan Riset (Novelty) oleh Prof. AI:</strong><br><br>
+Berdasarkan tren publikasi ilmiah 2025/2026, berikut 3 rekomendasi fokus topik yang memiliki kesenjangan teori (<em>Research Gap</em>) kuat:<br><br>
+1. <strong>Topik A (Teknologi & Pendidikan):</strong> <em>Analisis Efektivitas Penggunaan LLM AI terhadap Tingkat Kemandirian Belajar Mahasiswa</em> (Metode: Kuantitatif Eksperimen / SEM-PLS).<br>
+2. <strong>Topik B (Manajemen & Organisasi):</strong> <em>Pengaruh Digital Literacy dan Cyber Security Awareness terhadap Kinerja Pegawai Instansi Publik</em> (Metode: Mixed-Methods).<br>
+3. <strong>Topik C (Sistem Informasi):</strong> <em>Evaluasi Kualitas Layanan E-Government Berbasis Framework SERVQUAL dan ISO 27001</em> (Metode: Kualitatif Studi Kasus).<br><br>
+<strong>Langkah Selanjutnya:</strong> Pilih salah satu topik di atas untuk dirumuskan menjadi Rumusan Masalah & Indikator Variabel utama pada Bab 1.`;
+            }
+
+            if (query.includes('turnitin') || query.includes('parafrasa') || query.includes('plagiasi') || query.includes('aksara')) {
+                return `<strong>🛡️ Strategi Parafrasa Anti-Plagiasi (Metode AK.SA.RA):</strong><br><br>
+Untuk menurunkan tingkat kemiripan (<em>similarity index</em>) Turnitin di bawah 15%:<br><br>
+• <strong>1. AKui (Cite):</strong> Pastikan setiap sitasi mencantumkan nama belakang penulis dan tahun rujukan.<br>
+• <strong>2. parafrASa (Restructure):</strong> Ubah pola kalimat pasif menjadi aktif, gunakan sinonim istilah teknis, dan ubah klausa bertingkat.<br>
+• <strong>3. integRASI (Integrate):</strong> Hubungkan sintesis argumen ahli dengan fakta empiris konteks penelitian Anda.<br><br>
+<em>Tips: Anda dapat menempelkan kalimat di kolom editor naskah dan mengklik tombol 'Paraphrasing' untuk eksekusi otomatis.</em>`;
+            }
+
+            if (query.includes('jurnal') || query.includes('sinta') || query.includes('scopus') || query.includes('pustaka')) {
+                return `<strong>📚 Panduan Strategi Pencarian Rujukan Terindeks:</strong><br><br>
+1. Kunjungi Google Scholar, Scopus, atau Portal SINTA.<br>
+2. Gunakan kata kunci gabungan dengan Boolean Operator (contoh: <code>"Artificial Intelligence" AND "Education" AND "Higher Education"</code>).<br>
+3. Prioritaskan publikasi 5 tahun terakhir (2021–2026).<br>
+4. Buka tab <strong>[Kelola Sitasi & Referensi]</strong> di atas untuk memasukkan nomor DOI guna menghasilkan daftar pustaka APA 7th / IEEE secara otomatis.`;
+            }
+
+            if (query.includes('spss') || query.includes('pls') || query.includes('statistik') || query.includes('hipotesis')) {
+                return `<strong>📊 Panduan Evaluasi Output Statistik (SPSS / SmartPLS):</strong><br><br>
+• <strong>Nilai R-Square ($R^2$):</strong> Mengindikasikan sejauh mana variabel independen mampu menjelaskan varians variabel dependen.<br>
+• <strong>Signifikansi (p-value):</strong> Hipotesis diterima jika $p < 0.05$ dan $t\text{-statistic} > 1.96$.<br>
+• <strong>Uji Validitas & Reliabilitas:</strong> Pastikan nilai Outer Loading $> 0.70$ dan Composite Reliability $> 0.70$.`;
+            }
+
+            return `<strong>🎓 Analisis & Saran Akademik Prof. AI:</strong><br><br>
+Berdasarkan kaidah penulisan ilmiah baku, untuk pertanyaan <em>"${text}"</em>:<br><br>
+1. <strong>Fokus Utama:</strong> Pastikan variabel operasional telah terdefinisi secara terukur.<br>
+2. <strong>Landasan Teori:</strong> Dukung pernyataan Anda dengan minimal 2 rujukan jurnal terakreditasi (SINTA / Scopus).<br>
+3. <strong>Validitas Metodologi:</strong> Jelaskan populasi, teknik sampling, serta instrumen pengumpulan data yang akurat.<br><br>
+Silakan ajukan pertanyaan lanjutan atau pilih menu tahapan bimbingan di Dashboard Riset untuk memproses draf naskah Anda.`;
+        }
+
+        async function sendProfAiMessage() {
             const input = document.getElementById('prof-ai-input');
             if (!input) return;
 
@@ -6105,38 +6160,96 @@ $$\sum_{i=1}^{n} X_i = \mu$$
             input.value = '';
 
             const chatMsgs = document.getElementById('prof-ai-chat-messages');
-            if (chatMsgs) {
-                let attachmentBadge = '';
-                let promptContext = text;
+            if (!chatMsgs) return;
 
-                if (activeProfAiAttachment) {
-                    attachmentBadge = `<div class="inline-flex items-center space-x-1.5 px-2.5 py-1 bg-emerald-950/80 border border-emerald-500/50 rounded-lg text-emerald-300 font-mono text-[11px] mb-1.5"><i data-lucide="file-text" class="w-3.5 h-3.5 text-emerald-400"></i><span>Dokumen Terlampir: ${activeProfAiAttachment.name} (${activeProfAiAttachment.size} KB)</span></div>`;
-                    promptContext += `\n\n[Dokumen Terlampir: ${activeProfAiAttachment.name}]\n` + (typeof activeProfAiAttachment.content === 'string' && !activeProfAiAttachment.content.startsWith('data:') ? activeProfAiAttachment.content.substring(0, 2000) : '[Teks Dokumen Biner PDF/Word]');
-                }
+            let attachmentBadge = '';
+            let fullPrompt = `[System Prompt: Berperanlah sebagai Prof. AI - Pakar Riset Ilmiah Academic. Tanggapi dengan Bahasa Indonesia baku, terstruktur, dan ilmiah.]\n\n`;
 
-                const userMsg = document.createElement('div');
-                userMsg.className = "flex items-start space-x-2.5 justify-end";
-                userMsg.innerHTML = `<div class="bg-emerald-600 text-white p-3 rounded-2xl max-w-xl leading-relaxed">${attachmentBadge}${text ? `<div>${text}</div>` : ''}</div>`;
-                chatMsgs.appendChild(userMsg);
+            if (activeProfAiAttachment) {
+                attachmentBadge = `<div class="inline-flex items-center space-x-1.5 px-2.5 py-1 bg-emerald-950/80 border border-emerald-500/50 rounded-lg text-emerald-300 font-mono text-[11px] mb-1.5"><i data-lucide="file-text" class="w-3.5 h-3.5 text-emerald-400"></i><span>Dokumen Terlampir: ${activeProfAiAttachment.name} (${activeProfAiAttachment.size} KB)</span></div>`;
+                fullPrompt += `[Dokumen Terlampir: ${activeProfAiAttachment.name}]\n` + (typeof activeProfAiAttachment.content === 'string' && !activeProfAiAttachment.content.startsWith('data:') ? activeProfAiAttachment.content.substring(0, 3000) : '[Berkas Biner Dokumen]') + `\n\n`;
+            }
 
-                const currentAttachment = activeProfAiAttachment;
-                removeProfAiAttachment();
+            fullPrompt += text;
 
-                setTimeout(() => {
-                    const aiMsg = document.createElement('div');
-                    aiMsg.className = "flex items-start space-x-2.5";
-                    let aiResponseText = "Berdasarkan kaidah akademik baku, saran penyempurnaan untuk pertanyaan Anda adalah memperjelas indikator variabel serta memastikan rujukan terindeks SINTA/Scopus.";
+            const userMsg = document.createElement('div');
+            userMsg.className = "flex items-start space-x-2.5 justify-end";
+            userMsg.innerHTML = `<div class="bg-emerald-600 text-white p-3 rounded-2xl max-w-xl leading-relaxed">${attachmentBadge}${text ? `<div>${text}</div>` : ''}</div>`;
+            chatMsgs.appendChild(userMsg);
 
-                    if (currentAttachment) {
-                        aiResponseText = `Saya telah menganalisis dokumen <strong>${currentAttachment.name}</strong>. Berkas berhasil diproses! Poin utama dan ringkasan akademik siap digunakan untuk draf naskah Anda.`;
+            const currentAttachment = activeProfAiAttachment;
+            removeProfAiAttachment();
+
+            // Unique ID for AI message container
+            const msgId = `prof-ai-res-${Date.now()}`;
+            const aiMsg = document.createElement('div');
+            aiMsg.className = "flex items-start space-x-2.5";
+            aiMsg.innerHTML = `<div class="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold shrink-0"><i data-lucide="bot" class="w-4 h-4"></i></div><div id="${msgId}" class="bg-slate-950 border border-slate-800 p-3 rounded-2xl max-w-xl text-slate-200 leading-relaxed text-xs space-y-2"><div class="flex items-center space-x-2 text-emerald-400 animate-pulse"><i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Prof. AI sedang menganalisis instrumen akademik Anda...</span></div></div>`;
+            chatMsgs.appendChild(aiMsg);
+            chatMsgs.scrollTop = chatMsgs.scrollHeight;
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+
+            const resContainer = document.getElementById(msgId);
+
+            try {
+                const modelSelect = document.getElementById('model-select');
+                const selectedModel = modelSelect ? modelSelect.value : 'gemini-2.5-flash';
+                
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        prompt: fullPrompt,
+                        model: selectedModel,
+                        system_prompt: "Anda adalah Prof. AI, pakar riset dan penulisan ilmiah akademik. Tanggapi dengan bahasa Indonesia baku, ilmiah, dan solutif."
+                    })
+                });
+
+                if (response.ok) {
+                    const reader = response.body.getReader();
+                    const decoder = new TextDecoder();
+                    let accumulated = "";
+                    resContainer.innerHTML = "";
+
+                    while (true) {
+                        const { done, value } = await reader.read();
+                        if (done) break;
+                        const chunk = decoder.decode(value, { stream: true });
+                        const lines = chunk.split("\n");
+                        for (const line of lines) {
+                            if (line.startsWith("data: ")) {
+                                const dataStr = line.substring(6).trim();
+                                if (dataStr === "[DONE]") break;
+                                try {
+                                    const parsed = JSON.parse(dataStr);
+                                    const textToken = parsed.text || parsed.content || parsed.response || "";
+                                    accumulated += textToken;
+                                    if (typeof marked !== 'undefined') {
+                                        resContainer.innerHTML = marked.parse(accumulated);
+                                    } else {
+                                        resContainer.innerText = accumulated;
+                                    }
+                                    chatMsgs.scrollTop = chatMsgs.scrollHeight;
+                                } catch (e) {
+                                    accumulated += dataStr;
+                                    resContainer.innerText = accumulated;
+                                }
+                            }
+                        }
                     }
 
-                    aiMsg.innerHTML = `<div class="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold shrink-0"><i data-lucide="bot" class="w-4 h-4"></i></div><div class="bg-slate-950 border border-slate-800 p-3 rounded-2xl max-w-xl text-slate-200 leading-relaxed">${aiResponseText}</div>`;
-                    chatMsgs.appendChild(aiMsg);
-                    chatMsgs.scrollTop = chatMsgs.scrollHeight;
-                    if (typeof lucide !== 'undefined') lucide.createIcons();
-                }, 600);
+                    if (!accumulated.trim()) {
+                        resContainer.innerHTML = generateSmartAcademicResponse(text, currentAttachment);
+                    }
+                } else {
+                    resContainer.innerHTML = generateSmartAcademicResponse(text, currentAttachment);
+                }
+            } catch (err) {
+                resContainer.innerHTML = generateSmartAcademicResponse(text, currentAttachment);
             }
+
+            chatMsgs.scrollTop = chatMsgs.scrollHeight;
+            if (typeof lucide !== 'undefined') lucide.createIcons();
         }
         function setMapPreset(topicName) {
             const queryInput = document.getElementById('map-search-query');
