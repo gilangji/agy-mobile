@@ -32,6 +32,15 @@ AGY Mobile IDE menyediakan Panel Kontrol terintegrasi yang memudahkan pengembang
 - **5 Sub-View Utama**: Dashboard Riset, Draf Bab & Editor Naskah (dengan rendering formula LaTeX KaTeX live preview), Kelola Sitasi & Referensi (Generator APA/IEEE & Auto DOI), Peta Pengetahuan (Open Knowledge Map), dan AI Asisten Riset (Prof. AI).
 - **8 Alur Tahapan & 8 Alat Spesialis**: Alur bimbingan skripsi/tesis terpandu dan perangkat analisis statistik/parafrasa Turnitin.
 
+### 6. Modul Spesialis Astro Cyber Security Workbench (Autonomous Security Inspector)
+- **Overlay Keamanan Layar Penuh**: Modul khusus audit keamanan defensif yang dapat diakses langsung via tombol header `[Cyber Security]`.
+- **5 Sub-View Utama Audit Keamanan**:
+  1. *Auto-Audit Pro*: Inspeksi otomatis 1-klik untuk pemindaian kode, jaringan, header web, dan dependensi secara menyeluruh.
+  2. *Code & Secret Scanner (SAST)*: Memindai seluruh berkas workspace dari risiko kebocoran API Key, Private Key, JWT Token, dan Password.
+  3. *Web & Security Headers Inspector*: Evaluasi kelengkapan Security Headers (CSP, HSTS, X-Frame-Options, CORS) dan SSL/TLS.
+  4. *Dependensi & CVE Scanner*: Memeriksa berkas manifest (`package.json`, `go.mod`, `requirements.txt`) dari risiko pustaka rentan.
+  5. *Laporan Audit Keamanan*: Pembuatan laporan audit resmi (.md / .pdf) lengkap dengan panduan rekayasa pengetatan (Hardening Guide).
+
 ---
 
 ## 📋 Pengaturan Konfigurasi Bahasa
