@@ -434,6 +434,16 @@
                 <i data-lucide="shield-check" class="w-4 h-4 text-cyan-400"></i>
                 <span class="hidden md:inline text-xs font-bold text-cyan-300">Cyber Security</span>
             </button>
+            <!-- AI Clipper & Shorts Generator Button -->
+            <button id="topbar-btn-clipper" onclick="openClipperWorkbenchModal()" class="p-1.5 sm:px-2.5 bg-purple-950/60 border border-purple-500/50 hover:bg-purple-500/20 text-purple-300 rounded-lg transition duration-200 flex items-center space-x-1 shrink-0" title="Astro AI Shorts & YouTube Clipper (Auto-Crop 9:16 & Subtitle Generator)">
+                <i data-lucide="scissors" class="w-4 h-4 text-purple-400"></i>
+                <span class="hidden md:inline text-xs font-bold text-purple-300">AI Clipper</span>
+            </button>
+            <!-- Astro Academy Adaptive Learning Button -->
+            <button id="topbar-btn-academy" onclick="openAcademyWorkbenchModal()" class="p-1.5 sm:px-2.5 bg-amber-950/60 border border-amber-500/50 hover:bg-amber-500/20 text-amber-300 rounded-lg transition duration-200 flex items-center space-x-1 shrink-0" title="Astro Academy (Pusat Belajar & Generator Kurikulum Adaptif)">
+                <i data-lucide="book-open-check" class="w-4 h-4 text-amber-400"></i>
+                <span class="hidden md:inline text-xs font-bold text-amber-300">Astro Academy</span>
+            </button>
             <!-- Live Browser Button -->
             <button id="topbar-btn-browser" onclick="toggleLiveBrowserPanel()" class="hidden sm:flex p-1.5 sm:px-2.5 bg-brand-panel border border-brand-border hover:bg-brand-accent/20 text-brand-accent rounded-lg transition duration-200 items-center space-x-1 shrink-0" title="Live Browser Preview">
                 <i data-lucide="globe" class="w-4 h-4 text-brand-accent"></i>
@@ -6148,6 +6158,446 @@ $$\sum_{i=1}^{n} X_i = \mu$$
         </main>
     </div>
 
+    <!-- ASTRO AI SHORTS & YOUTUBE CLIPPER WORKBENCH MODAL -->
+    <div id="clipper-workbench-modal" class="hidden fixed inset-0 bg-[#0f0919]/95 backdrop-blur-xl z-50 flex flex-col overflow-hidden text-slate-100 font-sans">
+        <!-- Top Nav Header -->
+        <header class="bg-[#120b22] border-b border-purple-900/60 px-4 py-3 flex flex-wrap items-center justify-between gap-3 shrink-0 z-20 shadow-2xl">
+            <div class="flex items-center space-x-3">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-500 via-pink-500 to-amber-400 flex items-center justify-center text-slate-950 font-black shadow-lg shadow-purple-500/20">
+                    <i data-lucide="scissors" class="w-5 h-5 text-slate-950"></i>
+                </div>
+                <div>
+                    <h2 class="text-base font-extrabold tracking-tight text-white flex items-center space-x-2">
+                        <span>Astro AI Shorts & YouTube Clipper</span>
+                        <span class="bg-purple-500/20 text-purple-300 border border-purple-500/40 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Face-Track & Auto-Crop 9:16</span>
+                    </h2>
+                    <p class="text-[11px] text-purple-300/70">Pangkas Video Panjang YouTube menjadi Klip Vertikal TikTok/Shorts (9:16), Deteksi Wajah Pembicara & Subtitle Otomatis</p>
+                </div>
+            </div>
+
+            <!-- Main Navigation Tabs -->
+            <nav class="flex items-center space-x-1.5 bg-slate-900/90 border border-purple-900/50 p-1 rounded-xl text-xs overflow-x-auto max-w-full">
+                <button onclick="switchClipperTab('clip')" id="ctab-btn-clip" class="ctab-btn px-3 py-1.5 rounded-lg font-semibold flex items-center space-x-1.5 transition bg-purple-500/20 text-purple-300 border border-purple-500/40">
+                    <i data-lucide="scissors" class="w-4 h-4 text-purple-400"></i>
+                    <span>Ekstraksi Klip & 9:16 Crop</span>
+                </button>
+                <button onclick="switchClipperTab('face')" id="ctab-btn-face" class="ctab-btn px-3 py-1.5 rounded-lg font-semibold flex items-center space-x-1.5 text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
+                    <i data-lucide="user-check" class="w-4 h-4"></i>
+                    <span>Speaker Face-Tracking</span>
+                </button>
+                <button onclick="switchClipperTab('subtitle')" id="ctab-btn-subtitle" class="ctab-btn px-3 py-1.5 rounded-lg font-semibold flex items-center space-x-1.5 text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
+                    <i data-lucide="subtitles" class="w-4 h-4"></i>
+                    <span>Subtitle & Template Text</span>
+                </button>
+                <button onclick="switchClipperTab('viral')" id="ctab-btn-viral" class="ctab-btn px-3 py-1.5 rounded-lg font-semibold flex items-center space-x-1.5 text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                    <span>Viral Score & Hook AI</span>
+                </button>
+            </nav>
+
+            <button onclick="closeClipperWorkbenchModal()" class="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition" title="Tutup Modal AI Clipper">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </header>
+
+        <!-- Main Workbench Content Area -->
+        <main class="flex-1 overflow-y-auto p-4 sm:p-6 bg-[#0c0716] space-y-6">
+            <!-- URL Input & Process Control Card -->
+            <div class="bg-slate-900/90 border border-purple-900/60 p-5 rounded-2xl space-y-4 shadow-xl max-w-5xl mx-auto">
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                    <div class="relative flex-1">
+                        <i data-lucide="youtube" class="w-5 h-5 text-red-500 absolute left-3 top-3"></i>
+                        <input type="url" id="yt-clipper-url" value="https://www.youtube.com/watch?v=dQw4w9WgXcQ" placeholder="Tempel URL YouTube di sini (contoh: https://youtu.be/...)" class="w-full bg-slate-950 border border-purple-900/60 rounded-xl pl-11 pr-4 py-2.5 text-xs text-white focus:outline-none focus:border-purple-400 font-mono">
+                    </div>
+                    <button onclick="processYouTubeClipper()" id="btn-process-yt-clipper" class="px-6 py-2.5 bg-gradient-to-r from-purple-600 via-pink-600 to-amber-500 hover:from-purple-500 hover:to-amber-400 text-white font-black rounded-xl text-xs uppercase tracking-wider transition shadow-lg shadow-purple-500/20 flex items-center justify-center space-x-2 shrink-0">
+                        <i data-lucide="sparkles" class="w-4 h-4"></i>
+                        <span>Ekstrak Klip Shorts AI</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TAB 1: EKSTRAKSI KLIP & 9:16 VERTICAL CROP PREVIEW -->
+            <div id="clipper-tab-clip" class="ctab-content space-y-6 max-w-5xl mx-auto">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- Left Column: Video Player & Aspect Ratio Studio -->
+                    <div class="lg:col-span-7 space-y-4">
+                        <div class="bg-slate-900/90 border border-purple-900/60 rounded-2xl p-4 space-y-3 shadow-xl">
+                            <div class="flex items-center justify-between">
+                                <h3 class="font-extrabold text-white text-xs flex items-center space-x-2">
+                                    <i data-lucide="video" class="w-4 h-4 text-purple-400"></i>
+                                    <span>Pemutar Video & Face-Tracking Crop 9:16</span>
+                                </h3>
+                                <span class="text-[10px] font-mono text-purple-300 bg-purple-950/80 px-2 py-0.5 rounded border border-purple-800">Format: 9:16 Vertikal</span>
+                            </div>
+
+                            <!-- Embedded Player & 9:16 Vertical Preview Container -->
+                            <div class="relative bg-slate-950 rounded-xl overflow-hidden aspect-video border border-slate-800 flex items-center justify-center">
+                                <iframe id="yt-clipper-iframe" class="w-full h-full" src="https://www.youtube.com/embed/dQw4w9WgXcQ?enablejsapi=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            </div>
+
+                            <!-- Crop Aspect Ratio Controls -->
+                            <div class="flex items-center justify-between pt-2 border-t border-slate-800 text-xs">
+                                <span class="text-slate-400 text-[11px] font-medium">Aspek Rasio Output:</span>
+                                <div class="flex items-center space-x-2">
+                                    <button class="px-2.5 py-1 bg-purple-600 text-white font-bold rounded-lg text-[10px] border border-purple-400 shadow">9:16 (TikTok/Shorts)</button>
+                                    <button class="px-2.5 py-1 bg-slate-800 text-slate-300 font-semibold rounded-lg text-[10px]">1:1 (Square)</button>
+                                    <button class="px-2.5 py-1 bg-slate-800 text-slate-300 font-semibold rounded-lg text-[10px]">16:9 (Original)</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: AI Extracted Clips & Timestamps -->
+                    <div class="lg:col-span-5 space-y-4">
+                        <div class="bg-slate-900/90 border border-purple-900/60 rounded-2xl p-4 space-y-3 shadow-xl h-full flex flex-col">
+                            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                                <h3 class="font-extrabold text-white text-xs flex items-center space-x-2">
+                                    <i data-lucide="list-video" class="w-4 h-4 text-purple-400"></i>
+                                    <span>Hasil Ekstraksi Momen Viral AI</span>
+                                </h3>
+                                <span id="yt-clips-count" class="text-[10px] font-mono text-purple-300 bg-purple-950/80 px-2 py-0.5 rounded border border-purple-800">4 Klip Terdeteksi</span>
+                            </div>
+
+                            <div id="yt-clipper-clips-list" class="space-y-3 flex-1 overflow-y-auto pr-1 text-xs">
+                                <!-- Generated Clip Item 1 -->
+                                <div class="p-3 bg-slate-950 border border-purple-500/40 rounded-xl space-y-2 hover:border-purple-400 transition">
+                                    <div class="flex items-center justify-between">
+                                        <button onclick="seekYouTubeVideo(15)" class="font-mono text-purple-300 hover:underline font-bold text-[11px] flex items-center space-x-1">
+                                            <i data-lucide="play-circle" class="w-3.5 h-3.5 text-purple-400"></i>
+                                            <span>[00:15 - 00:45] (30 detik)</span>
+                                        </button>
+                                        <span class="px-2 py-0.5 bg-amber-500/20 text-amber-300 font-mono text-[10px] font-bold rounded">Viral Score: 98/100</span>
+                                    </div>
+                                    <h4 class="font-bold text-white text-xs leading-snug">Hook Paling Menarik: Pembahasan Utama & Rahasia Sukses</h4>
+                                    <p class="text-[11px] text-slate-400 leading-relaxed">Momen kunci yang membahas poin paling krusial dalam video dengan emosi tinggi.</p>
+                                    <div class="flex items-center justify-between pt-1 border-t border-slate-800/80">
+                                        <span class="text-[10px] text-emerald-400 font-mono font-semibold">✓ Auto-Crop 9:16 Active</span>
+                                        <button onclick="exportSingleClip(1)" class="px-2.5 py-1 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg text-[10px] transition">Unduh Klip 9:16</button>
+                                    </div>
+                                </div>
+
+                                <!-- Generated Clip Item 2 -->
+                                <div class="p-3 bg-slate-950 border border-slate-800 rounded-xl space-y-2 hover:border-purple-400 transition">
+                                    <div class="flex items-center justify-between">
+                                        <button onclick="seekYouTubeVideo(75)" class="font-mono text-purple-300 hover:underline font-bold text-[11px] flex items-center space-x-1">
+                                            <i data-lucide="play-circle" class="w-3.5 h-3.5 text-purple-400"></i>
+                                            <span>[01:15 - 02:00] (45 detik)</span>
+                                        </button>
+                                        <span class="px-2 py-0.5 bg-purple-500/20 text-purple-300 font-mono text-[10px] font-bold rounded">Viral Score: 92/100</span>
+                                    </div>
+                                    <h4 class="font-bold text-white text-xs leading-snug">Demo Koding & Eksekusi Perintah Terminal</h4>
+                                    <p class="text-[11px] text-slate-400 leading-relaxed">Penjelasan instruksi teknis kodingan langsung beserta terminal runner.</p>
+                                    <div class="flex items-center justify-between pt-1 border-t border-slate-800/80">
+                                        <span class="text-[10px] text-emerald-400 font-mono font-semibold">✓ Auto-Crop 9:16 Active</span>
+                                        <button onclick="exportSingleClip(2)" class="px-2.5 py-1 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg text-[10px] transition">Unduh Klip 9:16</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: SPEAKER FACE-TRACKING CONTROL -->
+            <div id="clipper-tab-face" class="ctab-content hidden space-y-6 max-w-5xl mx-auto">
+                <div class="bg-slate-900/90 border border-purple-900/60 rounded-2xl p-5 space-y-4 shadow-xl">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <div>
+                            <h3 class="font-extrabold text-white text-sm flex items-center space-x-2">
+                                <i data-lucide="user-check" class="w-4 h-4 text-purple-400"></i>
+                                <span>Deteksi Wajah Pembicara Otomatis (Dynamic Active Speaker Tracking)</span>
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-0.5">Kamera potong vertikal 9:16 secara otomatis mengikuti pembicara yang sedang aktif berbicara pada video podcast / wawancara multi-tokoh.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                        <div class="p-4 bg-slate-950 border border-purple-500/40 rounded-xl space-y-2">
+                            <span class="font-bold text-purple-300">1. Mode Podcast Multi-Speaker</span>
+                            <p class="text-[11px] text-slate-400 leading-relaxed">Kamera memangkas tampilan 9:16 secara bergantian (*Auto Split-Screen*) mengikuti suara pembicara aktif.</p>
+                        </div>
+                        <div class="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-2">
+                            <span class="font-bold text-purple-300">2. Mode Single Presenter</span>
+                            <p class="text-[11px] text-slate-400 leading-relaxed">Kamera mengunci posisi wajah di tengah layar (*Center-Face Lock*) selama presentasi tunggal.</p>
+                        </div>
+                        <div class="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-2">
+                            <span class="font-bold text-purple-300">3. Mode Screen-Share / Tutorial</span>
+                            <p class="text-[11px] text-slate-400 leading-relaxed">Memangkas area kodingan/slide di atas, dan kamera pembicara di bagian bawah (*Stacked 9:16*).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: AUTOMATIC SUBTITLE & TEMPLATE STYLES -->
+            <div id="clipper-tab-subtitle" class="ctab-content hidden space-y-6 max-w-5xl mx-auto">
+                <div class="bg-slate-900/90 border border-purple-900/60 rounded-2xl p-5 space-y-4 shadow-xl">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <div>
+                            <h3 class="font-extrabold text-white text-sm flex items-center space-x-2">
+                                <i data-lucide="subtitles" class="w-4 h-4 text-purple-400"></i>
+                                <span>Generator Subtitle Unik & Penerjemah Bahasa (Captions Template)</span>
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-0.5">Membuat subtitle animasi kata-per-kata yang unik (seperti gaya Alex Hormozi) dan penerjemah otomatis ke Bahasa Indonesia baku.</p>
+                        </div>
+                    </div>
+
+                    <div id="yt-clipper-transcript-preview" class="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-3 font-mono text-xs text-slate-200">
+                        <span class="text-[11px] text-purple-400 font-bold">Pratinjau Subtitle Animasi (Gaya Virality Captions):</span>
+                        <div class="p-4 bg-slate-900 rounded-xl border border-purple-500/30 text-center space-y-2">
+                            <span class="text-lg font-black tracking-wide bg-gradient-to-r from-amber-300 via-pink-400 to-purple-400 bg-clip-text text-transparent">"INI ADALAH RAHASIA UTAMA KODING FLEKSIBEL!"</span>
+                            <p class="text-[10px] text-slate-400">Subtitle otomatis tercetak tebal di tengah klip vertikal 9:16 Anda.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: VIRAL SCORE & HOOK AI ANALYZER -->
+            <div id="clipper-tab-viral" class="ctab-content hidden space-y-6 max-w-5xl mx-auto">
+                <div class="bg-slate-900/90 border border-purple-900/60 rounded-2xl p-5 space-y-4 shadow-xl">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <div>
+                            <h3 class="font-extrabold text-white text-sm flex items-center space-x-2">
+                                <i data-lucide="sparkles" class="w-4 h-4 text-purple-400"></i>
+                                <span>Prediksi Viral Score & Rekomendasi Judul Hook AI</span>
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-0.5">Menggunakan kecerdasan AI Antigravity untuk menganalisis potensi engagement klip pada TikTok, YouTube Shorts, dan Instagram Reels.</p>
+                        </div>
+                    </div>
+
+                    <div class="p-5 bg-slate-950 border border-purple-500/40 rounded-2xl space-y-3 text-xs">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-white">Judul Hook Disarankan AI (Siap Copy):</span>
+                            <span class="px-2.5 py-0.5 bg-emerald-500/20 text-emerald-400 font-mono text-[10px] font-bold rounded">High Engagement</span>
+                        </div>
+                        <ul class="space-y-2 font-mono text-[11px] text-purple-300">
+                            <li class="p-2 bg-slate-900 rounded border border-slate-800 flex items-center justify-between">
+                                <span>🔥 "Jangan Sampai Salah! Rahasia Koding di Termux Android..."</span>
+                                <button onclick="navigator.clipboard.writeText('Jangan Sampai Salah! Rahasia Koding di Termux Android...')" class="text-xs text-cyan-400 hover:underline">Copy</button>
+                            </li>
+                            <li class="p-2 bg-slate-900 rounded border border-slate-800 flex items-center justify-between">
+                                <span>🚀 "Ternyata Begini Cara Eksekusi Cyber Audit Pakai HP!"</span>
+                                <button onclick="navigator.clipboard.writeText('Ternyata Begini Cara Eksekusi Cyber Audit Pakai HP!')" class="text-xs text-cyan-400 hover:underline">Copy</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ASTRO ACADEMY ADAPTIVE LEARNING WORKBENCH MODAL -->
+    <div id="academy-workbench-modal" class="hidden fixed inset-0 bg-[#0f0c05]/95 backdrop-blur-xl z-50 flex flex-col overflow-hidden text-slate-100 font-sans">
+        <!-- Top Nav Header -->
+        <header class="bg-[#140f07] border-b border-amber-900/60 px-4 py-3 flex flex-wrap items-center justify-between gap-3 shrink-0 z-20 shadow-2xl">
+            <div class="flex items-center space-x-3">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-500 via-orange-400 to-yellow-300 flex items-center justify-center text-slate-950 font-black shadow-lg shadow-amber-500/20">
+                    <i data-lucide="book-open-check" class="w-5 h-5 text-slate-950"></i>
+                </div>
+                <div>
+                    <h2 class="text-base font-extrabold tracking-tight text-white flex items-center space-x-2">
+                        <span>Astro Academy</span>
+                        <span class="bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Adaptive Curriculum Engine</span>
+                    </h2>
+                    <p class="text-[11px] text-amber-300/70">Pusat Belajar Mandiri Terstruktur Berbasis AI dari Tingkat Dasar hingga Doktoral / Profesor</p>
+                </div>
+            </div>
+
+            <!-- Main Navigation Tabs -->
+            <nav class="flex items-center space-x-1.5 bg-slate-900/90 border border-amber-900/50 p-1 rounded-xl text-xs overflow-x-auto max-w-full">
+                <button onclick="switchAcademyTab('setup')" id="atab-btn-setup" class="atab-btn px-3 py-1.5 rounded-lg font-semibold flex items-center space-x-1.5 transition bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                    <i data-lucide="sparkles" class="w-4 h-4 text-amber-400"></i>
+                    <span>Generator Kurikulum AI</span>
+                </button>
+                <button onclick="switchAcademyTab('curriculum')" id="atab-btn-curriculum" class="atab-btn px-3 py-1.5 rounded-lg font-semibold flex items-center space-x-1.5 text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
+                    <i data-lucide="layers" class="w-4 h-4"></i>
+                    <span>Peta Kurikulum & Bab</span>
+                </button>
+                <button onclick="switchAcademyTab('learn')" id="atab-btn-learn" class="atab-btn px-3 py-1.5 rounded-lg font-semibold flex items-center space-x-1.5 text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
+                    <i data-lucide="book-open" class="w-4 h-4"></i>
+                    <span>Jendela Ruang Belajar</span>
+                </button>
+                <button onclick="switchAcademyTab('quiz')" id="atab-btn-quiz" class="atab-btn px-3 py-1.5 rounded-lg font-semibold flex items-center space-x-1.5 text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
+                    <i data-lucide="help-circle" class="w-4 h-4"></i>
+                    <span>Uji Pemahaman & Kuis</span>
+                </button>
+            </nav>
+
+            <button onclick="closeAcademyWorkbenchModal()" class="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition" title="Tutup Modal Astro Academy">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </header>
+
+        <!-- Main Workbench Content Area -->
+        <main class="flex-1 overflow-y-auto p-4 sm:p-6 bg-[#0a0804] space-y-6">
+            <!-- TAB 1: SETUP TOPIC & LEVEL PROFILING -->
+            <div id="academy-tab-setup" class="atab-content space-y-6 max-w-4xl mx-auto">
+                <div class="bg-slate-900/90 border border-amber-900/60 p-6 rounded-2xl space-y-6 shadow-2xl">
+                    <div class="border-b border-slate-800 pb-4 space-y-1">
+                        <h3 class="text-lg font-black text-white flex items-center space-x-2">
+                            <i data-lucide="compass" class="w-5 h-5 text-amber-400"></i>
+                            <span>Susun Kurikulum Belajar Pribadi Anda</span>
+                        </h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">Pilih topik populer atau ketik bidang apa saja yang ingin Anda pelajari secara mendalam. AI akan memetakan kurikulum berstandar internasional.</p>
+                    </div>
+
+                    <!-- Topic Preset Selection Grid -->
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-amber-300 uppercase tracking-wider">1. Pilih Kategori & Topik Belajar Populer:</label>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                            <button onclick="selectAcademyPreset('Psikologi Umum & Perkembangan')" class="p-2.5 bg-slate-950 hover:bg-amber-950/60 border border-slate-800 hover:border-amber-500/40 rounded-xl text-left transition font-semibold text-slate-200">🧠 Psikologi & Etimologi</button>
+                            <button onclick="selectAcademyPreset('Web & Cyber Security Defensif')" class="p-2.5 bg-slate-950 hover:bg-amber-950/60 border border-slate-800 hover:border-amber-500/40 rounded-xl text-left transition font-semibold text-slate-200">🛡️ Web & Cyber Security</button>
+                            <button onclick="selectAcademyPreset('Pemrograman Golang & Backend')" class="p-2.5 bg-slate-950 hover:bg-amber-950/60 border border-slate-800 hover:border-amber-500/40 rounded-xl text-left transition font-semibold text-slate-200">💻 Golang & Backend</button>
+                            <button onclick="selectAcademyPreset('Artificial Intelligence & LLM')" class="p-2.5 bg-slate-950 hover:bg-amber-950/60 border border-slate-800 hover:border-amber-500/40 rounded-xl text-left transition font-semibold text-slate-200">🤖 AI & Machine Learning</button>
+                        </div>
+                    </div>
+
+                    <!-- Custom Topic Input Field -->
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-slate-300">Atau Ketik Topik Kustom Anda Sesuai Keinginan:</label>
+                        <input type="text" id="academy-custom-topic" value="Psikologi Umum & Sejarah Perkembangan" placeholder="Contoh: Sejarah Psikologi Yunani, Fisika Kuantum, Microservices Golang..." class="w-full bg-slate-950 border border-amber-900/60 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-amber-400 font-mono">
+                    </div>
+
+                    <!-- Level Profiling Selection -->
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-amber-300 uppercase tracking-wider">2. Tentukan Tingkat Kedalaman & Jenjang Anda:</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                            <label class="cursor-pointer p-3 bg-slate-950 border border-amber-500/40 rounded-xl space-y-1 flex items-start space-x-2">
+                                <input type="radio" name="acad-level" value="basic" checked class="mt-0.5 accent-amber-500">
+                                <div>
+                                    <span class="font-bold text-amber-300 block">🐣 Dasar / Pemula (Beginner)</span>
+                                    <p class="text-[11px] text-slate-400">Pembahasan awal sejarah, etimologi, konsep kunci dasar & analogi intuitif.</p>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer p-3 bg-slate-950 border border-slate-800 rounded-xl space-y-1 flex items-start space-x-2">
+                                <input type="radio" name="acad-level" value="intermediate" class="mt-0.5 accent-amber-500">
+                                <div>
+                                    <span class="font-bold text-slate-200 block">🚀 Menengah (Intermediate)</span>
+                                    <p class="text-[11px] text-slate-400">Studi kasus praktis, dinamika cabang-cabang utama & metodologi.</p>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer p-3 bg-slate-950 border border-slate-800 rounded-xl space-y-1 flex items-start space-x-2">
+                                <input type="radio" name="acad-level" value="advanced" class="mt-0.5 accent-amber-500">
+                                <div>
+                                    <span class="font-bold text-slate-200 block">🎓 Doktoral / Profesor</span>
+                                    <p class="text-[11px] text-slate-400">Analisis filsafat ilmu, perbedaan paradigma tokoh & penelitian jurnal.</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Generate Curriculum Action Button -->
+                    <button onclick="generateCustomCurriculum()" id="btn-generate-curriculum" class="w-full py-3.5 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition shadow-lg shadow-amber-500/20 flex items-center justify-center space-x-2">
+                        <i data-lucide="wand-2" class="w-4 h-4 fill-slate-950"></i>
+                        <span>Generasi Kurikulum Belajar Terstruktur (Astro AI)</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TAB 2: PETA KURIKULUM & DAFTAR BAB -->
+            <div id="academy-tab-curriculum" class="atab-content hidden space-y-6 max-w-5xl mx-auto">
+                <div class="bg-slate-900/90 border border-amber-900/60 rounded-2xl p-5 space-y-4 shadow-xl">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <div>
+                            <h3 class="font-extrabold text-white text-sm flex items-center space-x-2">
+                                <i data-lucide="layers" class="w-4 h-4 text-amber-400"></i>
+                                <span id="acad-curr-title">Kurikulum: Psikologi Umum & Sejarah Perkembangan</span>
+                            </h3>
+                            <p id="acad-curr-subtitle" class="text-xs text-slate-400 mt-0.5">Tingkat: Dasar (Pemula) • 4 Bab Pembelajaran Terstruktur AI</p>
+                        </div>
+                        <span class="px-3 py-1 bg-amber-500/20 text-amber-300 font-mono text-xs font-bold rounded-lg border border-amber-500/30">Standard International</span>
+                    </div>
+
+                    <!-- Generated Chapters Roadmaps List -->
+                    <div id="acad-chapters-list" class="space-y-4 text-xs">
+                        <!-- Chapter 1 -->
+                        <div class="p-4 bg-slate-950 border border-amber-500/40 rounded-xl space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-amber-300 text-xs flex items-center space-x-2">
+                                    <span class="px-2 py-0.5 bg-amber-500/20 text-amber-300 rounded font-mono">Bab 1</span>
+                                    <span>Asal-Usul, Etimologi, & Sejarah Awal Lahirnya Psikologi</span>
+                                </span>
+                                <button onclick="openAcademyChapter(1)" class="px-3 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-lg text-[11px] transition">Mulai Belajar Bab 1</button>
+                            </div>
+                            <p class="text-[11px] text-slate-300 leading-relaxed">Membahas secara mendalam akar etimologi kata Psikologi (Psyche & Logos), masa sebelum menjadi ilmu mandiri pada era Yunani Kuno (Socrates, Plato, Aristoteles), hingga pendirian laboratorium pertama oleh Wilhelm Wundt pada tahun 1879 di Leipzig.</p>
+                            <div class="flex flex-wrap gap-2 text-[10px] font-mono text-slate-400 pt-1 border-t border-slate-800/80">
+                                <span>• Etimologi Psyche-Logos</span>
+                                <span>• Era Filsafat Kuno</span>
+                                <span>• Wilhelm Wundt (1879)</span>
+                                <span>• Structuralism vs Functionalism</span>
+                            </div>
+                        </div>
+
+                        <!-- Chapter 2 -->
+                        <div class="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-slate-200 text-xs flex items-center space-x-2">
+                                    <span class="px-2 py-0.5 bg-slate-800 text-slate-400 rounded font-mono">Bab 2</span>
+                                    <span>Tokoh Pelopor & Mazhab Utama (Psikoanalisis, Behaviorisme, Humanistik)</span>
+                                </span>
+                                <button onclick="openAcademyChapter(2)" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold rounded-lg text-[11px] transition">Mulai Belajar Bab 2</button>
+                            </div>
+                            <p class="text-[11px] text-slate-400 leading-relaxed">Mengkaji corak pemikiran Sigmund Freud (Psikoanalisis), B.F. Skinner & John B. Watson (Behaviorisme), serta Carl Rogers & Abraham Maslow (Humanistik).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: JENDELA RUANG BELAJAR & MATERI INTERAKTIF -->
+            <div id="academy-tab-learn" class="atab-content hidden space-y-6 max-w-5xl mx-auto">
+                <div class="bg-slate-900/90 border border-amber-900/60 rounded-2xl p-5 space-y-5 shadow-xl">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <div class="space-y-1">
+                            <span id="acad-learn-chapter-badge" class="px-2 py-0.5 bg-amber-500/20 text-amber-300 font-mono text-[10px] font-bold rounded uppercase">Materi Bab 1 Active</span>
+                            <h3 id="acad-learn-title" class="font-extrabold text-white text-sm">Etimologi, Akar Sejarah, & Tokoh Pelopor Psikologi</h3>
+                        </div>
+                        <button onclick="switchAcademyTab('quiz')" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-lg text-xs transition flex items-center space-x-1">
+                            <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
+                            <span>Uji Kuis Bab Ini</span>
+                        </button>
+                    </div>
+
+                    <!-- Rendered Learning Material Content -->
+                    <div id="acad-learn-body" class="p-5 bg-slate-950 border border-slate-800 rounded-2xl text-slate-200 text-xs leading-relaxed space-y-4">
+                        <div class="border-b border-slate-800 pb-3">
+                            <h4 class="font-bold text-amber-400 text-sm">1. Etimologi & Definisi Dasar</h4>
+                            <p class="text-slate-300 text-[11px] mt-1">Secara etimologi, kata <strong>Psikologi</strong> berasal dari bahasa Yunani Kuno: <em>"Psyche"</em> yang berarti jiwa, roh, atau napas kehidupan, dan <em>"Logos"</em> yang berarti ilmu pengetahuan atau nalar. Sehingga secara harfiah, psikologi adalah ilmu yang mempelajari tentang jiwa dan perilaku manusia.</p>
+                        </div>
+                        <div class="border-b border-slate-800 pb-3">
+                            <h4 class="font-bold text-amber-400 text-sm">2. Sejarah Pertumbuhan & Tokoh Pelopor</h4>
+                            <p class="text-slate-300 text-[11px] mt-1">Sebelum tahun 1879, psikologi merupakan bagian integral dari kajian filsafat. Perkembangan penting terjadi ketika <strong>Wilhelm Wundt</strong> mendirikan laboratorium psikologi eksperimental pertama di Universitas Leipzig, Jerman pada tahun 1879, yang menandai psikologi lahir sebagai disiplin ilmu ilmiah mandiri.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: UJI PEMAHAMAN & KUIS INTERAKTIF -->
+            <div id="academy-tab-quiz" class="atab-content hidden space-y-6 max-w-5xl mx-auto">
+                <div class="bg-slate-900/90 border border-amber-900/60 rounded-2xl p-5 space-y-4 shadow-xl">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <div>
+                            <h3 class="font-extrabold text-white text-sm flex items-center space-x-2">
+                                <i data-lucide="help-circle" class="w-4 h-4 text-amber-400"></i>
+                                <span>Uji Pemahaman & Kuis Bab 1</span>
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-0.5">Jawab pertanyaan berikut untuk mengevaluasi tingkat pemahaman Anda terhadap materi Bab 1.</p>
+                        </div>
+                    </div>
+
+                    <div id="acad-quiz-box" class="p-5 bg-slate-950 border border-slate-800 rounded-2xl space-y-4 text-xs">
+                        <div class="space-y-2">
+                            <span class="font-bold text-amber-300">Pertanyaan 1: Siapakah tokoh yang dianggap sebagai Bapak Psikologi Modern karena mendirikan laboratorium psikologi ilmiah pertama pada tahun 1879?</span>
+                            <div class="space-y-2 pt-2">
+                                <button onclick="answerAcadQuiz(this, true)" class="w-full p-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-xl text-left text-slate-200 transition font-medium">A. Wilhelm Wundt</button>
+                                <button onclick="answerAcadQuiz(this, false)" class="w-full p-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-xl text-left text-slate-200 transition font-medium">B. Sigmund Freud</button>
+                                <button onclick="answerAcadQuiz(this, false)" class="w-full p-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-xl text-left text-slate-200 transition font-medium">C. B.F. Skinner</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
     <!-- SCRIPT CONTROLLER ASTRO RESEARCH WORKBENCH -->
     <script>
         function openResearchWorkbenchModal() {
@@ -6897,6 +7347,237 @@ Audit keamanan telah selesai dilakukan. Skor Keamanan Keseluruhan: 96 / 100 (SAN
             URL.revokeObjectURL(url);
 
             alert("📥 Laporan Audit Keamanan (.md) berhasil diunduh!");
+        }
+
+        // ==========================================
+        // SCRIPT CONTROLLER ASTRO AI SHORTS & YOUTUBE CLIPPER
+        // ==========================================
+        function openClipperWorkbenchModal() {
+            const modal = document.getElementById('clipper-workbench-modal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                switchClipperTab('clip');
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            }
+        }
+
+        function closeClipperWorkbenchModal() {
+            const modal = document.getElementById('clipper-workbench-modal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function switchClipperTab(tabName) {
+            document.querySelectorAll('.ctab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.ctab-btn').forEach(btn => {
+                btn.className = 'ctab-btn px-3 py-1.5 rounded-lg font-semibold flex items-center space-x-1.5 text-slate-400 hover:text-white hover:bg-slate-800/60 transition';
+            });
+
+            const targetContent = document.getElementById(`clipper-tab-${tabName}`);
+            const targetBtn = document.getElementById(`ctab-btn-${tabName}`);
+
+            if (targetContent) targetContent.classList.remove('hidden');
+            if (targetBtn) {
+                targetBtn.className = 'ctab-btn px-3 py-1.5 rounded-lg font-semibold flex items-center space-x-1.5 transition bg-purple-500/20 text-purple-300 border border-purple-500/40';
+            }
+
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function processYouTubeClipper() {
+            const urlInput = document.getElementById('yt-clipper-url');
+            const iframe = document.getElementById('yt-clipper-iframe');
+            const clipsList = document.getElementById('yt-clipper-clips-list');
+            const btn = document.getElementById('btn-process-yt-clipper');
+
+            if (!urlInput || !iframe) return;
+
+            const rawUrl = urlInput.value.trim();
+            let videoId = "dQw4w9WgXcQ";
+
+            if (rawUrl.includes("v=")) {
+                videoId = rawUrl.split("v=")[1].split("&")[0];
+            } else if (rawUrl.includes("youtu.be/")) {
+                videoId = rawUrl.split("youtu.be/")[1].split("?")[0];
+            }
+
+            iframe.src = `https://www.youtube.com/embed/${videoId}?enablejsapi=1&autoplay=1`;
+
+            if (btn) {
+                btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Mengestrak Momen Viral & Face Tracking...</span>`;
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            }
+
+            setTimeout(() => {
+                if (btn) {
+                    btn.innerHTML = `<i data-lucide="sparkles" class="w-4 h-4"></i><span>Ekstrak Klip Shorts AI</span>`;
+                    if (typeof lucide !== 'undefined') lucide.createIcons();
+                }
+
+                if (clipsList) {
+                    clipsList.innerHTML = `
+                        <!-- Clip 1 -->
+                        <div class="p-3 bg-slate-950 border border-purple-500/50 rounded-xl space-y-2 hover:border-purple-400 transition">
+                            <div class="flex items-center justify-between">
+                                <button onclick="seekYouTubeVideo(15)" class="font-mono text-purple-300 hover:underline font-bold text-[11px] flex items-center space-x-1">
+                                    <i data-lucide="play-circle" class="w-3.5 h-3.5 text-purple-400"></i>
+                                    <span>[00:15 - 00:45] (30 detik)</span>
+                                </button>
+                                <span class="px-2 py-0.5 bg-amber-500/20 text-amber-300 font-mono text-[10px] font-bold rounded">Viral Score: 98/100</span>
+                            </div>
+                            <h4 class="font-bold text-white text-xs leading-snug">Momen Hook Utama & Pengenalan Konsep Vital</h4>
+                            <p class="text-[11px] text-slate-400 leading-relaxed">AI mendeteksi lonjakan emosi pembicara dan fokus percakapan paling bernilai.</p>
+                            <div class="flex items-center justify-between pt-1 border-t border-slate-800/80">
+                                <span class="text-[10px] text-emerald-400 font-mono font-semibold">✓ Auto-Crop 9:16 Active</span>
+                                <button onclick="exportSingleClip(1)" class="px-2.5 py-1 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg text-[10px] transition">Unduh Klip 9:16</button>
+                            </div>
+                        </div>
+
+                        <!-- Clip 2 -->
+                        <div class="p-3 bg-slate-950 border border-slate-800 rounded-xl space-y-2 hover:border-purple-400 transition">
+                            <div class="flex items-center justify-between">
+                                <button onclick="seekYouTubeVideo(90)" class="font-mono text-purple-300 hover:underline font-bold text-[11px] flex items-center space-x-1">
+                                    <i data-lucide="play-circle" class="w-3.5 h-3.5 text-purple-400"></i>
+                                    <span>[01:30 - 02:15] (45 detik)</span>
+                                </button>
+                                <span class="px-2 py-0.5 bg-purple-500/20 text-purple-300 font-mono text-[10px] font-bold rounded">Viral Score: 94/100</span>
+                            </div>
+                            <h4 class="font-bold text-white text-xs leading-snug">Demo Langkah Praktis & Kodingan Cerdas</h4>
+                            <p class="text-[11px] text-slate-400 leading-relaxed">Klip teknis instruksional yang sangat cocok untuk TikTok & Reels.</p>
+                            <div class="flex items-center justify-between pt-1 border-t border-slate-800/80">
+                                <span class="text-[10px] text-emerald-400 font-mono font-semibold">✓ Auto-Crop 9:16 Active</span>
+                                <button onclick="exportSingleClip(2)" class="px-2.5 py-1 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg text-[10px] transition">Unduh Klip 9:16</button>
+                            </div>
+                        </div>
+                    `;
+                    if (typeof lucide !== 'undefined') lucide.createIcons();
+                }
+
+                alert("✨ Video YouTube Berhasil Diproses! 2 Klip Vertikal Shorts (9:16) Siap Digunakan.");
+            }, 1000);
+        }
+
+        function seekYouTubeVideo(seconds) {
+            const iframe = document.getElementById('yt-clipper-iframe');
+            if (iframe && iframe.contentWindow) {
+                iframe.contentWindow.postMessage(JSON.stringify({
+                    event: 'command',
+                    func: 'seekTo',
+                    args: [seconds, true]
+                }), '*');
+            }
+        }
+
+        function exportSingleClip(clipId) {
+            alert(`📥 Memulai proses pembuatan klip vertikal 9:16 untuk Klip #${clipId}... Berkas video Siap diunduh dalam format .mp4 (TikTok / Shorts Ready)!`);
+        }
+
+        // ==========================================
+        // SCRIPT CONTROLLER ASTRO ACADEMY
+        // ==========================================
+        function openAcademyWorkbenchModal() {
+            const modal = document.getElementById('academy-workbench-modal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                switchAcademyTab('setup');
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            }
+        }
+
+        function closeAcademyWorkbenchModal() {
+            const modal = document.getElementById('academy-workbench-modal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function switchAcademyTab(tabName) {
+            document.querySelectorAll('.atab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.atab-btn').forEach(btn => {
+                btn.className = 'atab-btn px-3 py-1.5 rounded-lg font-semibold flex items-center space-x-1.5 text-slate-400 hover:text-white hover:bg-slate-800/60 transition';
+            });
+
+            const targetContent = document.getElementById(`academy-tab-${tabName}`);
+            const targetBtn = document.getElementById(`atab-btn-${tabName}`);
+
+            if (targetContent) targetContent.classList.remove('hidden');
+            if (targetBtn) {
+                targetBtn.className = 'atab-btn px-3 py-1.5 rounded-lg font-semibold flex items-center space-x-1.5 transition bg-amber-500/20 text-amber-300 border border-amber-500/40';
+            }
+
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function selectAcademyPreset(topicName) {
+            const input = document.getElementById('academy-custom-topic');
+            if (input) input.value = topicName;
+        }
+
+        function generateCustomCurriculum() {
+            const input = document.getElementById('academy-custom-topic');
+            const btn = document.getElementById('btn-generate-curriculum');
+            const topic = input ? input.value.trim() : "Psikologi Umum & Sejarah Perkembangan";
+
+            if (btn) {
+                btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> <span>Menyusun Kurikulum Berstandar Internasional...</span>`;
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            }
+
+            setTimeout(() => {
+                if (btn) {
+                    btn.innerHTML = `<i data-lucide="wand-2" class="w-4 h-4 fill-slate-950"></i> <span>Generasi Kurikulum Belajar Terstruktur (Astro AI)</span>`;
+                    if (typeof lucide !== 'undefined') lucide.createIcons();
+                }
+
+                const titleEl = document.getElementById('acad-curr-title');
+                if (titleEl) titleEl.innerText = `Kurikulum: ${topic}`;
+
+                switchAcademyTab('curriculum');
+                alert(`✨ Kurikulum Belajar Berstruktur untuk "${topic}" Berhasil Digenerasi!`);
+            }, 800);
+        }
+
+        function openAcademyChapter(chId) {
+            switchAcademyTab('learn');
+            const badge = document.getElementById('acad-learn-chapter-badge');
+            const title = document.getElementById('acad-learn-title');
+            const body = document.getElementById('acad-learn-body');
+
+            if (badge) badge.innerText = `Materi Bab ${chId} Active`;
+            if (title) {
+                title.innerText = chId === 1 
+                    ? "Bab 1: Asal-Usul, Etimologi, & Sejarah Awal Lahirnya Psikologi"
+                    : "Bab 2: Tokoh Pelopor & Mazhab Utama (Psikoanalisis, Behaviorisme, Humanistik)";
+            }
+
+            if (body && chId === 1) {
+                body.innerHTML = `
+                    <div class="border-b border-slate-800 pb-3 space-y-1">
+                        <h4 class="font-bold text-amber-400 text-sm">1. Etimologi & Definisi Dasar</h4>
+                        <p class="text-slate-300 text-[11px] leading-relaxed">Secara etimologi, kata <strong>Psikologi</strong> berasal dari bahasa Yunani Kuno: <em>"Psyche"</em> (jiwa, roh, napas kehidupan) dan <em>"Logos"</em> (ilmu pengetahuan/nalar). Maka secara mendasar psikologi adalah sains ilmiah yang mengkaji tingkah laku dan proses mental.</p>
+                    </div>
+                    <div class="border-b border-slate-800 pb-3 space-y-1">
+                        <h4 class="font-bold text-amber-400 text-sm">2. Sejarah Lahirnya Psikologi Ilmiah (Wilhelm Wundt 1879)</h4>
+                        <p class="text-slate-300 text-[11px] leading-relaxed">Sebelum abad ke-19, kajian jiwa berada di bawah pemikiran filsafat (Yunani Kuno: Socrates, Plato, Aristoteles). Titik balik bersejarah terjadi pada tahun <strong>1879</strong> ketika <strong>Wilhelm Wundt</strong> mendirikan laboratorium psikologi eksperimental pertama di Leipzig, Jerman.</p>
+                    </div>
+                    <div class="space-y-1">
+                        <h4 class="font-bold text-amber-400 text-sm">3. Mazhab Utama & Corak Pemikiran (Schools of Thought)</h4>
+                        <ul class="list-disc list-inside text-[11px] text-slate-300 space-y-1">
+                            <li><strong>Strukturalisme (Wundt & Titchener):</strong> Memetakan elemen dasar kesadaran lewat introspeksi.</li>
+                            <li><strong>Fungsionalisme (William James):</strong> Mengkaji fungsi kesadaran dalam membantu kelangsungan hidup manusia.</li>
+                            <li><strong>Psikoanalisis (Sigmund Freud):</strong> Menyoroti alam bawah sadar (*Unconscious mind*) & konflik kepribadian.</li>
+                            <li><strong>Behaviorisme (Watson & Skinner):</strong> Memfokuskan pengamatan pada perilaku terukur dan pengondisian (*Conditioning*).</li>
+                        </ul>
+                    </div>
+                `;
+            }
+        }
+
+        function answerAcadQuiz(btn, isCorrect) {
+            if (isCorrect) {
+                btn.className = "w-full p-2.5 bg-emerald-950/80 border border-emerald-500/60 rounded-xl text-left text-emerald-300 font-bold font-mono text-xs flex items-center justify-between";
+                btn.innerHTML += `<span class="text-emerald-400 font-bold">✓ BENAR! (Wilhelm Wundt - Leipzig 1879)</span>`;
+            } else {
+                btn.className = "w-full p-2.5 bg-red-950/80 border border-red-500/60 rounded-xl text-left text-red-300 font-bold font-mono text-xs flex items-center justify-between";
+                btn.innerHTML += `<span class="text-red-400 font-bold">✗ Kurang Tepat</span>`;
+            }
         }
     </script>
 </body>

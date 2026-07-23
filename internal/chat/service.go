@@ -388,39 +388,37 @@ func (s *Service) StartChat(ctx context.Context, req ChatRequest, activeWorkspac
 	cmd.Env = os.Environ()
 
 	convID := req.Conversation
-	if convID != "" {
-		s.mu.Lock()
-		if oldCmd, exists := s.activeChatCmds[convID]; exists && oldCmd != nil && oldCmd.Process != nil {
-			_ = oldCmd.Process.Kill()
-		}
-		if oldCancel, exists := s.activeChatCancels[convID]; exists && oldCancel != nil {
-			oldCancel()
-		}
-		s.activeChatCmds[convID] = cmd
-		s.activeChatCancels[convID] = cmdCancel
-		s.mu.Unlock()
+	if convID == "" {
+		convID = fmt.Sprintf("tmp-%d", time.Now().UnixNano())
 	}
+
+	s.mu.Lock()
+	if oldCmd, exists := s.activeChatCmds[convID]; exists && oldCmd != nil && oldCmd.Process != nil {
+		_ = oldCmd.Process.Kill()
+	}
+	if oldCancel, exists := s.activeChatCancels[convID]; exists && oldCancel != nil {
+		oldCancel()
+	}
+	s.activeChatCmds[convID] = cmd
+	s.activeChatCancels[convID] = cmdCancel
+	s.mu.Unlock()
 
 	stdoutPipe, err := cmd.StdoutPipe()
 	if err != nil {
-		if convID != "" {
-			s.mu.Lock()
-			delete(s.activeChatCmds, convID)
-			delete(s.activeChatCancels, convID)
-			s.mu.Unlock()
-		}
+		s.mu.Lock()
+		delete(s.activeChatCmds, convID)
+		delete(s.activeChatCancels, convID)
+		s.mu.Unlock()
 		cmdCancel()
 		return nil, nil, err
 	}
 	cmd.Stderr = cmd.Stdout
 
 	if err := cmd.Start(); err != nil {
-		if convID != "" {
-			s.mu.Lock()
-			delete(s.activeChatCmds, convID)
-			delete(s.activeChatCancels, convID)
-			s.mu.Unlock()
-		}
+		s.mu.Lock()
+		delete(s.activeChatCmds, convID)
+		delete(s.activeChatCancels, convID)
+		s.mu.Unlock()
 		cmdCancel()
 		return nil, nil, err
 	}
@@ -437,7 +435,10 @@ func (s *Service) CleanupChat(convID string, cmd *exec.Cmd) {
 	if cmd != nil && s.activeChatCmds[convID] == cmd {
 		delete(s.activeChatCmds, convID)
 	}
-	if _, exists := s.activeChatCancels[convID]; exists {
+	if cancel, exists := s.activeChatCancels[convID]; exists {
+		if cancel != nil {
+			cancel()
+		}
 		delete(s.activeChatCancels, convID)
 	}
 	s.mu.Unlock()
