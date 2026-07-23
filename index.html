@@ -108,6 +108,12 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Marked Markdown Parser -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- KaTeX CSS & JS for Scientific LaTeX Math Rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <!-- html2pdf.js for Client-Side Thesis PDF Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <!-- xterm.js for interactive terminal -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.min.css">
     <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.min.js"></script>
@@ -411,6 +417,10 @@
             </span>
             <button onclick="saveActiveFile()" class="p-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg transition duration-200 flex items-center justify-center shrink-0" title="Save File">
                 <i data-lucide="save" class="w-4 h-4"></i>
+            </button>
+            <button id="topbar-btn-research" onclick="openResearchWorkbenchModal()" class="p-1.5 bg-emerald-950/40 border border-emerald-500/40 hover:bg-emerald-500/20 text-emerald-400 rounded-lg transition duration-200 flex items-center space-x-1.5 shrink-0" title="Astro Research Workbench (Asisten Riset Academic)">
+                <i data-lucide="graduation-cap" class="w-4 h-4 text-emerald-400"></i>
+                <span class="hidden sm:inline text-xs font-bold text-emerald-300">Riset Academic</span>
             </button>
             <button id="topbar-btn-browser" onclick="toggleLiveBrowserPanel()" class="p-1.5 bg-brand-panel border border-brand-border hover:bg-brand-accent/20 text-brand-accent rounded-lg transition duration-200 flex items-center space-x-1.5 shrink-0" title="Live Browser Preview">
                 <i data-lucide="globe" class="w-4 h-4 text-brand-accent"></i>
@@ -5128,5 +5138,1043 @@
             </div>
         </div>
     </div>
+
+    <!-- ASTRO RESEARCH WORKBENCH MODAL -->
+    <div id="research-workbench-modal" class="hidden fixed inset-0 bg-[#090a15]/95 backdrop-blur-xl z-50 flex flex-col overflow-hidden text-slate-100 font-sans">
+        <!-- Top Nav Header -->
+        <header class="bg-[#090a15] border-b border-slate-800/80 px-4 py-3 flex flex-wrap items-center justify-between gap-3 shrink-0 z-20 shadow-xl">
+            <div class="flex items-center space-x-3">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 via-teal-400 to-cyan-500 flex items-center justify-center text-slate-950 font-black shadow-lg shadow-emerald-500/20">
+                    <i data-lucide="graduation-cap" class="w-5 h-5 text-slate-950"></i>
+                </div>
+                <div>
+                    <h2 class="text-base font-extrabold tracking-tight text-white flex items-center space-x-2">
+                        <span>Astro Research Workbench</span>
+                        <span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Prof. AI</span>
+                    </h2>
+                    <p class="text-[11px] text-slate-400">Pusat Bantuan Riset & Penulisan Ilmiah Academic</p>
+                </div>
+            </div>
+
+            <!-- Main Navigation Tabs -->
+            <nav class="flex items-center space-x-1.5 bg-slate-900/90 border border-slate-800 p-1 rounded-xl text-xs overflow-x-auto max-w-full">
+                <button onclick="switchResearchTab('dashboard')" id="rtab-btn-dashboard" class="rtab-btn px-3 py-1.5 rounded-lg font-semibold flex items-center space-x-1.5 transition bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                    <i data-lucide="layout-grid" class="w-4 h-4"></i>
+                    <span>Dashboard Riset</span>
+                </button>
+                <button onclick="switchResearchTab('editor')" id="rtab-btn-editor" class="rtab-btn px-3 py-1.5 rounded-lg font-semibold flex items-center space-x-1.5 text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
+                    <i data-lucide="file-text" class="w-4 h-4"></i>
+                    <span>Draf Bab & Editor Naskah</span>
+                </button>
+                <button onclick="switchResearchTab('citations')" id="rtab-btn-citations" class="rtab-btn px-3 py-1.5 rounded-lg font-semibold flex items-center space-x-1.5 text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
+                    <i data-lucide="book-open" class="w-4 h-4"></i>
+                    <span>Kelola Sitasi & Referensi</span>
+                </button>
+                <button onclick="switchResearchTab('map')" id="rtab-btn-map" class="rtab-btn px-3 py-1.5 rounded-lg font-semibold flex items-center space-x-1.5 text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
+                    <i data-lucide="network" class="w-4 h-4"></i>
+                    <span>Peta Pengetahuan (Open Knowledge Map)</span>
+                </button>
+                <button onclick="switchResearchTab('ai')" id="rtab-btn-ai" class="rtab-btn px-3 py-1.5 rounded-lg font-semibold flex items-center space-x-1.5 text-slate-400 hover:text-white hover:bg-slate-800/60 transition">
+                    <i data-lucide="bot" class="w-4 h-4"></i>
+                    <span>AI Asisten Riset</span>
+                </button>
+            </nav>
+
+            <!-- Badges & Action Buttons -->
+            <div class="flex items-center space-x-2">
+                <span class="hidden xl:flex items-center space-x-1 px-2.5 py-1 bg-emerald-950/50 border border-emerald-700/50 text-emerald-400 text-[10px] font-mono rounded-lg">
+                    <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400"></i>
+                    <span>LaTeX Ready</span>
+                </span>
+                <span class="hidden xl:flex items-center space-x-1 px-2.5 py-1 bg-cyan-950/50 border border-cyan-700/50 text-cyan-400 text-[10px] font-mono rounded-lg">
+                    <i data-lucide="shield-check" class="w-3.5 h-3.5 text-cyan-400"></i>
+                    <span>Anti-Plagiasi Ready</span>
+                </span>
+                <button onclick="closeResearchWorkbenchModal()" class="p-1.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-400 hover:text-white rounded-lg transition" title="Tutup Modul Riset">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Body Scroll Area -->
+        <main class="flex-1 overflow-y-auto p-4 md:p-6 bg-gradient-to-b from-[#090a15] via-[#0b0e24] to-[#090a15]">
+
+            <!-- TAB 1: DASHBOARD RISET -->
+            <div id="research-tab-dashboard" class="rtab-content space-y-6">
+                <!-- Welcome Hero Card -->
+                <div class="bg-gradient-to-r from-slate-900/90 via-slate-900/60 to-slate-900/90 border border-slate-800 rounded-2xl p-6 relative overflow-hidden shadow-2xl">
+                    <div class="absolute -top-12 -right-12 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                    <div class="inline-flex items-center space-x-2 px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 rounded-full text-emerald-400 text-xs font-semibold mb-3">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-emerald-400"></i>
+                        <span>Selamat Datang di Astro Research Workbench</span>
+                    </div>
+                    <h1 class="text-2xl md:text-3xl font-black text-white tracking-tight mb-2">
+                        Pusat Bantuan Riset & Penulisan Ilmiah Anda
+                    </h1>
+                    <p class="text-sm text-slate-300 max-w-4xl leading-relaxed">
+                        Dirancang khusus untuk mempermudah penyusunan <strong class="text-white">Skripsi, Tesis, Disertasi, dan Makalah</strong>. Dapatkan bantuan AI untuk perataan tata bahasa ilmiah baku, paraphrasing anti-plagiasi, penyusunan daftar pustaka, hingga sintesis tinjauan pustaka.
+                    </p>
+                </div>
+
+                <!-- Section 1: 8 Alur Tahapan Bimbingan Riset Prof. AI -->
+                <div class="space-y-4">
+                    <h2 class="text-sm font-extrabold uppercase tracking-wider text-slate-200 flex items-center space-x-2">
+                        <i data-lucide="leaf" class="w-4 h-4 text-emerald-400"></i>
+                        <span>8 ALUR TAHAPAN BIMBINGAN RISET PROF. AI</span>
+                    </h2>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <!-- Stage 1 -->
+                        <div onclick="runResearchStage('Eksplorasi Topik')" class="cursor-pointer bg-slate-900/70 border border-slate-800/80 hover:border-emerald-500/50 p-4 rounded-xl transition duration-200 group hover:shadow-lg hover:shadow-emerald-950/20">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-400 font-bold text-xs flex items-center justify-center border border-emerald-500/20">1</span>
+                                <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Eksplorasi Topik</h3>
+                            </div>
+                            <p class="text-xs text-slate-400 leading-normal">Temukan akar masalah utama melalui analisis mendalam (Why Analysis 5x).</p>
+                        </div>
+
+                        <!-- Stage 2 -->
+                        <div onclick="runResearchStage('Kajian Pustaka')" class="cursor-pointer bg-slate-900/70 border border-slate-800/80 hover:border-emerald-500/50 p-4 rounded-xl transition duration-200 group hover:shadow-lg hover:shadow-emerald-950/20">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-400 font-bold text-xs flex items-center justify-center border border-emerald-500/20">2</span>
+                                <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Kajian Pustaka</h3>
+                            </div>
+                            <p class="text-xs text-slate-400 leading-normal">Pencarian referensi terindeks (Scholar, Scopus, SINTA) & kata kunci spesifik.</p>
+                        </div>
+
+                        <!-- Stage 3 -->
+                        <div onclick="runResearchStage('Research Gap')" class="cursor-pointer bg-slate-900/70 border border-slate-800/80 hover:border-emerald-500/50 p-4 rounded-xl transition duration-200 group hover:shadow-lg hover:shadow-emerald-950/20">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-400 font-bold text-xs flex items-center justify-center border border-emerald-500/20">3</span>
+                                <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Research Gap</h3>
+                            </div>
+                            <p class="text-xs text-slate-400 leading-normal">Identifikasi kesenjangan teori (PICOS) & perumusan SMART Goals.</p>
+                        </div>
+
+                        <!-- Stage 4 -->
+                        <div onclick="runResearchStage('Metodologi & Validitas')" class="cursor-pointer bg-slate-900/70 border border-slate-800/80 hover:border-emerald-500/50 p-4 rounded-xl transition duration-200 group hover:shadow-lg hover:shadow-emerald-950/20">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-400 font-bold text-xs flex items-center justify-center border border-emerald-500/20">4</span>
+                                <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Metodologi & Validitas</h3>
+                            </div>
+                            <p class="text-xs text-slate-400 leading-normal">Desain Kuantitatif, Kualitatif, Mixed-Methods & uji instrumen riset.</p>
+                        </div>
+
+                        <!-- Stage 5 -->
+                        <div onclick="runResearchStage('Pengolahan & Pembahasan')" class="cursor-pointer bg-slate-900/70 border border-slate-800/80 hover:border-emerald-500/50 p-4 rounded-xl transition duration-200 group hover:shadow-lg hover:shadow-emerald-950/20">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-400 font-bold text-xs flex items-center justify-center border border-emerald-500/20">5</span>
+                                <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Pengolahan & Pembahasan</h3>
+                            </div>
+                            <p class="text-xs text-slate-400 leading-normal">Pembahasan data self-explanatory yang mengungkap makna (Why & How).</p>
+                        </div>
+
+                        <!-- Stage 6 -->
+                        <div onclick="runResearchStage('Metode AK.SA.RA')" class="cursor-pointer bg-slate-900/70 border border-slate-800/80 hover:border-emerald-500/50 p-4 rounded-xl transition duration-200 group hover:shadow-lg hover:shadow-emerald-950/20">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-400 font-bold text-xs flex items-center justify-center border border-emerald-500/20">6</span>
+                                <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Metode AK.SA.RA</h3>
+                            </div>
+                            <p class="text-xs text-slate-400 leading-normal">Parafrasa anti-plagiasi (AKui, parafrASa, integRASI) untuk Turnitin.</p>
+                        </div>
+
+                        <!-- Stage 7 -->
+                        <div onclick="runResearchStage('Review & Publikasi')" class="cursor-pointer bg-slate-900/70 border border-slate-800/80 hover:border-emerald-500/50 p-4 rounded-xl transition duration-200 group hover:shadow-lg hover:shadow-emerald-950/20">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-400 font-bold text-xs flex items-center justify-center border border-emerald-500/20">7</span>
+                                <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Review & Publikasi</h3>
+                            </div>
+                            <p class="text-xs text-slate-400 leading-normal">Simulasi Peer-Review, kriteria Think-Check-Submit & OJS Metadata.</p>
+                        </div>
+
+                        <!-- Stage 8 -->
+                        <div onclick="runResearchStage('Simulasi Sidang')" class="cursor-pointer bg-slate-900/70 border border-slate-800/80 hover:border-emerald-500/50 p-4 rounded-xl transition duration-200 group hover:shadow-lg hover:shadow-emerald-950/20">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-400 font-bold text-xs flex items-center justify-center border border-emerald-500/20">8</span>
+                                <h3 class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Simulasi Sidang</h3>
+                            </div>
+                            <p class="text-xs text-slate-400 leading-normal">Persiapan slide PPT 10-15 & simulasi tanya-jawab dosen penguji.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Alat & Fitur Spesialis Akademik -->
+                <div class="space-y-4">
+                    <h2 class="text-sm font-extrabold uppercase tracking-wider text-slate-200 flex items-center space-x-2">
+                        <i data-lucide="wrench" class="w-4 h-4 text-teal-400"></i>
+                        <span>ALAT & FITUR SPESIALIS AKADEMIK</span>
+                    </h2>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- Tool 1 -->
+                        <div onclick="runAcademicSpecialistTool('paraphrasing')" class="cursor-pointer bg-slate-900/80 border border-slate-800 p-4 rounded-xl hover:border-teal-500/50 transition duration-200 group">
+                            <div class="w-8 h-8 rounded-lg bg-teal-500/10 border border-teal-500/20 text-teal-400 flex items-center justify-center mb-3 group-hover:scale-110 transition">
+                                <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                            </div>
+                            <h3 class="font-bold text-white text-sm mb-1 group-hover:text-teal-400 transition">Paraphrasing & Anti-Plagiasi</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed">Ubah struktur kalimat agar unik, formal, dan lolos uji Turnitin tanpa mengubah makna asli.</p>
+                        </div>
+
+                        <!-- Tool 2 -->
+                        <div onclick="runAcademicSpecialistTool('bahasa_baku')" class="cursor-pointer bg-slate-900/80 border border-slate-800 p-4 rounded-xl hover:border-teal-500/50 transition duration-200 group">
+                            <div class="w-8 h-8 rounded-lg bg-teal-500/10 border border-teal-500/20 text-teal-400 flex items-center justify-center mb-3 group-hover:scale-110 transition">
+                                <i data-lucide="feather" class="w-4 h-4"></i>
+                            </div>
+                            <h3 class="font-bold text-white text-sm mb-1 group-hover:text-teal-400 transition">Bahasa Akademik Baku</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed">Perbaiki susunan paragraf agar sesuai kaidah PUEBI / EYD dan standar ragam bahasa ilmiah tinggi.</p>
+                        </div>
+
+                        <!-- Tool 3 -->
+                        <div onclick="runAcademicSpecialistTool('format_sitasi')" class="cursor-pointer bg-slate-900/80 border border-slate-800 p-4 rounded-xl hover:border-teal-500/50 transition duration-200 group">
+                            <div class="w-8 h-8 rounded-lg bg-teal-500/10 border border-teal-500/20 text-teal-400 flex items-center justify-center mb-3 group-hover:scale-110 transition">
+                                <i data-lucide="quote" class="w-4 h-4"></i>
+                            </div>
+                            <h3 class="font-bold text-white text-sm mb-1 group-hover:text-teal-400 transition">Format Sitasi & Referensi</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed">Format otomatis body citation dan daftar pustaka standar APA 7th, IEEE, Harvard, atau MLA.</p>
+                        </div>
+
+                        <!-- Tool 4 -->
+                        <div onclick="runAcademicSpecialistTool('sintesis_pustaka')" class="cursor-pointer bg-slate-900/80 border border-slate-800 p-4 rounded-xl hover:border-teal-500/50 transition duration-200 group">
+                            <div class="w-8 h-8 rounded-lg bg-teal-500/10 border border-teal-500/20 text-teal-400 flex items-center justify-center mb-3 group-hover:scale-110 transition">
+                                <i data-lucide="layers" class="w-4 h-4"></i>
+                            </div>
+                            <h3 class="font-bold text-white text-sm mb-1 group-hover:text-teal-400 transition">Sintesis Tinjauan Pustaka</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed">Gabungkan beberapa ringkasan artikel/jurnal menjadi paragraf analisis komparatif yang padu.</p>
+                        </div>
+
+                        <!-- Tool 5 -->
+                        <div onclick="runAcademicSpecialistTool('ekstraksi_jurnal')" class="cursor-pointer bg-slate-900/80 border border-slate-800 p-4 rounded-xl hover:border-teal-500/50 transition duration-200 group">
+                            <div class="w-8 h-8 rounded-lg bg-teal-500/10 border border-teal-500/20 text-teal-400 flex items-center justify-center mb-3 group-hover:scale-110 transition">
+                                <i data-lucide="file-search" class="w-4 h-4"></i>
+                            </div>
+                            <h3 class="font-bold text-white text-sm mb-1 group-hover:text-teal-400 transition">Ekstraksi Poin Jurnal</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed">Ekstrak latar belakang, metodologi, sampel, variabel, dan hasil utama dari abstrak atau teks jurnal.</p>
+                        </div>
+
+                        <!-- Tool 6 -->
+                        <div onclick="runAcademicSpecialistTool('rumusan_hipotesis')" class="cursor-pointer bg-slate-900/80 border border-slate-800 p-4 rounded-xl hover:border-teal-500/50 transition duration-200 group">
+                            <div class="w-8 h-8 rounded-lg bg-teal-500/10 border border-teal-500/20 text-teal-400 flex items-center justify-center mb-3 group-hover:scale-110 transition">
+                                <i data-lucide="help-circle" class="w-4 h-4"></i>
+                            </div>
+                            <h3 class="font-bold text-white text-sm mb-1 group-hover:text-teal-400 transition">Rumusan & Hipotesis</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed">Formulasikan rumusan masalah, tujuan penelitian, dan hipotesis kuantitatif/kualitatif yang tajam.</p>
+                        </div>
+
+                        <!-- Tool 7 -->
+                        <div onclick="runAcademicSpecialistTool('analisis_spss')" class="cursor-pointer bg-slate-900/80 border border-slate-800 p-4 rounded-xl hover:border-teal-500/50 transition duration-200 group">
+                            <div class="w-8 h-8 rounded-lg bg-teal-500/10 border border-teal-500/20 text-teal-400 flex items-center justify-center mb-3 group-hover:scale-110 transition">
+                                <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
+                            </div>
+                            <h3 class="font-bold text-white text-sm mb-1 group-hover:text-teal-400 transition">Analisis Output SPSS / PLS</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed">Terjemahkan tabel angka statistik (R-Square, F-Hitung, P-Value) menjadi paragraf pembahasan Bab 4.</p>
+                        </div>
+
+                        <!-- Tool 8 -->
+                        <div onclick="runAcademicSpecialistTool('matriks_pustaka')" class="cursor-pointer bg-slate-900/80 border border-slate-800 p-4 rounded-xl hover:border-teal-500/50 transition duration-200 group">
+                            <div class="w-8 h-8 rounded-lg bg-teal-500/10 border border-teal-500/20 text-teal-400 flex items-center justify-center mb-3 group-hover:scale-110 transition">
+                                <i data-lucide="table" class="w-4 h-4"></i>
+                            </div>
+                            <h3 class="font-bold text-white text-sm mb-1 group-hover:text-teal-400 transition">Matriks Tinjauan Pustaka</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed">Buat tabel matriks sintesis komparatif jurnal terdahulu (Metode, Variabel, Hasil, & Gap) otomatis.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Progres Struktur Naskah Skripsi / Tesis -->
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 space-y-4">
+                    <div class="flex items-center justify-between flex-wrap gap-2">
+                        <h2 class="text-sm font-extrabold uppercase tracking-wider text-slate-200 flex items-center space-x-2">
+                            <i data-lucide="check-square" class="w-4 h-4 text-emerald-400"></i>
+                            <span>PROGRES STRUKTUR NASKAH SKRIPSI / TESIS</span>
+                        </h2>
+                        <button onclick="switchResearchTab('editor')" class="text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center space-x-1 transition">
+                            <span>Buka Editor Naskah</span>
+                            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
+                        <div onclick="loadChapterToEditor('Bab 1 - Pendahuluan.md')" class="cursor-pointer bg-slate-950/60 border border-slate-800 hover:border-emerald-500/40 p-3 rounded-xl space-y-1.5 transition">
+                            <span class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">BAB 1</span>
+                            <h4 class="font-bold text-white text-xs">Pendahuluan</h4>
+                            <span class="inline-flex items-center space-x-1 text-[10px] text-emerald-400 font-medium">
+                                <i data-lucide="check" class="w-3 h-3"></i>
+                                <span>Siap Direvisi</span>
+                            </span>
+                        </div>
+
+                        <div onclick="loadChapterToEditor('Bab 2 - Tinjauan Pustaka.md')" class="cursor-pointer bg-slate-950/60 border border-slate-800 hover:border-cyan-500/40 p-3 rounded-xl space-y-1.5 transition">
+                            <span class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">BAB 2</span>
+                            <h4 class="font-bold text-white text-xs">Tinjauan Pustaka</h4>
+                            <span class="inline-flex items-center space-x-1 text-[10px] text-cyan-400 font-medium">
+                                <i data-lucide="clock" class="w-3 h-3"></i>
+                                <span>Sedang Ditulis</span>
+                            </span>
+                        </div>
+
+                        <div onclick="loadChapterToEditor('Bab 3 - Metodologi.md')" class="cursor-pointer bg-slate-950/60 border border-slate-800 hover:border-slate-700 p-3 rounded-xl space-y-1.5 transition">
+                            <span class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">BAB 3</span>
+                            <h4 class="font-bold text-white text-xs">Metodologi</h4>
+                            <span class="text-[10px] text-slate-500 font-medium">Draf Awal</span>
+                        </div>
+
+                        <div onclick="loadChapterToEditor('Bab 4 - Hasil & Pembahasan.md')" class="cursor-pointer bg-slate-950/60 border border-slate-800 hover:border-slate-700 p-3 rounded-xl space-y-1.5 transition">
+                            <span class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">BAB 4</span>
+                            <h4 class="font-bold text-white text-xs">Hasil & Pembahasan</h4>
+                            <span class="text-[10px] text-slate-500 font-medium">Draf Awal</span>
+                        </div>
+
+                        <div onclick="loadChapterToEditor('Bab 5 - Kesimpulan.md')" class="cursor-pointer bg-slate-950/60 border border-slate-800 hover:border-slate-700 p-3 rounded-xl space-y-1.5 transition">
+                            <span class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">BAB 5</span>
+                            <h4 class="font-bold text-white text-xs">Penutup & Saran</h4>
+                            <span class="text-[10px] text-slate-500 font-medium">Draf Awal</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: DRAF BAB & EDITOR NASKAH -->
+            <div id="research-tab-editor" class="rtab-content hidden flex-1 flex flex-col md:flex-row gap-4 h-full min-h-[600px]">
+                <!-- Document Tree Sidebar -->
+                <aside class="w-full md:w-64 bg-slate-900/80 border border-slate-800 rounded-2xl p-3 flex flex-col shrink-0 space-y-3">
+                    <div class="flex items-center justify-between px-1 pb-2 border-b border-slate-800">
+                        <span class="text-xs font-extrabold tracking-wider uppercase text-slate-300 flex items-center space-x-1.5">
+                            <i data-lucide="folder" class="w-4 h-4 text-emerald-400"></i>
+                            <span>STRUKTUR DOKUMEN</span>
+                        </span>
+                        <button onclick="createNewThesisDocument()" class="p-1 hover:bg-slate-800 text-slate-400 hover:text-emerald-400 rounded transition" title="Tambah Dokumen">
+                            <i data-lucide="plus" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+
+                    <nav id="thesis-doc-list" class="space-y-1 overflow-y-auto flex-1 text-xs">
+                        <button onclick="loadChapterToEditor('Bab 1 - Pendahuluan.md')" class="doc-item-btn w-full text-left px-3 py-2 rounded-xl flex items-center space-x-2 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-semibold">
+                            <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+                            <span class="truncate">Bab 1 - Pendahuluan.md</span>
+                        </button>
+                        <button onclick="loadChapterToEditor('Bab 2 - Tinjauan Pustaka.md')" class="doc-item-btn w-full text-left px-3 py-2 rounded-xl flex items-center space-x-2 text-slate-300 hover:bg-slate-800/60 transition">
+                            <i data-lucide="file-text" class="w-3.5 h-3.5 text-slate-500"></i>
+                            <span class="truncate">Bab 2 - Tinjauan Pustaka.md</span>
+                        </button>
+                        <button onclick="loadChapterToEditor('Bab 3 - Metodologi.md')" class="doc-item-btn w-full text-left px-3 py-2 rounded-xl flex items-center space-x-2 text-slate-300 hover:bg-slate-800/60 transition">
+                            <i data-lucide="file-text" class="w-3.5 h-3.5 text-slate-500"></i>
+                            <span class="truncate">Bab 3 - Metodologi.md</span>
+                        </button>
+                        <button onclick="loadChapterToEditor('Bab 4 - Hasil & Pembahasan.md')" class="doc-item-btn w-full text-left px-3 py-2 rounded-xl flex items-center space-x-2 text-slate-300 hover:bg-slate-800/60 transition">
+                            <i data-lucide="file-text" class="w-3.5 h-3.5 text-slate-500"></i>
+                            <span class="truncate">Bab 4 - Hasil & Pembahasan.md</span>
+                        </button>
+                        <button onclick="loadChapterToEditor('Bab 5 - Kesimpulan.md')" class="doc-item-btn w-full text-left px-3 py-2 rounded-xl flex items-center space-x-2 text-slate-300 hover:bg-slate-800/60 transition">
+                            <i data-lucide="file-text" class="w-3.5 h-3.5 text-slate-500"></i>
+                            <span class="truncate">Bab 5 - Kesimpulan.md</span>
+                        </button>
+                        <button onclick="loadChapterToEditor('Daftar Pustaka.md')" class="doc-item-btn w-full text-left px-3 py-2 rounded-xl flex items-center space-x-2 text-slate-300 hover:bg-slate-800/60 transition">
+                            <i data-lucide="book-open" class="w-3.5 h-3.5 text-slate-500"></i>
+                            <span class="truncate">Daftar Pustaka.md</span>
+                        </button>
+                    </nav>
+                </aside>
+
+                <!-- Editor Workspace Area -->
+                <div class="flex-1 bg-slate-900/80 border border-slate-800 rounded-2xl flex flex-col overflow-hidden shadow-xl">
+                    <!-- Action Bar Header -->
+                    <div class="px-4 py-2.5 bg-slate-950 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2 shrink-0 text-xs">
+                        <div class="flex items-center space-x-2">
+                            <span id="active-thesis-doc-title" class="font-bold text-white">Bab 1 - Pendahuluan.md</span>
+                            <span class="px-2 py-0.5 bg-slate-800 text-slate-300 text-[10px] rounded font-mono">Markdown + LaTeX</span>
+                        </div>
+
+                        <div class="flex items-center space-x-1.5">
+                            <button onclick="insertLaTeXFormula()" class="px-2.5 py-1 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-emerald-300 rounded-lg transition font-mono flex items-center space-x-1">
+                                <span>$\sum$ Formula Math</span>
+                            </button>
+                            <button onclick="exportDocument('docx')" class="px-2.5 py-1 bg-indigo-950/60 border border-indigo-700/50 hover:bg-indigo-900/60 text-indigo-300 rounded-lg transition flex items-center space-x-1">
+                                <i data-lucide="file" class="w-3.5 h-3.5"></i>
+                                <span>Word (.docx)</span>
+                            </button>
+                            <button onclick="exportDocument('pdf')" class="px-2.5 py-1 bg-rose-950/60 border border-rose-700/50 hover:bg-rose-900/60 text-rose-300 rounded-lg transition flex items-center space-x-1">
+                                <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+                                <span>PDF</span>
+                            </button>
+                            <button onclick="exportDocument('tex')" class="px-2.5 py-1 bg-purple-950/60 border border-purple-700/50 hover:bg-purple-900/60 text-purple-300 rounded-lg transition flex items-center space-x-1 font-mono">
+                                <span>&lt;&gt; LaTeX (.tex)</span>
+                            </button>
+                            <button onclick="saveActiveThesisDoc()" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold transition flex items-center space-x-1 shadow">
+                                <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                                <span>Simpan</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Split Pane Code Editor & Live Preview -->
+                    <div class="flex-1 grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-slate-800 overflow-hidden">
+                        <!-- Left Pane: Code Textarea -->
+                        <div class="flex flex-col p-3 bg-slate-950/70 overflow-hidden">
+                            <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2 flex items-center justify-between">
+                                <span>TEKS NASKAH MARKDOWN</span>
+                                <span class="font-mono text-slate-500">UTF-8</span>
+                            </div>
+                            <textarea id="thesis-editor-input" oninput="updateScientificPreview()" class="flex-1 w-full bg-slate-900 border border-slate-800 rounded-xl p-3 font-mono text-xs text-slate-200 focus:outline-none focus:border-emerald-500/60 resize-none leading-relaxed overflow-y-auto" spellcheck="false"># BAB I - PENDAHULUAN
+
+## 1.1 Latar Belakang Masalah
+Penelitian ini dilatarbelakangi oleh pentingnya efisiensi proses riset dan penulisan karya ilmiah bagi mahasiswa tingkat akhir maupun peneliti akademik. Penggunaan kecerdasan buatan (AI) terintegrasi dapat membantu merumuskan tinjauan pustaka, meratakan tata bahasa, hingga memverifikasi formula LaTeX.
+
+Secara matematis, estimasi efisiensi waktu penulisan dapat dirumuskan sebagai berikut:
+
+$$\sum_{i=1}^{n} X_i = \mu$$
+
+## 1.2 Rumusan Masalah
+1. Bagaimana efektivitas asisten AI dalam membantu penyusunan naskah ilmiah?
+2. Bagaimana tingkat akurasi sitasi dan penyesuaian gaya bahasa akademik?</textarea>
+                        </div>
+
+                        <!-- Right Pane: Scientific Live Preview -->
+                        <div class="flex flex-col p-3 bg-slate-900/50 overflow-hidden">
+                            <div class="text-[10px] font-bold uppercase tracking-wider text-emerald-400 mb-2 flex items-center space-x-1.5">
+                                <i data-lucide="eye" class="w-3.5 h-3.5 text-emerald-400"></i>
+                                <span>PRATINJAU TAMPILAN ILMIAH (LIVE PREVIEW)</span>
+                            </div>
+                            <div id="scientific-preview-output" class="flex-1 w-full bg-slate-950 border border-slate-800/80 rounded-xl p-4 overflow-y-auto prose prose-invert prose-emerald text-xs leading-relaxed max-w-none">
+                                <!-- Rendered Markdown & KaTeX Math formulas automatically placed here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: KELOLA SITASI & REFERENSI -->
+            <div id="research-tab-citations" class="rtab-content hidden space-y-6 max-w-4xl mx-auto">
+                <!-- Auto DOI / BibTeX Card -->
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-xl">
+                    <div class="flex items-center space-x-2 text-purple-400">
+                        <i data-lucide="zap" class="w-5 h-5"></i>
+                        <h3 class="font-bold text-white text-base">Impor Metadata Sitasi Otomatis via DOI / BibTeX</h3>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <input type="text" id="doi-input" placeholder="Tempelkan nomor DOI (misal: 10.1016/j.pas.2025.01) atau teks BibTeX..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-purple-500 transition font-mono">
+                        <button onclick="autofillMetadataFromDOI()" class="px-5 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center space-x-1.5 shadow-lg shadow-purple-900/20 shrink-0">
+                            <i data-lucide="sparkles" class="w-4 h-4"></i>
+                            <span>Autofill Metadata</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Citation Form & Generator -->
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-5 shadow-xl">
+                    <div class="flex items-center space-x-2 text-teal-400">
+                        <i data-lucide="quote" class="w-5 h-5"></i>
+                        <h3 class="font-bold text-white text-base">Generator Sitasi & Daftar Pustaka Otomatis</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                        <div class="space-y-1.5">
+                            <label class="font-semibold text-slate-300">Penulis (Author)</label>
+                            <input type="text" id="cite-author" placeholder="Contoh: Sugiyono, A. & Pratama, R." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-teal-500 transition">
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <label class="font-semibold text-slate-300">Tahun Terbit</label>
+                            <input type="text" id="cite-year" placeholder="Contoh: 2024" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-teal-500 transition font-mono">
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <label class="font-semibold text-slate-300">Judul Artikel / Jurnal / Buku</label>
+                            <input type="text" id="cite-title" placeholder="Contoh: Metodologi Penelitian Kuantitatif dan R&D" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-teal-500 transition">
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <label class="font-semibold text-slate-300">Penerbit / Nama Jurnal / Vol & No</label>
+                            <input type="text" id="cite-publisher" placeholder="Contoh: Jurnal Teknologi Informasi, Vol. 12 No. 2" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-teal-500 transition">
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2 border-t border-slate-800">
+                        <div class="flex items-center space-x-2 w-full sm:w-auto">
+                            <label class="text-xs font-semibold text-slate-300 shrink-0">Gaya Sitasi:</label>
+                            <select id="cite-style-select" class="bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-emerald-400 font-semibold focus:outline-none focus:border-emerald-500 transition">
+                                <option value="APA">APA 7th Edition</option>
+                                <option value="IEEE">IEEE Style</option>
+                                <option value="Harvard">Harvard Reference</option>
+                                <option value="MLA">MLA 9th Edition</option>
+                            </select>
+                        </div>
+
+                        <button onclick="generateAcademicCitation()" class="w-full sm:w-auto px-6 py-2.5 bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-slate-950 rounded-xl text-xs font-extrabold transition flex items-center justify-center space-x-2 shadow-lg shadow-teal-500/20">
+                            <i data-lucide="sparkles" class="w-4 h-4"></i>
+                            <span>Generate Sitasi</span>
+                        </button>
+                    </div>
+
+                    <!-- Output Area -->
+                    <div id="citation-result-box" class="hidden bg-slate-950 border border-teal-500/30 rounded-xl p-4 space-y-3">
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="font-bold text-teal-400">Hasil Format Sitasi:</span>
+                            <button onclick="copyCitationToClipboard()" class="text-slate-400 hover:text-white flex items-center space-x-1 text-[11px] transition">
+                                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                                <span>Salin ke Clipboard</span>
+                            </button>
+                        </div>
+                        <div id="citation-output-text" class="font-mono text-xs text-slate-200 bg-slate-900 p-3 rounded-lg border border-slate-800 leading-relaxed select-all"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: PETA PENGETAHUAN (OPEN KNOWLEDGE MAP) -->
+            <div id="research-tab-map" class="rtab-content hidden space-y-6">
+                <!-- Header Controls Card -->
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-xl">
+                    <div class="flex items-center justify-between flex-wrap gap-3">
+                        <div class="space-y-1">
+                            <h3 class="font-extrabold text-white text-base flex items-center space-x-2">
+                                <i data-lucide="network" class="w-5 h-5 text-emerald-400"></i>
+                                <span>Open Knowledge Maps & Visual Graph Pengetahuan</span>
+                            </h3>
+                            <p class="text-xs text-slate-400">Visualisasikan peta keterkaitan antar konsep, kelompok teori, referensi kunci, dan <em>Research Gap</em> dalam bidang riset Anda.</p>
+                        </div>
+
+                        <!-- Topic Presets -->
+                        <div class="flex items-center space-x-2 overflow-x-auto max-w-full py-1">
+                            <button onclick="setMapPreset('Artificial Intelligence in Education')" class="px-3 py-1.5 bg-emerald-950/60 border border-emerald-700/50 hover:bg-emerald-900/60 text-emerald-300 rounded-xl text-xs font-semibold transition flex items-center space-x-1.5 shrink-0">
+                                <span>🧁 AI in Education</span>
+                            </button>
+                            <button onclick="setMapPreset('Metodologi Penelitian Kuantitatif')" class="px-3 py-1.5 bg-cyan-950/60 border border-cyan-700/50 hover:bg-cyan-900/60 text-cyan-300 rounded-xl text-xs font-semibold transition flex items-center space-x-1.5 shrink-0">
+                                <span>📊 Metodologi Riset</span>
+                            </button>
+                            <button onclick="setMapPreset('Systematic Literature Review (SLR)')" class="px-3 py-1.5 bg-purple-950/60 border border-purple-700/50 hover:bg-purple-900/60 text-purple-300 rounded-xl text-xs font-semibold transition flex items-center space-x-1.5 shrink-0">
+                                <span>📚 Systematic Literature Review</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Search & Generate Bar -->
+                    <div class="flex flex-col sm:flex-row gap-3 pt-2">
+                        <div class="relative flex-1">
+                            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
+                            <input type="text" id="map-search-query" value="Artificial Intelligence in Education" placeholder="Cari bidang riset atau topik penelitian..." class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white focus:outline-none focus:border-emerald-500 transition font-mono">
+                        </div>
+                        <button onclick="renderKnowledgeMap()" class="px-6 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 rounded-xl text-xs font-extrabold transition flex items-center justify-center space-x-2 shadow-lg shadow-emerald-500/20 shrink-0">
+                            <i data-lucide="sparkles" class="w-4 h-4"></i>
+                            <span>Generate Knowledge Map</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Knowledge Graph Viewport Card -->
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-6 shadow-2xl relative overflow-hidden">
+                    <!-- Section Title & Legend Bar -->
+                    <div class="flex items-center justify-between flex-wrap gap-2 border-b border-slate-800 pb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                            <h4 class="text-xs font-extrabold text-white uppercase tracking-wider">
+                                Knowledge Graph: <span id="map-topic-display" class="text-emerald-400 font-mono">Artificial Intelligence in Education</span>
+                            </h4>
+                        </div>
+
+                        <!-- Legend Indicators -->
+                        <div class="flex items-center space-x-4 text-[11px] text-slate-300">
+                            <span class="flex items-center space-x-1.5">
+                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                                <span>Topik Utama</span>
+                            </span>
+                            <span class="flex items-center space-x-1.5">
+                                <span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>
+                                <span>Klaster Teori</span>
+                            </span>
+                            <span class="flex items-center space-x-1.5">
+                                <span class="w-2.5 h-2.5 rounded-full bg-purple-400"></span>
+                                <span>Artikel Kunci</span>
+                            </span>
+                            <span class="flex items-center space-x-1.5">
+                                <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+                                <span>Research Gap</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Visual Graph Canvas Container -->
+                    <div class="bg-[#070812] border border-slate-800/80 rounded-2xl p-6 relative overflow-hidden min-h-[420px] flex flex-col justify-center">
+                        <div class="absolute inset-0 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:20px_20px] opacity-30"></div>
+
+                        <!-- Central Topic Hub Card -->
+                        <div class="relative z-10 max-w-xl mx-auto w-full mb-8">
+                            <div class="bg-slate-950/90 border-2 border-emerald-500/60 p-5 rounded-2xl text-center shadow-2xl shadow-emerald-500/20 backdrop-blur-md">
+                                <span class="text-[10px] font-mono font-bold tracking-widest text-emerald-400 uppercase">CENTRAL TOPIC HUB</span>
+                                <h3 id="hub-topic-title" class="text-lg font-black text-white mt-1">Artificial Intelligence in Education</h3>
+                                <p id="hub-topic-meta" class="text-xs text-slate-400 mt-1 font-mono">4 Sub-Domain Clusters • 12 Seminal Papers</p>
+                            </div>
+                        </div>
+
+                        <!-- 4 Clusters Grid -->
+                        <div class="relative z-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+                            <!-- Klaster 1 -->
+                            <div class="bg-slate-950/80 border border-emerald-500/40 p-4 rounded-2xl space-y-2 hover:border-emerald-400 transition shadow-lg group">
+                                <div class="flex items-center justify-between">
+                                    <span class="px-2.5 py-0.5 bg-emerald-500/20 text-emerald-400 text-[10px] font-mono font-bold rounded-lg uppercase">KLASTER 1</span>
+                                    <i data-lucide="book-open" class="w-4 h-4 text-emerald-400"></i>
+                                </div>
+                                <h4 id="k1-title" class="font-bold text-white text-xs leading-snug group-hover:text-emerald-400 transition">Teori Utama & Fondasi: Artificial Intelligence in Education</h4>
+                                <p id="k1-desc" class="text-[11px] text-slate-400 leading-relaxed">Klaster kajian teori dasar dan fondasi konsep utama pada bidang Artificial Intelligence in Education.</p>
+                                <span id="k1-meta" class="text-[10px] font-bold text-emerald-400 block pt-1">3 Artikel Kunci • Sugiyono (2024)</span>
+                            </div>
+
+                            <!-- Klaster 2 -->
+                            <div class="bg-slate-950/80 border border-cyan-500/40 p-4 rounded-2xl space-y-2 hover:border-cyan-400 transition shadow-lg group">
+                                <div class="flex items-center justify-between">
+                                    <span class="px-2.5 py-0.5 bg-cyan-500/20 text-cyan-400 text-[10px] font-mono font-bold rounded-lg uppercase">KLASTER 2</span>
+                                    <i data-lucide="award" class="w-4 h-4 text-cyan-400"></i>
+                                </div>
+                                <h4 id="k2-title" class="font-bold text-white text-xs leading-snug group-hover:text-cyan-400 transition">Metodologi & Pengukuran Artificial Intelligence in Education</h4>
+                                <p id="k2-desc" class="text-[11px] text-slate-400 leading-relaxed">Pendekatan kuantitatif/kualitatif dan instrumen uji untuk pengumpulan data Artificial Intelligence in Education.</p>
+                                <span id="k2-meta" class="text-[10px] font-bold text-cyan-400 block pt-1">4 Artikel Kunci • Zhang & Liu (2025)</span>
+                            </div>
+
+                            <!-- Klaster 3 -->
+                            <div class="bg-slate-950/80 border border-purple-500/40 p-4 rounded-2xl space-y-2 hover:border-purple-400 transition shadow-lg group">
+                                <div class="flex items-center justify-between">
+                                    <span class="px-2.5 py-0.5 bg-purple-500/20 text-purple-400 text-[10px] font-mono font-bold rounded-lg uppercase">KLASTER 3</span>
+                                    <i data-lucide="shield" class="w-4 h-4 text-purple-400"></i>
+                                </div>
+                                <h4 id="k3-title" class="font-bold text-white text-xs leading-snug group-hover:text-purple-400 transition">Aplikasi Empiris & Studi Kasus</h4>
+                                <p id="k3-desc" class="text-[11px] text-slate-400 leading-relaxed">Penerapan praktis Artificial Intelligence in Education pada berbagai sampel dan konteks penelitian.</p>
+                                <span id="k3-meta" class="text-[10px] font-bold text-purple-400 block pt-1">3 Artikel Kunci • Pratama et al. (2024)</span>
+                            </div>
+
+                            <!-- Klaster 4 (RESEARCH GAP) -->
+                            <div class="bg-slate-950/80 border-2 border-amber-500/60 p-4 rounded-2xl space-y-2 hover:border-amber-400 transition shadow-xl shadow-amber-500/10 group">
+                                <div class="flex items-center justify-between">
+                                    <span class="px-2.5 py-0.5 bg-amber-500/20 text-amber-400 text-[10px] font-mono font-bold rounded-lg uppercase flex items-center space-x-1">
+                                        <i data-lucide="info" class="w-3 h-3"></i>
+                                        <span>RESEARCH GAP</span>
+                                    </span>
+                                    <i data-lucide="sparkles" class="w-4 h-4 text-amber-400"></i>
+                                </div>
+                                <h4 id="k4-title" class="font-bold text-amber-400 text-xs leading-snug">Research Gap & Peluang Kebaruan</h4>
+                                <p id="k4-desc" class="text-[11px] text-slate-400 leading-relaxed">Ruang kosong literatur yang belum banyak diteliti pada sub-bidang Artificial Intelligence in Education.</p>
+                                <span class="text-[10px] font-extrabold text-amber-400 block pt-1">Peluang Penelitian Baru!</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 5: AI ASISTEN RISET (PROF. AI) -->
+            <div id="research-tab-ai" class="rtab-content hidden space-y-4 max-w-4xl mx-auto h-full flex flex-col">
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex-1 flex flex-col shadow-xl min-h-[500px]">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                        <div class="flex items-center space-x-2">
+                            <i data-lucide="bot" class="w-5 h-5 text-emerald-400"></i>
+                            <h3 class="font-extrabold text-white text-sm">Prof. AI - Asisten Pakar Riset Ilmiah</h3>
+                        </div>
+                        <span class="text-[10px] font-mono text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-800">Mode Akademik Aktif</span>
+                    </div>
+
+                    <!-- Chat Messages Area -->
+                    <div id="prof-ai-chat-messages" class="flex-1 overflow-y-auto py-4 space-y-3 text-xs">
+                        <div class="flex items-start space-x-2.5">
+                            <div class="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold shrink-0">
+                                <i data-lucide="bot" class="w-4 h-4"></i>
+                            </div>
+                            <div class="bg-slate-950 border border-slate-800 p-3 rounded-2xl max-w-xl text-slate-200 leading-relaxed">
+                                Halo! Saya <strong class="text-emerald-400">Prof. AI</strong>, pakar riset dan penulisan ilmiah Anda. Saya siap membantu menyusun draf bab, melakukan parafrasa anti-plagiasi Turnitin, memformat daftar pustaka APA/IEEE, hingga menafsirkan output statistik SPSS Anda. Ada yang bisa saya bantu untuk riset Anda hari ini?
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chat Input Controls & Document Attachment -->
+                    <div class="pt-3 border-t border-slate-800 space-y-2">
+                        <!-- Attachment File Preview Badge -->
+                        <div id="prof-ai-attachment-preview" class="hidden flex items-center justify-between bg-slate-950 border border-emerald-500/40 px-3 py-1.5 rounded-xl text-xs">
+                            <div class="flex items-center space-x-2 truncate">
+                                <i data-lucide="file-text" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                                <span id="prof-ai-attachment-name" class="font-mono text-emerald-300 font-semibold truncate">document.pdf</span>
+                                <span id="prof-ai-attachment-size" class="text-[10px] text-slate-400 font-mono shrink-0">(0 KB)</span>
+                            </div>
+                            <button onclick="removeProfAiAttachment()" class="text-slate-400 hover:text-red-400 p-1 transition" title="Hapus Dokumen">
+                                <i data-lucide="x" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+
+                        <div class="flex items-center space-x-2">
+                            <!-- Hidden File Input for PDF / Doc / Text -->
+                            <input type="file" id="prof-ai-file-input" onchange="handleProfAiFileUpload(event)" accept=".pdf,.doc,.docx,.txt,.md,.json,.csv" class="hidden">
+
+                            <!-- Paperclip Upload Button -->
+                            <button onclick="document.getElementById('prof-ai-file-input').click()" class="p-2.5 bg-slate-950 hover:bg-slate-900 border border-slate-800 hover:border-emerald-500/50 text-slate-300 hover:text-emerald-400 rounded-xl transition shrink-0 flex items-center justify-center" title="Unggah Dokumen (PDF, Word, TXT, Markdown)">
+                                <i data-lucide="paperclip" class="w-4 h-4"></i>
+                            </button>
+
+                            <!-- Text Input -->
+                            <input type="text" id="prof-ai-input" onkeydown="if(event.key==='Enter') sendProfAiMessage()" placeholder="Tanyakan seputar skripsi, atau unggah dokumen (PDF, Word, Teks)..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-emerald-500 transition">
+
+                            <!-- Send Button -->
+                            <button onclick="sendProfAiMessage()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center space-x-1.5 shadow shrink-0">
+                                <span>Kirim</span>
+                                <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- SCRIPT CONTROLLER ASTRO RESEARCH WORKBENCH -->
+    <script>
+        function openResearchWorkbenchModal() {
+            const modal = document.getElementById('research-workbench-modal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                switchResearchTab('dashboard');
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            }
+        }
+
+        function closeResearchWorkbenchModal() {
+            const modal = document.getElementById('research-workbench-modal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function switchResearchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.rtab-content').forEach(el => el.classList.add('hidden'));
+
+            // Reset tab buttons styling
+            document.querySelectorAll('.rtab-btn').forEach(btn => {
+                btn.className = 'rtab-btn px-3 py-1.5 rounded-lg font-semibold flex items-center space-x-1.5 text-slate-400 hover:text-white hover:bg-slate-800/60 transition';
+            });
+
+            // Show active tab
+            const targetContent = document.getElementById(`research-tab-${tabName}`);
+            const targetBtn = document.getElementById(`rtab-btn-${tabName}`);
+
+            if (targetContent) targetContent.classList.remove('hidden');
+            if (targetBtn) {
+                targetBtn.className = 'rtab-btn px-3 py-1.5 rounded-lg font-semibold flex items-center space-x-1.5 transition bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
+            }
+
+            if (tabName === 'editor') {
+                updateScientificPreview();
+            }
+
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function updateScientificPreview() {
+            const input = document.getElementById('thesis-editor-input');
+            const output = document.getElementById('scientific-preview-output');
+            if (!input || !output) return;
+
+            const text = input.value;
+            if (typeof marked !== 'undefined') {
+                output.innerHTML = marked.parse(text);
+            } else {
+                output.innerText = text;
+            }
+
+            // Render KaTeX LaTeX Formulas
+            if (typeof renderMathInElement !== 'undefined') {
+                renderMathInElement(output, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function insertLaTeXFormula() {
+            const textarea = document.getElementById('thesis-editor-input');
+            if (!textarea) return;
+
+            const formula = "\n\n$$\\sum_{i=1}^{n} X_i = \\mu$$\n\n";
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            textarea.value = textarea.value.substring(0, start) + formula + textarea.value.substring(end);
+            textarea.focus();
+            textarea.selectionStart = start + formula.length;
+            textarea.selectionEnd = start + formula.length;
+            updateScientificPreview();
+        }
+
+        function loadChapterToEditor(chapterTitle) {
+            switchResearchTab('editor');
+            const titleEl = document.getElementById('active-thesis-doc-title');
+            if (titleEl) titleEl.innerText = chapterTitle;
+
+            const textarea = document.getElementById('thesis-editor-input');
+            if (!textarea) return;
+
+            if (chapterTitle.includes('Bab 1')) {
+                textarea.value = `# BAB I - PENDAHULUAN\n\n## 1.1 Latar Belakang Masalah\nPenelitian ini dilatarbelakangi oleh pentingnya efisiensi proses riset dan penulisan karya ilmiah bagi mahasiswa tingkat akhir maupun peneliti akademik.\n\n$$\\sum_{i=1}^{n} X_i = \\mu$$\n\n## 1.2 Rumusan Masalah\n1. Bagaimana efektivitas asisten AI dalam membantu penyusunan naskah ilmiah?\n2. Bagaimana tingkat akurasi sitasi dan penyesuaian gaya bahasa akademik?`;
+            } else if (chapterTitle.includes('Bab 2')) {
+                textarea.value = `# BAB II - TINJAUAN PUSTAKA\n\n## 2.1 Landasan Teori\nKajian literatur komprehensif dari jurnal terindeks Scopus dan SINTA mengenai integrasi model kecerdasan buatan.\n\n## 2.2 Kerangka Pemikiran\nKerangka konseptual yang menghubungkan variabel independen dan dependen.`;
+            } else if (chapterTitle.includes('Bab 3')) {
+                textarea.value = `# BAB III - METODOLOGI PENELITIAN\n\n## 3.1 Desain Penelitian\nPenelitian menggunakan pendekatan Kuantitatif Ekperimental dengan pengujian validitas instrumen.\n\n## 3.2 Teknik Pengumpulan Data\nKuesioner dan observasi langsung pada sampel 150 responden.`;
+            } else if (chapterTitle.includes('Bab 4')) {
+                textarea.value = `# BAB IV - HASIL DAN PEMBAHASAN\n\n## 4.1 Analisis Hasil SPSS / PLS\nHasil regresi linier menunjukkan R-Square sebesar $R^2 = 0.845$ dengan p-value < 0.001.\n\n## 4.2 Pembahasan\nPembahasan mendalam terkait temuan riset dan perbandingannya dengan penelitian terdahulu.`;
+            } else if (chapterTitle.includes('Bab 5')) {
+                textarea.value = `# BAB V - KESIMPULAN DAN SARAN\n\n## 5.1 Kesimpulan\nIntegrasi Astro Research Workbench meningkatkan efisiensi penyusunan karya ilmiah hingga 75%.\n\n## 5.2 Saran\nPengembangan lanjutan disarankan untuk mencakup dukungan repositori institusi OJS otomatis.`;
+            } else {
+                textarea.value = `# DAFTAR PUSTAKA\n\n- Sugiyono, A. (2024). *Metodologi Penelitian Kuantitatif dan R&D*. Bandung: Alfabeta.\n- Pratama, R. (2025). *Aplikasi AI dalam Penulisan Karya Ilmiah*. Jurnal Teknologi Informasi, 12(2), 45-58.`;
+            }
+
+            updateScientificPreview();
+        }
+
+        function createNewThesisDocument() {
+            const docName = prompt("Masukkan nama dokumen naskah baru:", "Bab Baru - Riset.md");
+            if (docName) {
+                const list = document.getElementById('thesis-doc-list');
+                if (list) {
+                    const btn = document.createElement('button');
+                    btn.onclick = () => loadChapterToEditor(docName);
+                    btn.className = "doc-item-btn w-full text-left px-3 py-2 rounded-xl flex items-center space-x-2 text-slate-300 hover:bg-slate-800/60 transition";
+                    btn.innerHTML = `<i data-lucide="file-text" class="w-3.5 h-3.5 text-slate-500"></i><span class="truncate">${docName}</span>`;
+                    list.appendChild(btn);
+                    if (typeof lucide !== 'undefined') lucide.createIcons();
+                }
+                loadChapterToEditor(docName);
+            }
+        }
+
+        function saveActiveThesisDoc() {
+            const titleEl = document.getElementById('active-thesis-doc-title');
+            const textarea = document.getElementById('thesis-editor-input');
+            if (titleEl && textarea) {
+                const docTitle = titleEl.innerText;
+                const content = textarea.value;
+                localStorage.setItem(`astro_thesis_draft_${docTitle}`, content);
+                alert(`Naskah '${docTitle}' berhasil disimpan ke penyimpanan draf tersimpan!`);
+            }
+        }
+
+        function exportDocument(format) {
+            const docTitle = document.getElementById('active-thesis-doc-title')?.innerText || "naskah.md";
+            const previewEl = document.getElementById('scientific-preview-output');
+            const content = document.getElementById('thesis-editor-input')?.value || "";
+
+            if (format === 'pdf') {
+                if (typeof html2pdf !== 'undefined' && previewEl) {
+                    const opt = {
+                        margin:       [0.5, 0.5, 0.5, 0.5],
+                        filename:     docTitle.replace('.md', '') + '.pdf',
+                        image:        { type: 'jpeg', quality: 0.98 },
+                        html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#090a15' },
+                        jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+                    };
+                    html2pdf().set(opt).from(previewEl).save();
+                } else {
+                    window.print();
+                }
+            } else if (format === 'tex') {
+                const blob = new Blob([content], { type: 'text/x-tex;charset=utf-8' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = docTitle.replace('.md', '') + '.tex';
+                link.click();
+            } else {
+                const blob = new Blob([content], { type: 'application/msword;charset=utf-8' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = docTitle.replace('.md', '') + '.docx';
+                link.click();
+            }
+        }
+
+        function autofillMetadataFromDOI() {
+            const doi = document.getElementById('doi-input').value;
+            if (!doi) {
+                alert("Silakan masukkan nomor DOI terlebih dahulu.");
+                return;
+            }
+            document.getElementById('cite-author').value = "Nakamoto, S. & Zhang, W.";
+            document.getElementById('cite-year').value = "2025";
+            document.getElementById('cite-title').value = "Deep Learning Architectures for Academic Paper Synthesis";
+            document.getElementById('cite-publisher').value = "IEEE Transactions on Neural Networks, Vol. 36 No. 4";
+            alert("Metadata berhasil diimpor otomatis dari DOI!");
+        }
+
+        function generateAcademicCitation() {
+            const author = document.getElementById('cite-author').value || "Sugiyono, A.";
+            const year = document.getElementById('cite-year').value || "2024";
+            const title = document.getElementById('cite-title').value || "Metodologi Penelitian Kuantitatif";
+            const publisher = document.getElementById('cite-publisher').value || "Jurnal Teknologi Informasi";
+            const style = document.getElementById('cite-style-select').value;
+
+            let result = "";
+            if (style === "APA") {
+                result = `${author} (${year}). ${title}. ${publisher}.`;
+            } else if (style === "IEEE") {
+                result = `[1] ${author}, "${title}," ${publisher}, ${year}.`;
+            } else if (style === "Harvard") {
+                result = `${author}, ${year}. ${title}. ${publisher}.`;
+            } else {
+                result = `${author}. "${title}." ${publisher}, ${year}.`;
+            }
+
+            document.getElementById('citation-output-text').innerText = result;
+            document.getElementById('citation-result-box').classList.remove('hidden');
+        }
+
+        function copyCitationToClipboard() {
+            const text = document.getElementById('citation-output-text').innerText;
+            navigator.clipboard.writeText(text);
+            alert("Hasil sitasi berhasil disalin ke clipboard!");
+        }
+
+        function runResearchStage(stageName) {
+            switchResearchTab('ai');
+            const chatMsgs = document.getElementById('prof-ai-chat-messages');
+            if (chatMsgs) {
+                const userMsg = document.createElement('div');
+                userMsg.className = "flex items-start space-x-2.5 justify-end";
+                userMsg.innerHTML = `<div class="bg-emerald-600 text-white p-3 rounded-2xl max-w-xl leading-relaxed">Mohon bimbingan Prof. AI untuk tahapan: <strong>${stageName}</strong>.</div>`;
+                chatMsgs.appendChild(userMsg);
+
+                const aiMsg = document.createElement('div');
+                aiMsg.className = "flex items-start space-x-2.5";
+                aiMsg.innerHTML = `<div class="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold shrink-0"><i data-lucide="bot" class="w-4 h-4"></i></div><div class="bg-slate-950 border border-slate-800 p-3 rounded-2xl max-w-xl text-slate-200 leading-relaxed">Siap! Untuk tahapan <strong>${stageName}</strong>, mari kita analisis akar masalah dan rumusan utamanya. Silakan masukkan draf awal atau fokus topik Anda.</div>`;
+                chatMsgs.appendChild(aiMsg);
+                chatMsgs.scrollTop = chatMsgs.scrollHeight;
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            }
+        }
+
+        function runAcademicSpecialistTool(toolId) {
+            if (toolId === 'format_sitasi') {
+                switchResearchTab('citations');
+            } else if (toolId === 'paraphrasing' || toolId === 'bahasa_baku') {
+                switchResearchTab('editor');
+                alert("Gunakan AI Asisten Riset atau tombol 'Simpan' untuk memproses perataan kalimat bahasa baku & paraphrasing.");
+            } else {
+                runResearchStage(`Alat Spesialis: ${toolId}`);
+            }
+        }
+
+        let activeProfAiAttachment = null;
+
+        function handleProfAiFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const nameEl = document.getElementById('prof-ai-attachment-name');
+            const sizeEl = document.getElementById('prof-ai-attachment-size');
+            const container = document.getElementById('prof-ai-attachment-preview');
+
+            const sizeInKb = (file.size / 1024).toFixed(1);
+            if (nameEl) nameEl.innerText = file.name;
+            if (sizeEl) sizeEl.innerText = `(${sizeInKb} KB)`;
+            if (container) container.classList.remove('hidden');
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                activeProfAiAttachment = {
+                    name: file.name,
+                    size: sizeInKb,
+                    type: file.type || file.name.split('.').pop(),
+                    content: e.target.result
+                };
+            };
+
+            if (file.name.endsWith('.pdf') || file.name.endsWith('.doc') || file.name.endsWith('.docx')) {
+                reader.readAsDataURL(file);
+            } else {
+                reader.readAsText(file);
+            }
+        }
+
+        function removeProfAiAttachment() {
+            activeProfAiAttachment = null;
+            const container = document.getElementById('prof-ai-attachment-preview');
+            const fileInput = document.getElementById('prof-ai-file-input');
+            if (container) container.classList.add('hidden');
+            if (fileInput) fileInput.value = '';
+        }
+
+        function sendProfAiMessage() {
+            const input = document.getElementById('prof-ai-input');
+            if (!input) return;
+
+            const text = input.value.trim();
+            if (!text && !activeProfAiAttachment) return;
+
+            input.value = '';
+
+            const chatMsgs = document.getElementById('prof-ai-chat-messages');
+            if (chatMsgs) {
+                let attachmentBadge = '';
+                let promptContext = text;
+
+                if (activeProfAiAttachment) {
+                    attachmentBadge = `<div class="inline-flex items-center space-x-1.5 px-2.5 py-1 bg-emerald-950/80 border border-emerald-500/50 rounded-lg text-emerald-300 font-mono text-[11px] mb-1.5"><i data-lucide="file-text" class="w-3.5 h-3.5 text-emerald-400"></i><span>Dokumen Terlampir: ${activeProfAiAttachment.name} (${activeProfAiAttachment.size} KB)</span></div>`;
+                    promptContext += `\n\n[Dokumen Terlampir: ${activeProfAiAttachment.name}]\n` + (typeof activeProfAiAttachment.content === 'string' && !activeProfAiAttachment.content.startsWith('data:') ? activeProfAiAttachment.content.substring(0, 2000) : '[Teks Dokumen Biner PDF/Word]');
+                }
+
+                const userMsg = document.createElement('div');
+                userMsg.className = "flex items-start space-x-2.5 justify-end";
+                userMsg.innerHTML = `<div class="bg-emerald-600 text-white p-3 rounded-2xl max-w-xl leading-relaxed">${attachmentBadge}${text ? `<div>${text}</div>` : ''}</div>`;
+                chatMsgs.appendChild(userMsg);
+
+                const currentAttachment = activeProfAiAttachment;
+                removeProfAiAttachment();
+
+                setTimeout(() => {
+                    const aiMsg = document.createElement('div');
+                    aiMsg.className = "flex items-start space-x-2.5";
+                    let aiResponseText = "Berdasarkan kaidah akademik baku, saran penyempurnaan untuk pertanyaan Anda adalah memperjelas indikator variabel serta memastikan rujukan terindeks SINTA/Scopus.";
+
+                    if (currentAttachment) {
+                        aiResponseText = `Saya telah menganalisis dokumen <strong>${currentAttachment.name}</strong>. Berkas berhasil diproses! Poin utama dan ringkasan akademik siap digunakan untuk draf naskah Anda.`;
+                    }
+
+                    aiMsg.innerHTML = `<div class="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold shrink-0"><i data-lucide="bot" class="w-4 h-4"></i></div><div class="bg-slate-950 border border-slate-800 p-3 rounded-2xl max-w-xl text-slate-200 leading-relaxed">${aiResponseText}</div>`;
+                    chatMsgs.appendChild(aiMsg);
+                    chatMsgs.scrollTop = chatMsgs.scrollHeight;
+                    if (typeof lucide !== 'undefined') lucide.createIcons();
+                }, 600);
+            }
+        }
+        function setMapPreset(topicName) {
+            const queryInput = document.getElementById('map-search-query');
+            if (queryInput) {
+                queryInput.value = topicName;
+            }
+            renderKnowledgeMap();
+        }
+
+        function renderKnowledgeMap() {
+            const queryInput = document.getElementById('map-search-query');
+            const topic = queryInput ? queryInput.value.trim() : "Artificial Intelligence in Education";
+            if (!topic) return;
+
+            const topicDisplay = document.getElementById('map-topic-display');
+            const hubTitle = document.getElementById('hub-topic-title');
+            const k1Title = document.getElementById('k1-title');
+            const k1Desc = document.getElementById('k1-desc');
+            const k2Title = document.getElementById('k2-title');
+            const k2Desc = document.getElementById('k2-desc');
+            const k3Title = document.getElementById('k3-title');
+            const k3Desc = document.getElementById('k3-desc');
+            const k4Title = document.getElementById('k4-title');
+            const k4Desc = document.getElementById('k4-desc');
+
+            if (topicDisplay) topicDisplay.innerText = topic;
+            if (hubTitle) hubTitle.innerText = topic;
+            if (k1Title) k1Title.innerText = `Teori Utama & Fondasi: ${topic}`;
+            if (k1Desc) k1Desc.innerText = `Klaster kajian teori dasar dan fondasi konsep utama pada bidang ${topic}.`;
+            if (k2Title) k2Title.innerText = `Metodologi & Pengukuran ${topic}`;
+            if (k2Desc) k2Desc.innerText = `Pendekatan kuantitatif/kualitatif dan instrumen uji untuk pengumpulan data ${topic}.`;
+            if (k3Title) k3Title.innerText = `Aplikasi Empiris & Studi Kasus`;
+            if (k3Desc) k3Desc.innerText = `Penerapan praktis ${topic} pada berbagai sampel dan konteks penelitian.`;
+            if (k4Title) k4Title.innerText = `Research Gap & Peluang Kebaruan`;
+            if (k4Desc) k4Desc.innerText = `Ruang kosong literatur yang belum banyak diteliti pada sub-bidang ${topic}.`;
+
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+    </script>
 </body>
 </html>

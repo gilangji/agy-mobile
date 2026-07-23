@@ -27,6 +27,11 @@ AGY Mobile IDE menyediakan Panel Kontrol terintegrasi yang memudahkan pengembang
 ### 4. Sistem Pembaruan Mandiri (Self-Update System)
 - **Pemeriksaan Rilis GitHub**: Memeriksa tag rilis terbaru dari repositori GitHub dan memungkinkan pembaruan/downgrade versi server dengan satu kali klik.
 
+### 5. Modul Spesialis Astro Research Workbench (Asisten Riset Academic)
+- **Overlay Layar Penuh Bebas Bentrok**: Modul khusus riset ilmiah yang dapat diakses langsung via tombol header `[Riset Academic]`.
+- **5 Sub-View Utama**: Dashboard Riset, Draf Bab & Editor Naskah (dengan rendering formula LaTeX KaTeX live preview), Kelola Sitasi & Referensi (Generator APA/IEEE & Auto DOI), Peta Pengetahuan (Open Knowledge Map), dan AI Asisten Riset (Prof. AI).
+- **8 Alur Tahapan & 8 Alat Spesialis**: Alur bimbingan skripsi/tesis terpandu dan perangkat analisis statistik/parafrasa Turnitin.
+
 ---
 
 ## 📋 Pengaturan Konfigurasi Bahasa

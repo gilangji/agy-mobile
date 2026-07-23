@@ -1,10 +1,13 @@
-const CACHE_NAME = 'agy-ide-v1.1.2-pro';
+const CACHE_NAME = 'agy-ide-v1.2.0-pro';
 const ASSETS = [
   '/',
   '/login-pwd',
   '/manifest.json',
   '/icon-192.png',
-  '/icon-512.png'
+  '/icon-512.png',
+  'https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css',
+  'https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js',
+  'https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js'
 ];
 
 self.addEventListener('install', (e) => {
